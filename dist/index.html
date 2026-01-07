@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    
+    <!-- Favicon и иконки приложения -->
+    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Chill Out Lingerie" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        ::-webkit-scrollbar { display: none;}
+        body { overflow-x: hidden; }
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        .font-sans { font-family: 'Montserrat', sans-serif; }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .gold-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5c3 50%, #d4af37 100%);
+        }
+        
+        .text-gold {
+            color: #d4af37;
+        }
+        
+        .border-gold {
+            border-color: #d4af37;
+        }
+        
+        .bg-charcoal {
+            background-color: #2b2b2b;
+        }
+        
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100vh;
+            background: rgba(43, 43, 43, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .menu-overlay.active {
+            left: 0;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .cta-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .carousel-container {
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+        
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-charcoal text-white font-sans">
+
+<div id="menu-overlay" class="menu-overlay">
+    <div class="container mx-auto px-8 h-full flex flex-col justify-center">
+        <button onclick="closeMenu()" class="absolute top-8 right-8 text-4xl text-gold hover:rotate-90 transition-transform duration-300">
+            <i class="fa-solid fa-times"></i>
+        </button>
+        <nav class="space-y-8">
+            <a href="#hero" onclick="closeMenu()" class="block text-6xl font-serif font-light text-white hover:text-gold transition-colors duration-300">HOME</a>
+            <a href="#catalog" onclick="closeMenu()" class="block text-6xl font-serif font-light text-white hover:text-gold transition-colors duration-300">CATALOG</a>
+            <a href="#bestsellers" onclick="closeMenu()" class="block text-6xl font-serif font-light text-white hover:text-gold transition-colors duration-300">BESTSELLERS</a>
+            <a href="#new-arrivals" onclick="closeMenu()" class="block text-6xl font-serif font-light text-white hover:text-gold transition-colors duration-300">NEW ARRIVALS</a>
+            <a href="#about" onclick="closeMenu()" class="block text-6xl font-serif font-light text-white hover:text-gold transition-colors duration-300">ABOUT</a>
+            <a href="#contact" onclick="closeMenu()" class="block text-6xl font-serif font-light text-white hover:text-gold transition-colors duration-300">CONTACT</a>
+        </nav>
+        <div class="mt-16 flex space-x-6">
+            <a href="#" class="text-2xl text-gold hover:scale-110 transition-transform"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="text-2xl text-gold hover:scale-110 transition-transform"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#" class="text-2xl text-gold hover:scale-110 transition-transform"><i class="fa-brands fa-pinterest"></i></a>
+            <a href="#" class="text-2xl text-gold hover:scale-110 transition-transform"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+    </div>
+</div>
+
+<header id="header" class="fixed top-0 left-0 right-0 z-50 glassmorphism">
+    <div class="container mx-auto px-8 py-6 flex items-center justify-between">
+        <button onclick="openMenu()" class="text-2xl text-gold hover:scale-110 transition-transform">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        
+        <div class="absolute left-1/2 transform -translate-x-1/2">
+            <h1 class="text-3xl font-serif font-bold text-gold tracking-wider">Chill Out Lingerie</h1>
+        </div>
+        
+        <div class="flex items-center space-x-6">
+            <button class="text-xl text-white hover:text-gold transition-colors">
+                <i class="fa-solid fa-search"></i>
+            </button>
+            <button class="text-xl text-white hover:text-gold transition-colors">
+                <i class="fa-regular fa-user"></i>
+            </button>
+            <button class="text-xl text-white hover:text-gold transition-colors relative">
+                <i class="fa-solid fa-shopping-bag"></i>
+                <span class="absolute -top-2 -right-2 bg-gold text-charcoal rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">0</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<section id="hero" class="relative h-[800px] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0">
+        <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/6555e7d064-c3b9b19a9e4b32d7ad33.png" alt="luxury silk and lace lingerie texture background in soft pink and cream tones, elegant fabric close-up with soft lighting, high-end fashion photography" />
+        <div class="absolute inset-0 bg-gradient-to-b from-charcoal/60 via-charcoal/40 to-charcoal/80"></div>
+    </div>
+    
+    <div class="relative z-10 text-center px-8 animate-fade-in">
+        <h2 class="text-8xl font-serif font-light mb-6 tracking-wide">
+            <span class="text-gold">Chill Out</span>
+        </h2>
+        <h3 class="text-6xl font-serif font-light mb-8 text-white">Lingerie</h3>
+        <p class="text-xl font-sans font-light mb-12 max-w-2xl mx-auto text-gray-300 tracking-wide">
+            Where elegance meets comfort. Discover our curated collection of premium lingerie designed for the modern woman.
+        </p>
+        <div class="flex items-center justify-center space-x-6">
+            <button class="cta-button relative px-12 py-4 border-2 border-gold text-gold font-sans font-medium tracking-widest hover:bg-gold hover:text-charcoal transition-all duration-300">
+                <span class="relative z-10">EXPLORE COLLECTIONS</span>
+            </button>
+            <button class="cta-button relative px-12 py-4 bg-gold text-charcoal font-sans font-medium tracking-widest hover:bg-white transition-all duration-300">
+                <span class="relative z-10">SHOP BESTSELLERS</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <i class="fa-solid fa-chevron-down text-3xl text-gold"></i>
+    </div>
+</section>
+
+<section id="value-proposition" class="py-24 bg-gradient-to-b from-charcoal to-neutral-900">
+    <div class="container mx-auto px-8">
+        <div class="grid grid-cols-3 gap-16">
+            <div class="text-center group">
+                <div class="w-24 h-24 mx-auto mb-6 glassmorphism rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-gem text-4xl text-gold"></i>
+                </div>
+                <h3 class="text-2xl font-serif font-semibold mb-4 text-gold">Premium Quality</h3>
+                <p class="text-gray-400 font-sans font-light leading-relaxed">
+                    Handpicked fabrics from the finest mills. Every piece crafted with meticulous attention to detail and luxury materials.
+                </p>
+            </div>
+            
+            <div class="text-center group">
+                <div class="w-24 h-24 mx-auto mb-6 glassmorphism rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-heart text-4xl text-gold"></i>
+                </div>
+                <h3 class="text-2xl font-serif font-semibold mb-4 text-gold">Inclusive Sizing</h3>
+                <p class="text-gray-400 font-sans font-light leading-relaxed">
+                    Celebrating every body. Our collection ranges from XS to 4XL, ensuring perfect fit and confidence for all.
+                </p>
+            </div>
+            
+            <div class="text-center group">
+                <div class="w-24 h-24 mx-auto mb-6 glassmorphism rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-truck text-4xl text-gold"></i>
+                </div>
+                <h3 class="text-2xl font-serif font-semibold mb-4 text-gold">Free Shipping</h3>
+                <p class="text-gray-400 font-sans font-light leading-relaxed">
+                    Complimentary express delivery on all orders. Discreet packaging and hassle-free returns within 30 days.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="featured-collection" class="py-24 bg-neutral-900 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
+    
+    <div class="container mx-auto px-8 relative z-10">
+        <div class="text-center mb-16">
+            <h2 class="text-6xl font-serif font-light mb-4 text-gold">Featured Collection</h2>
+            <p class="text-xl text-gray-400 font-sans font-light">Timeless pieces for every occasion</p>
+        </div>
+        
+        <div class="grid grid-cols-4 gap-8">
+            <div class="group cursor-pointer">
+                <div class="relative overflow-hidden mb-6 bg-neutral-800 h-96 hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/96fccf4507-ee48a6038febd71fdd60.png" alt="elegant black lace bralette on model, luxury lingerie photography, studio lighting" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        <button class="w-full py-3 bg-gold text-charcoal font-sans font-medium tracking-wider">QUICK VIEW</button>
+                    </div>
+                </div>
+                <h4 class="text-lg font-serif mb-2 text-white">Midnight Lace Bralette</h4>
+                <p class="text-sm text-gray-400 mb-2 font-sans">Delicate French lace</p>
+                <p class="text-xl font-sans font-semibold text-gold">$78.00</p>
+            </div>
+            
+            <div class="group cursor-pointer">
+                <div class="relative overflow-hidden mb-6 bg-neutral-800 h-96 hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b56beff876-e29888d5a8ccd0f22677.png" alt="champagne silk slip dress lingerie on model, luxury sleepwear photography, elegant pose" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        <button class="w-full py-3 bg-gold text-charcoal font-sans font-medium tracking-wider">QUICK VIEW</button>
+                    </div>
+                    <div class="absolute top-4 right-4 bg-gold text-charcoal px-3 py-1 text-xs font-sans font-bold tracking-wider">NEW</div>
+                </div>
+                <h4 class="text-lg font-serif mb-2 text-white">Champagne Silk Slip</h4>
+                <p class="text-sm text-gray-400 mb-2 font-sans">Pure mulberry silk</p>
+                <p class="text-xl font-sans font-semibold text-gold">$145.00</p>
+            </div>
+            
+            <div class="group cursor-pointer">
+                <div class="relative overflow-hidden mb-6 bg-neutral-800 h-96 hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png" alt="blush pink satin and lace bodysuit lingerie on model, high-end intimate apparel photography" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        <button class="w-full py-3 bg-gold text-charcoal font-sans font-medium tracking-wider">QUICK VIEW</button>
+                    </div>
+                </div>
+                <h4 class="text-lg font-serif mb-2 text-white">Rose Satin Bodysuit</h4>
+                <p class="text-sm text-gray-400 mb-2 font-sans">Italian satin blend</p>
+                <p class="text-xl font-sans font-semibold text-gold">$92.00</p>
+            </div>
+            
+            <div class="group cursor-pointer">
+                <div class="relative overflow-hidden mb-6 bg-neutral-800 h-96 hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png" alt="ivory lace teddy lingerie on model, bridal lingerie photography, romantic lighting" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        <button class="w-full py-3 bg-gold text-charcoal font-sans font-medium tracking-wider">QUICK VIEW</button>
+                    </div>
+                    <div class="absolute top-4 right-4 bg-rose-400 text-white px-3 py-1 text-xs font-sans font-bold tracking-wider">BESTSELLER</div>
+                </div>
+                <h4 class="text-lg font-serif mb-2 text-white">Ivory Lace Teddy</h4>
+                <p class="text-sm text-gray-400 mb-2 font-sans">Chantilly lace</p>
+                <p class="text-xl font-sans font-semibold text-gold">$118.00</p>
+            </div>
+        </div>
+        
+        <div class="text-center mt-16">
+            <button class="cta-button relative px-16 py-4 border-2 border-gold text-gold font-sans font-medium tracking-widest hover:bg-gold hover:text-charcoal transition-all duration-300">
+                <span class="relative z-10">VIEW ALL PRODUCTS</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<section id="bestsellers" class="py-24 bg-charcoal">
+    <div class="container mx-auto px-8">
+        <div class="flex items-center justify-between mb-16">
+            <div>
+                <h2 class="text-6xl font-serif font-light text-gold mb-4">Bestsellers</h2>
+                <p class="text-xl text-gray-400 font-sans font-light">Customer favorites that never go out of style</p>
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="scrollCarousel('left')" class="w-12 h-12 border border-gold text-gold hover:bg-gold hover:text-charcoal transition-all duration-300 flex items-center justify-center">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button onclick="scrollCarousel('right')" class="w-12 h-12 border border-gold text-gold hover:bg-gold hover:text-charcoal transition-all duration-300 flex items-center justify-center">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="carousel" class="carousel-container flex space-x-8 overflow-x-auto pb-8">
+            <div class="flex-none w-80 group cursor-pointer">
+                <div class="relative overflow-hidden mb-6 bg-neutral-800 h-[28rem] hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/5c08a7f1c6-b1f2b1fff0aab95f6104.png" alt="emerald green silk robe with lace trim on model, luxury sleepwear photography" />
+                    <div class="absolute top-4 left-4 bg-gold text-charcoal px-4 py-2 text-sm font-sans font-bold tracking-wider">
+                        <i class="fa-solid fa-star mr-2"></i>4.9
+                    </div>
+                </div>
+                <h4 class="text-xl font-serif mb-2 text-white">Emerald Silk Robe</h4>
+                <p class="text-sm text-gray-400 mb-3 font-sans">Luxurious silk charmeuse</p>
+                <p class="text-2xl font-sans font-semibold text-gold">$168.00</p>
+            </div>
+            
+            <div class="flex-none w-80 group cursor-pointer">
+                <div class="relative overflow-hidden mb-6 bg-neutral-800 h-[28rem] hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/0ff1edacf9-0d1b5003996b1b432a27.png" alt="burgundy lace bra and panty set on model, luxury lingerie photography, dramatic lighting" />
+                    <div class="absolute top-4 left-4 bg-gold text-charcoal px-4 py-2 text-sm font-sans font-bold tracking-wider">
+                        <i class="fa-solid fa-star mr-2"></i>5.0
+                    </div>
+                </div>
+                <h4 class="text-xl font-serif mb-2 text-white">Burgundy Lace Set</h4>
+                <p class="text-sm text-gray-400 mb-3 font-sans">Floral embroidered lace</p>
+                <p class="text-2xl font-sans font-semibold text-gold">$95.00</p>
+            </div>
+            
+            <div class="flex-none w-80 group cursor-pointer">
+                <div class="relative overflow-hidden mb-6 bg-neutral-800 h-[28rem] hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/a550f76729-2f940b8687fba9bc8a11.png" alt="white cotton and lace camisole pajama set on model, elegant sleepwear photography" />
+                    <div class="absolute top-4 left-4 bg-gold text-charcoal px-4 py-2 text-sm font-sans font-bold tracking-wider">
+                        <i class="fa-solid fa-star mr-2"></i>4.8
+                    </div>
+                </div>
+                <h4 class="text-xl font-serif mb-2 text-white">Cloud Camisole Set</h4>
+                <p class="text-sm text-gray-400 mb-3 font-sans">Pima cotton & lace</p>
+                <p class="text-2xl font-sans font-semibold text-gold">$82.00</p>
+            </div>
+            
+            <div class="flex-none w-80 group cursor-pointer">
+                <div class="relative overflow-hidden mb-6 bg-neutral-800 h-[28rem] hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/48870ed260-bde48a1c7ea8473e1e41.png" alt="navy blue satin chemise with lace details on model, luxury nightwear photography" />
+                    <div class="absolute top-4 left-4 bg-gold text-charcoal px-4 py-2 text-sm font-sans font-bold tracking-wider">
+                        <i class="fa-solid fa-star mr-2"></i>4.9
+                    </div>
+                </div>
+                <h4 class="text-xl font-serif mb-2 text-white">Midnight Chemise</h4>
+                <p class="text-sm text-gray-400 mb-3 font-sans">Satin with lace accents</p>
+                <p class="text-2xl font-sans font-semibold text-gold">$105.00</p>
+            </div>
+            
+            <div class="flex-none w-80 group cursor-pointer">
+                <div class="relative overflow-hidden mb-6 bg-neutral-800 h-[28rem] hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/8ec3f80d6a-ff62832bf3e5711e34a5.png" alt="peach silk bralette and shorts pajama set on model, luxury loungewear photography" />
+                    <div class="absolute top-4 left-4 bg-gold text-charcoal px-4 py-2 text-sm font-sans font-bold tracking-wider">
+                        <i class="fa-solid fa-star mr-2"></i>4.7
+                    </div>
+                </div>
+                <h4 class="text-xl font-serif mb-2 text-white">Peach Dream Set</h4>
+                <p class="text-sm text-gray-400 mb-3 font-sans">Silk bralette & shorts</p>
+                <p class="text-2xl font-sans font-semibold text-gold">$125.00</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="new-arrivals" class="py-24 bg-gradient-to-b from-charcoal to-neutral-900">
+    <div class="container mx-auto px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-6xl font-serif font-light text-gold mb-4">New Arrivals</h2>
+            <p class="text-xl text-gray-400 font-sans font-light">Fresh styles just added to our collection</p>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-12">
+            <div class="col-span-2">
+                <div class="relative overflow-hidden bg-neutral-800 h-[42rem] group cursor-pointer hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/18e9a25748-4b11a0bfe27d58a635f0.png" alt="luxury champagne silk pajama set on model in elegant bedroom setting, high-end fashion photography, soft natural lighting" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-12">
+                        <div class="glassmorphism p-8">
+                            <span class="inline-block px-4 py-2 bg-gold text-charcoal text-xs font-sans font-bold tracking-widest mb-4">NEW ARRIVAL</span>
+                            <h3 class="text-4xl font-serif font-light text-white mb-4">Champagne Dreams Collection</h3>
+                            <p class="text-lg text-gray-300 font-sans font-light mb-6">Indulge in pure luxury with our signature silk blend. Designed for ultimate comfort and timeless elegance.</p>
+                            <button class="cta-button relative px-10 py-3 bg-gold text-charcoal font-sans font-medium tracking-wider hover:bg-white transition-all duration-300">
+                                <span class="relative z-10">SHOP NOW</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-12">
+                <div class="relative overflow-hidden bg-neutral-800 h-80 group cursor-pointer hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/425b0cfdf7-0c3bc91ccd1a89de7620.png" alt="dusty rose lace bralette and high waist panty set on model, luxury lingerie photography" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h4 class="text-2xl font-serif text-white mb-2">Rose Garden Set</h4>
+                        <p class="text-gold text-xl font-sans font-semibold">$88.00</p>
+                    </div>
+                </div>
+                
+                <div class="relative overflow-hidden bg-neutral-800 h-80 group cursor-pointer hover-lift">
+                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/9748b8f173-db06ed5110f8b9df1561.png" alt="sage green silk camisole with lace trim on model, luxury sleepwear photography, minimalist aesthetic" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h4 class="text-2xl font-serif text-white mb-2">Sage Silk Cami</h4>
+                        <p class="text-gold text-xl font-sans font-semibold">$72.00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="shop-by-category" class="py-24 bg-white">
+    <div class="container mx-auto px-8">
+        <div class="text-center mb-16">
+            <p class="text-gold font-inter text-sm tracking-[0.3em] uppercase mb-3">Discover</p>
+            <h2 class="font-playfair text-5xl font-bold text-gray-900 mb-4">Shop By Category</h2>
+        </div>
+        <div class="grid grid-cols-2 gap-8">
+            <div id="category-lingerie" class="relative group cursor-pointer overflow-hidden h-[450px]">
+                <img class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/e1c675aa23-2d4d9f46c0df38e78bd4.png" alt="luxury lingerie collection display, elegant intimate apparel, premium bras and panties, sophisticated styling" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-12">
+                    <h3 class="font-playfair text-4xl font-bold text-white mb-3">Lingerie</h3>
+                    <p class="text-white/90 font-inter text-base mb-6">Bras, Panties, Bodysuits & More</p>
+                    <button class="text-white font-inter font-medium text-sm tracking-wide hover:text-gold transition-colors duration-300 flex items-center space-x-2">
+                        <span>EXPLORE COLLECTION</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="category-sleepwear" class="relative group cursor-pointer overflow-hidden h-[450px]">
+                <img class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/8d22e8b917-45930bbd52832d16a866.png" alt="luxury sleepwear collection, silk pajamas and robes, elegant nightwear display, premium fabrics" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-12">
+                    <h3 class="font-playfair text-4xl font-bold text-white mb-3">Sleepwear</h3>
+                    <p class="text-white/90 font-inter text-base mb-6">Pajamas, Robes, Nightgowns & Sets</p>
+                    <button class="text-white font-inter font-medium text-sm tracking-wide hover:text-gold transition-colors duration-300 flex items-center space-x-2">
+                        <span>EXPLORE COLLECTION</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 gap-8 mt-8">
+            <div id="category-accessories" class="relative group cursor-pointer overflow-hidden h-[320px]">
+                <img class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/e60a5848a9-ff667377d0accce2d5da.png" alt="luxury lingerie accessories, elegant garter belts and stockings, premium intimate accessories display" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-8">
+                    <h3 class="font-playfair text-2xl font-bold text-white mb-2">Accessories</h3>
+                    <p class="text-white/90 font-inter text-sm mb-4">Complete Your Look</p>
+                    <button class="text-white font-inter font-medium text-xs tracking-wide hover:text-gold transition-colors duration-300">SHOP NOW →</button>
+                </div>
+            </div>
+            <div id="category-bridal" class="relative group cursor-pointer overflow-hidden h-[320px]">
+                <img class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/f7310dd007-d20be4269f968db0562f.png" alt="luxury bridal lingerie, white lace wedding night lingerie, elegant bridal intimate apparel" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-8">
+                    <h3 class="font-playfair text-2xl font-bold text-white mb-2">Bridal</h3>
+                    <p class="text-white/90 font-inter text-sm mb-4">For Your Special Day</p>
+                    <button class="text-white font-inter font-medium text-xs tracking-wide hover:text-gold transition-colors duration-300">SHOP NOW →</button>
+                </div>
+            </div>
+            <div id="category-lounge" class="relative group cursor-pointer overflow-hidden h-[320px]">
+                <img class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/ab6d4f4aea-48414ec65d2704a7fe52.png" alt="luxury loungewear, comfortable elegant homewear, premium casual intimate apparel" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-8">
+                    <h3 class="font-playfair text-2xl font-bold text-white mb-2">Loungewear</h3>
+                    <p class="text-white/90 font-inter text-sm mb-4">Comfort Meets Style</p>
+                    <button class="text-white font-inter font-medium text-xs tracking-wide hover:text-gold transition-colors duration-300">SHOP NOW →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="testimonials" class="py-24 bg-charcoal relative overflow-hidden">
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gold/5 rounded-full blur-3xl"></div>
+    
+    <div class="container mx-auto px-8 relative z-10">
+        <div class="text-center mb-16">
+            <h2 class="text-6xl font-serif font-light text-gold mb-4">What Our Customers Say</h2>
+            <p class="text-xl text-gray-400 font-sans font-light">Real reviews from real people</p>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-8">
+            <div class="glassmorphism p-8 hover-lift">
+                <div class="flex items-center mb-6">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Customer" class="w-16 h-16 rounded-full object-cover mr-4">
+                    <div>
+                        <h4 class="text-lg font-serif text-white">Sarah Mitchell</h4>
+                        <div class="flex text-gold text-sm">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-300 font-sans font-light italic leading-relaxed">
+                    "The quality is absolutely exceptional. The silk feels incredible against the skin, and the attention to detail is remarkable. Worth every penny!"
+                </p>
+            </div>
+            
+            <div class="glassmorphism p-8 hover-lift">
+                <div class="flex items-center mb-6">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" alt="Customer" class="w-16 h-16 rounded-full object-cover mr-4">
+                    <div>
+                        <h4 class="text-lg font-serif text-white">Emma Thompson</h4>
+                        <div class="flex text-gold text-sm">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-300 font-sans font-light italic leading-relaxed">
+                    "Finally found a brand that offers true inclusive sizing without compromising on style. The fit is perfect and I feel absolutely beautiful!"
+                </p>
+            </div>
+            
+            <div class="glassmorphism p-8 hover-lift">
+                <div class="flex items-center mb-6">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-7.jpg" alt="Customer" class="w-16 h-16 rounded-full object-cover mr-4">
+                    <div>
+                        <h4 class="text-lg font-serif text-white">Jessica Lee</h4>
+                        <div class="flex text-gold text-sm">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-300 font-sans font-light italic leading-relaxed">
+                    "Customer service is outstanding! My order arrived beautifully packaged and the free shipping was incredibly fast. Highly recommend!"
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="size-guide" class="py-24 bg-gradient-to-b from-charcoal to-neutral-900">
+    <div class="container mx-auto px-8">
+        <div class="grid grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-6xl font-serif font-light text-gold mb-8">Find Your Perfect Fit</h2>
+                <p class="text-lg text-gray-300 font-sans font-light leading-relaxed mb-8">
+                    Not sure about your size? Our comprehensive size guide and fit experts are here to help you find pieces that fit perfectly and feel incredible.
+                </p>
+                
+                <div class="space-y-6 mb-10">
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fa-solid fa-ruler text-gold text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-serif text-white mb-2">Detailed Measurements</h4>
+                            <p class="text-gray-400 font-sans font-light">Step-by-step guide with visual aids to measure yourself accurately at home.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fa-solid fa-comments text-gold text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-serif text-white mb-2">Expert Consultation</h4>
+                            <p class="text-gray-400 font-sans font-light">Chat with our fit specialists for personalized recommendations.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fa-solid fa-sync text-gold text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-serif text-white mb-2">Easy Exchanges</h4>
+                            <p class="text-gray-400 font-sans font-light">Free exchanges within 30 days if the fit isn't quite right.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="cta-button relative px-12 py-4 bg-gold text-charcoal font-sans font-medium tracking-wider hover:bg-white transition-all duration-300">
+                    <span class="relative z-10">VIEW SIZE GUIDE</span>
+                </button>
+            </div>
+            
+            <div class="glassmorphism p-12">
+                <h3 class="text-3xl font-serif text-white mb-8 text-center">Quick Size Calculator</h3>
+                <form class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-sans text-gray-400 mb-2">Band Size (inches)</label>
+                        <input type="number" placeholder="e.g., 34" class="w-full px-6 py-4 bg-neutral-800 border border-gold/30 text-white font-sans focus:outline-none focus:border-gold transition-colors">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-sans text-gray-400 mb-2">Bust Size (inches)</label>
+                        <input type="number" placeholder="e.g., 38" class="w-full px-6 py-4 bg-neutral-800 border border-gold/30 text-white font-sans focus:outline-none focus:border-gold transition-colors">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-sans text-gray-400 mb-2">Body Type</label>
+                        <select class="w-full px-6 py-4 bg-neutral-800 border border-gold/30 text-white font-sans focus:outline-none focus:border-gold transition-colors">
+                            <option>Select body type</option>
+                            <option>Petite</option>
+                            <option>Average</option>
+                            <option>Tall</option>
+                            <option>Plus Size</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="w-full py-4 bg-gold text-charcoal font-sans font-medium tracking-wider hover:bg-white transition-all duration-300">
+                        CALCULATE MY SIZE
+                    </button>
+                </form>
+                
+                <p class="text-center text-sm text-gray-500 font-sans mt-6">
+                    Results are recommendations. Fit may vary by style.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="py-24 bg-gradient-to-b from-charcoal to-neutral-900">
+    <div class="container mx-auto px-8">
+        <div class="grid grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-6xl font-serif font-light text-gold mb-8">Our Story</h2>
+                <p class="text-lg text-gray-300 font-sans font-light leading-relaxed mb-6">
+                    Founded in 2018, Chill Out Lingerie was born from a simple belief: every woman deserves to feel beautiful, comfortable, and confident in her intimate apparel.
+                </p>
+                <p class="text-lg text-gray-300 font-sans font-light leading-relaxed mb-6">
+                    We meticulously source the finest fabrics from around the world, working with artisan mills in France, Italy, and Switzerland to create pieces that are as luxurious as they are comfortable.
+                </p>
+                <p class="text-lg text-gray-300 font-sans font-light leading-relaxed mb-8">
+                    Our commitment to inclusive sizing and sustainable practices ensures that elegance is accessible to all, without compromising our planet.
+                </p>
+                <button class="cta-button relative px-12 py-4 border-2 border-gold text-gold font-sans font-medium tracking-widest hover:bg-gold hover:text-charcoal transition-all duration-300">
+                    <span class="relative z-10">LEARN MORE</span>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-6">
+                    <div class="h-64 overflow-hidden bg-neutral-800">
+                        <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png" alt="luxury lingerie atelier workspace, designer sketching, elegant studio environment" />
+                    </div>
+                    <div class="h-80 overflow-hidden bg-neutral-800">
+                        <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b968491bc7-138dd7e45dcca10c68bc.png" alt="premium silk and lace fabric swatches, luxury textile close-up, design materials" />
+                    </div>
+                </div>
+                <div class="space-y-6 mt-12">
+                    <div class="h-80 overflow-hidden bg-neutral-800">
+                        <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/d64f703e74-b89648cd77a5bc3ef3b0.png" alt="seamstress working on luxury lingerie, artisan craftsmanship, detailed sewing" />
+                    </div>
+                    <div class="h-64 overflow-hidden bg-neutral-800">
+                        <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/f71fb1b09d-ef225f5c31b19bc7eb0a.png" alt="elegant lingerie packaging with ribbon, luxury gift presentation, brand details" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="sustainability" class="py-24 bg-neutral-900">
+    <div class="container mx-auto px-8">
+        <div class="glassmorphism p-16 text-center">
+            <i class="fa-solid fa-leaf text-6xl text-gold mb-8"></i>
+            <h2 class="text-5xl font-serif font-light text-white mb-6">Committed to Sustainability</h2>
+            <p class="text-xl text-gray-300 font-sans font-light max-w-3xl mx-auto leading-relaxed mb-8">
+                We believe luxury and responsibility go hand in hand. Our packaging is 100% recyclable, we use ethically sourced materials, and partner with manufacturers who share our commitment to fair labor practices and environmental stewardship.
+            </p>
+            <div class="grid grid-cols-4 gap-8 mt-12">
+                <div>
+                    <p class="text-4xl font-serif font-bold text-gold mb-2">100%</p>
+                    <p class="text-sm text-gray-400 font-sans">Recyclable Packaging</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-serif font-bold text-gold mb-2">50+</p>
+                    <p class="text-sm text-gray-400 font-sans">Ethical Partners</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-serif font-bold text-gold mb-2">0</p>
+                    <p class="text-sm text-gray-400 font-sans">Animal Products</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-serif font-bold text-gold mb-2">5★</p>
+                    <p class="text-sm text-gray-400 font-sans">Customer Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="newsletter" class="py-24 bg-charcoal">
+    <div class="container mx-auto px-8">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-5xl font-serif font-light text-gold mb-6">Join Our Community</h2>
+            <p class="text-xl text-gray-300 font-sans font-light mb-12">
+                Subscribe to receive exclusive offers, styling tips, and early access to new collections.
+            </p>
+            <form class="flex gap-4 max-w-2xl mx-auto">
+                <input type="email" placeholder="Enter your email address" class="flex-1 px-6 py-4 bg-neutral-800 border border-gold/30 text-white font-sans focus:outline-none focus:border-gold transition-colors">
+                <button type="submit" class="cta-button relative px-12 py-4 bg-gold text-charcoal font-sans font-medium tracking-wider hover:bg-white transition-all duration-300">
+                    <span class="relative z-10">SUBSCRIBE</span>
+                </button>
+            </form>
+            <p class="text-sm text-gray-500 font-sans mt-6">
+                By subscribing, you agree to our Privacy Policy and consent to receive updates.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="py-24 bg-gradient-to-b from-charcoal to-neutral-900">
+    <div class="container mx-auto px-8">
+        <div class="grid grid-cols-2 gap-16">
+            <div>
+                <h2 class="text-5xl font-serif font-light text-gold mb-8">Get In Touch</h2>
+                <p class="text-lg text-gray-300 font-sans font-light mb-12">
+                    Have a question? Our customer care team is here to help. Reach out and we'll get back to you within 24 hours.
+                </p>
+                
+                <div class="space-y-8">
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fa-solid fa-phone text-gold text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-serif text-white mb-2">Phone</h4>
+                            <p class="text-gray-400 font-sans">+1 (555) 123-4567</p>
+                            <p class="text-sm text-gray-500 font-sans mt-1">Mon-Fri, 9am-6pm EST</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fa-solid fa-envelope text-gold text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-serif text-white mb-2">Email</h4>
+                            <p class="text-gray-400 font-sans">hello@chilloutlingerie.com</p>
+                            <p class="text-sm text-gray-500 font-sans mt-1">We'll respond within 24 hours</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fa-solid fa-location-dot text-gold text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-serif text-white mb-2">Showroom</h4>
+                            <p class="text-gray-400 font-sans">123 Madison Avenue<br>New York, NY 10016</p>
+                            <p class="text-sm text-gray-500 font-sans mt-1">By appointment only</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glassmorphism p-10">
+                <h3 class="text-3xl font-serif text-white mb-8">Send Us a Message</h3>
+                <form class="space-y-6">
+                    <div>
+                        <input type="text" placeholder="Your Name" class="w-full px-6 py-4 bg-neutral-800 border border-gold/30 text-white font-sans focus:outline-none focus:border-gold transition-colors">
+                    </div>
+                    <div>
+                        <input type="email" placeholder="Your Email" class="w-full px-6 py-4 bg-neutral-800 border border-gold/30 text-white font-sans focus:outline-none focus:border-gold transition-colors">
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Subject" class="w-full px-6 py-4 bg-neutral-800 border border-gold/30 text-white font-sans focus:outline-none focus:border-gold transition-colors">
+                    </div>
+                    <div>
+                        <textarea rows="5" placeholder="Your Message" class="w-full px-6 py-4 bg-neutral-800 border border-gold/30 text-white font-sans focus:outline-none focus:border-gold transition-colors resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="cta-button relative w-full py-4 bg-gold text-charcoal font-sans font-medium tracking-wider hover:bg-white transition-all duration-300">
+                        <span class="relative z-10">SEND MESSAGE</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer id="footer" class="bg-neutral-900 pt-16 pb-8 border-t border-gold/20">
+    <div class="container mx-auto px-8">
+        <div class="grid grid-cols-5 gap-12 mb-12">
+            <div class="col-span-2">
+                <h3 class="text-3xl font-serif font-bold text-gold mb-6">Chill Out Lingerie</h3>
+                <p class="text-gray-400 font-sans font-light leading-relaxed mb-6">
+                    Elevating intimate apparel with timeless elegance, premium quality, and inclusive designs for the modern woman.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-charcoal transition-all duration-300">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-charcoal transition-all duration-300">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-charcoal transition-all duration-300">
+                        <i class="fa-brands fa-pinterest"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-charcoal transition-all duration-300">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="text-lg font-serif text-gold mb-6">Shop</h4>
+                <ul class="space-y-3">
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Bras</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Panties</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Sleepwear</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Bodysuits</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">New Arrivals</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Bestsellers</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="text-lg font-serif text-gold mb-6">Customer Care</h4>
+                <ul class="space-y-3">
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Size Guide</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Shipping Info</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Returns</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">FAQ</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Contact Us</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Track Order</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="text-lg font-serif text-gold mb-6">Company</h4>
+                <ul class="space-y-3">
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">About Us</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Sustainability</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Careers</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Press</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Blog</a></li>
+                    <li><a href="#" class="text-gray-400 font-sans font-light hover:text-gold transition-colors">Affiliates</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="border-t border-gold/20 pt-8 flex items-center justify-between">
+            <p class="text-sm text-gray-500 font-sans">© 2024 Chill Out Lingerie. All rights reserved.</p>
+            <div class="flex space-x-8">
+                <a href="#" class="text-sm text-gray-500 font-sans hover:text-gold transition-colors">Privacy Policy</a>
+                <a href="#" class="text-sm text-gray-500 font-sans hover:text-gold transition-colors">Terms of Service</a>
+                <a href="#" class="text-sm text-gray-500 font-sans hover:text-gold transition-colors">Cookie Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    function openMenu() {
+        document.getElementById('menu-overlay').classList.add('active');
+    }
+    
+    function closeMenu() {
+        document.getElementById('menu-overlay').classList.remove('active');
+    }
+    
+    function scrollCarousel(direction) {
+        const carousel = document.getElementById('carousel');
+        const scrollAmount = 350;
+        
+        if (direction === 'left') {
+            carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        } else {
+            carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(section);
+        });
+    });
+</script>
+
+</body>
+</html>

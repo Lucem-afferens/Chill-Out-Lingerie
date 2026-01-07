@@ -7,10 +7,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Собранные файлы (production build)
-# dist/ собирается автоматически при коммите через GitHub Actions
-# Не коммитим dist/, так как он генерируется при сборке
-dist/
-dist-ssr/
+# dist/ коммитится в репозиторий для деплоя на Vercel
+# dist-ssr/
 *.local
 
 # Кеш и временные файлы
