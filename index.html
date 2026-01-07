@@ -229,6 +229,10 @@
             <button class="text-base sm:text-lg md:text-xl text-white hover:text-gold transition-colors">
                 <i class="fa-solid fa-search"></i>
             </button>
+            <!-- Кнопка переключения языка -->
+            <button id="lang-toggle" onclick="toggleLanguage()" class="px-3 py-1 sm:px-4 sm:py-1.5 border border-gold/30 text-gold hover:bg-gold hover:text-charcoal transition-all duration-300 text-sm sm:text-base font-sans font-medium tracking-wide">
+                <span id="lang-text">EN</span>
+            </button>
             <!-- <button class="text-base sm:text-lg md:text-xl text-white hover:text-gold transition-colors hidden sm:block">
                 <i class="fa-regular fa-user"></i>
             </button> -->
@@ -502,11 +506,11 @@
     </div>
 </section>
 
-<section id="shop-by-category" class="py-12 sm:py-16 md:py-20 lg:py-24 bg-white">
+<section id="shop-by-category" class="py-12 sm:py-16 md:py-20 lg:py-24 bg-charcoal">
     <div class="container mx-auto px-4 sm:px-6 md:px-8">
         <div class="text-center mb-8 sm:mb-12 md:mb-16">
             <p class="text-gold font-inter text-xs sm:text-sm tracking-[0.3em] uppercase mb-2 sm:mb-3">Discover</p>
-            <h2 class="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">Shop By Category</h2>
+            <h2 class="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4">Shop By Category</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             <div id="category-lingerie" class="relative group cursor-pointer overflow-hidden h-64 sm:h-80 md:h-96 lg:h-[450px]">
@@ -632,6 +636,13 @@
                     "Customer service is outstanding! My order arrived beautifully packaged and the free shipping was incredibly fast. Highly recommend!"
                 </p>
             </div>
+        </div>
+        
+        <!-- Кнопка "Оставить отзыв" -->
+        <div class="text-center mt-12 sm:mt-16 md:mt-20">
+            <button class="cta-button relative px-8 sm:px-10 md:px-12 py-3 sm:py-4 border-2 border-gold text-gold font-sans font-medium text-sm sm:text-base tracking-widest hover:bg-gold hover:text-charcoal transition-all duration-300">
+                <span class="relative z-10" data-en="LEAVE A REVIEW" data-ru="ОСТАВИТЬ ОТЗЫВ">LEAVE A REVIEW</span>
+            </button>
         </div>
     </div>
 </section>
@@ -973,6 +984,61 @@
             carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
     }
+    
+    // Функция переключения языка
+    let currentLang = localStorage.getItem('language') || 'en';
+    
+    function toggleLanguage() {
+        // Переключаем язык
+        currentLang = currentLang === 'en' ? 'ru' : 'en';
+        
+        // Сохраняем выбор в localStorage
+        localStorage.setItem('language', currentLang);
+        
+        // Обновляем атрибут lang в html
+        document.documentElement.lang = currentLang;
+        
+        // Обновляем текст кнопки
+        const langButton = document.getElementById('lang-text');
+        if (langButton) {
+            langButton.textContent = currentLang.toUpperCase();
+        }
+        
+        // Обновляем все элементы с data-атрибутами
+        updateLanguage();
+    }
+    
+    function updateLanguage() {
+        // Обновляем элементы с data-en и data-ru атрибутами
+        document.querySelectorAll('[data-en][data-ru]').forEach(element => {
+            element.textContent = currentLang === 'en' 
+                ? element.getAttribute('data-en') 
+                : element.getAttribute('data-ru');
+        });
+        
+        // Обновляем title страницы
+        if (currentLang === 'ru') {
+            document.title = 'Chill Out Lingerie - Премиальное белье и пижамы | Элегантное нижнее белье';
+        } else {
+            document.title = 'Chill Out Lingerie - Premium Luxury Lingerie & Sleepwear | Elegant Intimate Apparel';
+        }
+    }
+    
+    // Инициализация языка при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        // Устанавливаем язык из localStorage или по умолчанию
+        currentLang = localStorage.getItem('language') || 'en';
+        document.documentElement.lang = currentLang;
+        
+        // Обновляем кнопку языка
+        const langButton = document.getElementById('lang-text');
+        if (langButton) {
+            langButton.textContent = currentLang.toUpperCase();
+        }
+        
+        // Обновляем контент
+        updateLanguage();
+    });
     
     document.addEventListener('DOMContentLoaded', function() {
         const observerOptions = {
