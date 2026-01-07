@@ -1,0 +1,59 @@
+name: Build and Deploy
+
+# Workflow запускается при каждом push в main ветку
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Шаг 1: Получить код из репозитория
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Шаг 2: Установить Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      # Шаг 3: Установить зависимости
+      - name: Install dependencies
+        run: npm ci
+      
+      # Шаг 4: Собрать проект для production
+      - name: Build project
+        run: npm run build
+      
+      # Шаг 5: Проверить, что dist создан и содержит файлы
+      - name: Verify build output
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Ошибка: директория dist не создана"
+            exit 1
+          fi
+          if [ ! -f "dist/index.html" ]; then
+            echo "Ошибка: dist/index.html не найден"
+            exit 1
+          fi
+          echo "Сборка успешна. Файлы в dist:"
+          ls -la dist/
+          echo "---"
+          find dist -type f
+      
+      # Шаг 6: Загрузить артефакты сборки (опционально, для отладки)
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+

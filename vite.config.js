@@ -14,8 +14,8 @@ export default defineConfig({
     // Директория для собранных файлов
     outDir: 'dist',
     
-    // Генерировать source maps для отладки
-    sourcemap: true,
+    // Генерировать source maps для отладки (отключено для production)
+    sourcemap: false,
     
     // Минификация в production
     minify: 'esbuild',
@@ -23,10 +23,20 @@ export default defineConfig({
     // Размер предупреждения о больших чанках (в килобайтах)
     chunkSizeWarningLimit: 1000,
     
+    // Очищать выходную директорию перед сборкой
+    emptyOutDir: true,
+    
     // Настройки rollup (Vite использует Rollup для сборки)
     rollupOptions: {
       input: {
         main: './index.html'
+      },
+      // Настройки вывода
+      output: {
+        // Формат имени файлов для чанков
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     }
   },
