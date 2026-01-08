@@ -100,16 +100,15 @@
             <i class="fa-solid fa-bars"></i>
         </button>
         
-        <a href="index.html" style="text-decoration: none; color: inherit;"><h1 class="header-logo">Chill Out Lingerie</h1></a>
+        <a href="index.html" style="text-decoration: none; color: inherit;">
+            <img src="/logo.svg" alt="Chill Out Lingerie" class="header-logo-image">
+            <h1 class="header-logo">Chill Out Lingerie</h1>
+        </a>
         
         <div class="header-actions">
             <button onclick="toggleLanguage()" class="lang-switcher" title="Переключить язык">
                 <span class="lang-switcher-text">RU</span>
             </button>
-            <a href="index.html" style="text-decoration: none; color: inherit;">
-                <img src="/logo.svg" alt="Chill Out Lingerie" class="header-logo-image">
-                <h1 class="header-logo">Chill Out Lingerie</h1>
-            </a>
             <button onclick="toggleSearchBar()" class="icon-btn">
                 <i class="fa-solid fa-search"></i>
             </button>
@@ -327,7 +326,7 @@
                 </div>
                 
                 <div class="products-container">
-                    <div class="product-card">
+                    <div class="product-card" data-category="bras" data-material="lace" data-price="78" data-rating="5" data-color="black">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/6555e7d064-c3b9b19a9e4b32d7ad33.png" alt="elegant black lace bralette">
                             <div class="product-overlay">
@@ -338,8 +337,8 @@
                             </button>
                             <div class="product-badge badge-new" data-i18n="product.badge.new">НОВИНКА</div>
                         </div>
-                        <h4 class="product-title">Midnight Lace Bralette</h4>
-                        <p class="product-description">Delicate French lace</p>
+                        <h4 class="product-title" data-i18n="product.items.midnightLaceBralette.title">Midnight Lace Bralette</h4>
+                        <p class="product-description" data-i18n="product.items.midnightLaceBralette.description">Delicate French lace</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -353,7 +352,7 @@
                         <p class="product-price">$78.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="sleepwear" data-material="silk" data-price="145" data-rating="5" data-color="champagne">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b56beff876-e29888d5a8ccd0f22677.png" alt="champagne silk slip dress">
                             <div class="product-overlay">
@@ -364,8 +363,8 @@
                             </button>
                             <div class="product-badge badge-bestseller" data-i18n="product.badge.bestseller">ХИТ ПРОДАЖ</div>
                         </div>
-                        <h4 class="product-title">Champagne Silk Slip</h4>
-                        <p class="product-description">Pure mulberry silk</p>
+                        <h4 class="product-title" data-i18n="product.items.champagneSilkSlip.title">Champagne Silk Slip</h4>
+                        <p class="product-description" data-i18n="product.items.champagneSilkSlip.description">Pure mulberry silk</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -379,7 +378,7 @@
                         <p class="product-price">$145.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="bodysuits" data-material="satin" data-price="92" data-rating="4" data-color="rose">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/0ff1edacf9-0d1b5003996b1b432a27.png" alt="burgundy lace set">
                             <div class="product-overlay">
@@ -389,8 +388,8 @@
                                 <i class="fa-regular fa-heart"></i>
                             </button>
                         </div>
-                        <h4 class="product-title">Rose Satin Bodysuit</h4>
-                        <p class="product-description">Italian satin blend</p>
+                        <h4 class="product-title" data-i18n="product.items.roseSatinBodysuit.title">Rose Satin Bodysuit</h4>
+                        <p class="product-description" data-i18n="product.items.roseSatinBodysuit.description">Italian satin blend</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -404,7 +403,7 @@
                         <p class="product-price">$92.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="bodysuits" data-material="lace" data-price="118" data-rating="5" data-color="ivory">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png" alt="ivory lace teddy">
                             <div class="product-overlay">
@@ -414,8 +413,8 @@
                                 <i class="fa-regular fa-heart"></i>
                             </button>
                         </div>
-                        <h4 class="product-title">Ivory Lace Teddy</h4>
-                        <p class="product-description">Chantilly lace</p>
+                        <h4 class="product-title" data-i18n="product.items.ivoryLaceTeddy.title">Ivory Lace Teddy</h4>
+                        <p class="product-description" data-i18n="product.items.ivoryLaceTeddy.description">Chantilly lace</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -429,7 +428,7 @@
                         <p class="product-price">$118.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="robes" data-material="silk" data-price="168" data-rating="5" data-color="emerald">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/5c08a7f1c6-b1f2b1fff0aab95f6104.png" alt="emerald silk robe">
                             <div class="product-overlay">
@@ -439,8 +438,8 @@
                                 <i class="fa-regular fa-heart"></i>
                             </button>
                         </div>
-                        <h4 class="product-title">Emerald Silk Robe</h4>
-                        <p class="product-description">Luxurious silk charmeuse</p>
+                        <h4 class="product-title" data-i18n="product.items.emeraldSilkRobe.title">Emerald Silk Robe</h4>
+                        <p class="product-description" data-i18n="product.items.emeraldSilkRobe.description">Luxurious silk charmeuse</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -454,7 +453,7 @@
                         <p class="product-price">$168.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="sleepwear" data-material="cotton" data-price="82" data-rating="4" data-color="white">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/a550f76729-2f940b8687fba9bc8a11.png" alt="white cotton camisole set">
                             <div class="product-overlay">
@@ -464,8 +463,8 @@
                                 <i class="fa-regular fa-heart"></i>
                             </button>
                         </div>
-                        <h4 class="product-title">Cloud Camisole Set</h4>
-                        <p class="product-description">Pima cotton & lace</p>
+                        <h4 class="product-title" data-i18n="product.items.cloudCamisoleSet.title">Cloud Camisole Set</h4>
+                        <p class="product-description" data-i18n="product.items.cloudCamisoleSet.description">Pima cotton & lace</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -479,7 +478,7 @@
                         <p class="product-price">$82.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="sleepwear" data-material="satin" data-price="84" data-rating="5" data-color="navy">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/48870ed260-bde48a1c7ea8473e1e41.png" alt="navy satin chemise">
                             <div class="product-overlay">
@@ -490,8 +489,8 @@
                             </button>
                             <div class="product-badge badge-sale">-20%</div>
                         </div>
-                        <h4 class="product-title">Midnight Chemise</h4>
-                        <p class="product-description">Satin with lace accents</p>
+                        <h4 class="product-title" data-i18n="product.items.midnightChemise.title">Midnight Chemise</h4>
+                        <p class="product-description" data-i18n="product.items.midnightChemise.description">Satin with lace accents</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -508,7 +507,7 @@
                         </div>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="sleepwear" data-material="silk" data-price="125" data-rating="4" data-color="peach">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/8ec3f80d6a-ff62832bf3e5711e34a5.png" alt="peach silk set">
                             <div class="product-overlay">
@@ -518,8 +517,8 @@
                                 <i class="fa-regular fa-heart"></i>
                             </button>
                         </div>
-                        <h4 class="product-title">Peach Dream Set</h4>
-                        <p class="product-description">Silk bralette & shorts</p>
+                        <h4 class="product-title" data-i18n="product.items.peachDreamSet.title">Peach Dream Set</h4>
+                        <p class="product-description" data-i18n="product.items.peachDreamSet.description">Silk bralette & shorts</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -533,7 +532,7 @@
                         <p class="product-price">$125.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="sleepwear" data-material="silk" data-price="195" data-rating="5" data-color="champagne">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/18e9a25748-4b11a0bfe27d58a635f0.png" alt="champagne pajama set">
                             <div class="product-overlay">
@@ -544,8 +543,8 @@
                             </button>
                             <div class="product-badge badge-new" data-i18n="product.badge.new">НОВИНКА</div>
                         </div>
-                        <h4 class="product-title">Champagne Dreams PJ Set</h4>
-                        <p class="product-description">Signature silk blend</p>
+                        <h4 class="product-title" data-i18n="product.items.champagneDreamsPJSet.title">Champagne Dreams PJ Set</h4>
+                        <p class="product-description" data-i18n="product.items.champagneDreamsPJSet.description">Signature silk blend</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -559,7 +558,7 @@
                         <p class="product-price">$195.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="sleepwear" data-material="lace" data-price="88" data-rating="4" data-color="rose">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/425b0cfdf7-0c3bc91ccd1a89de7620.png" alt="rose lace set">
                             <div class="product-overlay">
@@ -569,8 +568,8 @@
                                 <i class="fa-regular fa-heart"></i>
                             </button>
                         </div>
-                        <h4 class="product-title">Rose Garden Set</h4>
-                        <p class="product-description">Floral lace design</p>
+                        <h4 class="product-title" data-i18n="product.items.roseGardenSet.title">Rose Garden Set</h4>
+                        <p class="product-description" data-i18n="product.items.roseGardenSet.description">Floral lace design</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -584,7 +583,7 @@
                         <p class="product-price">$88.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="sleepwear" data-material="silk" data-price="72" data-rating="5" data-color="sage">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/9748b8f173-db06ed5110f8b9df1561.png" alt="sage silk cami">
                             <div class="product-overlay">
@@ -594,8 +593,8 @@
                                 <i class="fa-regular fa-heart"></i>
                             </button>
                         </div>
-                        <h4 class="product-title">Sage Silk Cami</h4>
-                        <p class="product-description">Minimalist elegance</p>
+                        <h4 class="product-title" data-i18n="product.items.sageSilkCami.title">Sage Silk Cami</h4>
+                        <p class="product-description" data-i18n="product.items.sageSilkCami.description">Minimalist elegance</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -609,7 +608,7 @@
                         <p class="product-price">$72.00</p>
                     </div>
                     
-                    <div class="product-card">
+                    <div class="product-card" data-category="bras" data-material="lace" data-price="65" data-rating="5" data-color="black">
                         <div class="product-image-wrapper">
                             <img class="product-image" loading="lazy" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/2fcc1bf8a5-be70f47eadce17c0083c.png" alt="luxury lace bras">
                             <div class="product-overlay">
@@ -620,8 +619,8 @@
                             </button>
                             <div class="product-badge badge-bestseller" data-i18n="product.badge.bestseller">ХИТ ПРОДАЖ</div>
                         </div>
-                        <h4 class="product-title">Velvet Noir Bralette</h4>
-                        <p class="product-description">Soft cup design</p>
+                        <h4 class="product-title" data-i18n="product.items.velvetNoirBralette.title">Velvet Noir Bralette</h4>
+                        <p class="product-description" data-i18n="product.items.velvetNoirBralette.description">Soft cup design</p>
                         <div class="product-rating">
                             <div class="product-stars">
                                 <i class="fa-solid fa-star"></i>
@@ -776,6 +775,80 @@
                 badge: {
                     new: 'НОВИНКА',
                     bestseller: 'ХИТ ПРОДАЖ'
+                },
+                items: {
+                    midnightLaceBralette: {
+                        title: 'Мистический Кружевной Бралетт',
+                        description: 'Нежное французское кружево'
+                    },
+                    champagneSilkSlip: {
+                        title: 'Шампанское Шелковое Платье',
+                        description: 'Чистый шелк тутового дерева'
+                    },
+                    roseSatinBodysuit: {
+                        title: 'Розовый Атласный Боди',
+                        description: 'Итальянская атласная смесь'
+                    },
+                    ivoryLaceTeddy: {
+                        title: 'Слоновая Кружевная Тедди',
+                        description: 'Кружево Шантильи'
+                    },
+                    emeraldSilkRobe: {
+                        title: 'Изумрудный Шелковый Халат',
+                        description: 'Роскошный шелковый шармез'
+                    },
+                    cloudCamisoleSet: {
+                        title: 'Облачный Комплект Камизоль',
+                        description: 'Пима хлопок и кружево'
+                    },
+                    midnightChemise: {
+                        title: 'Полуночная Сорочка',
+                        description: 'Атлас с кружевными акцентами'
+                    },
+                    peachDreamSet: {
+                        title: 'Персиковый Комплект Мечта',
+                        description: 'Шелковый бралетт и шорты'
+                    },
+                    champagneDreamsPJSet: {
+                        title: 'Комплект Пижамы Шампанское Мечты',
+                        description: 'Фирменная шелковая смесь'
+                    },
+                    midnightLaceBralette: {
+                        title: 'Полуночный Бралетт с Кружевом',
+                        description: 'Нежное французское кружево'
+                    },
+                    champagneSilkSlip: {
+                        title: 'Шелковая Сорочка Шампанское',
+                        description: 'Чистый шелк тутового дерева'
+                    },
+                    roseSatinBodysuit: {
+                        title: 'Розовое Атласное Боди',
+                        description: 'Итальянская атласная смесь'
+                    },
+                    ivoryLaceTeddy: {
+                        title: 'Слоновая Кость Кружевное Тедди',
+                        description: 'Кружево Шантильи'
+                    },
+                    emeraldSilkRobe: {
+                        title: 'Изумрудный Шелковый Халат',
+                        description: 'Роскошный шелковый шармез'
+                    },
+                    midnightChemise: {
+                        title: 'Полуночная Сорочка',
+                        description: 'Атлас с кружевными акцентами'
+                    },
+                    roseGardenSet: {
+                        title: 'Комплект Розовый Сад',
+                        description: 'Цветочный кружевной дизайн'
+                    },
+                    sageSilkCami: {
+                        title: 'Шалфейная Шелковая Камизоль',
+                        description: 'Минималистичная элегантность'
+                    },
+                    velvetNoirBralette: {
+                        title: 'Бралетт Бархат Нуар',
+                        description: 'Дизайн с мягкой чашкой'
+                    }
                 }
             },
             catalog: {
@@ -853,6 +926,56 @@
                 badge: {
                     new: 'NEW',
                     bestseller: 'BESTSELLER'
+                },
+                items: {
+                    midnightLaceBralette: {
+                        title: 'Midnight Lace Bralette',
+                        description: 'Delicate French lace'
+                    },
+                    champagneSilkSlip: {
+                        title: 'Champagne Silk Slip',
+                        description: 'Pure mulberry silk'
+                    },
+                    roseSatinBodysuit: {
+                        title: 'Rose Satin Bodysuit',
+                        description: 'Italian satin blend'
+                    },
+                    ivoryLaceTeddy: {
+                        title: 'Ivory Lace Teddy',
+                        description: 'Chantilly lace'
+                    },
+                    emeraldSilkRobe: {
+                        title: 'Emerald Silk Robe',
+                        description: 'Luxurious silk charmeuse'
+                    },
+                    cloudCamisoleSet: {
+                        title: 'Cloud Camisole Set',
+                        description: 'Pima cotton & lace'
+                    },
+                    midnightChemise: {
+                        title: 'Midnight Chemise',
+                        description: 'Satin with lace accents'
+                    },
+                    peachDreamSet: {
+                        title: 'Peach Dream Set',
+                        description: 'Silk bralette & shorts'
+                    },
+                    champagneDreamsPJSet: {
+                        title: 'Champagne Dreams PJ Set',
+                        description: 'Signature silk blend'
+                    },
+                    roseGardenSet: {
+                        title: 'Rose Garden Set',
+                        description: 'Floral lace design'
+                    },
+                    sageSilkCami: {
+                        title: 'Sage Silk Cami',
+                        description: 'Minimalist elegance'
+                    },
+                    velvetNoirBralette: {
+                        title: 'Velvet Noir Bralette',
+                        description: 'Soft cup design'
+                    }
                 }
             },
             catalog: {
@@ -990,21 +1113,222 @@
         searchBar.classList.toggle('active');
     }
     
+    // Функция фильтрации товаров
+    function filterProducts() {
+        const products = document.querySelectorAll('.product-card');
+        const searchInput = document.querySelector('.search-input');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        
+        // Получаем активные фильтры категорий
+        const categoryFilters = [];
+        document.querySelectorAll('.filter-checkbox[id^="cat-"]:checked').forEach(cb => {
+            categoryFilters.push(cb.id.replace('cat-', ''));
+        });
+        
+        // Получаем активные фильтры материалов
+        const materialFilters = [];
+        document.querySelectorAll('.filter-checkbox[id^="mat-"]:checked').forEach(cb => {
+            materialFilters.push(cb.id.replace('mat-', ''));
+        });
+        
+        // Получаем цену из слайдера
+        const priceSlider = document.querySelector('.price-slider');
+        const maxPrice = priceSlider ? parseInt(priceSlider.value) : 300;
+        
+        // Получаем выбранные размеры
+        const sizeFilters = [];
+        document.querySelectorAll('.size-btn.active').forEach(btn => {
+            sizeFilters.push(btn.textContent.trim());
+        });
+        
+            // Получаем выбранные цвета
+            const colorFilters = [];
+            document.querySelectorAll('.color-btn.active').forEach(btn => {
+                const bgColor = btn.style.backgroundColor || window.getComputedStyle(btn).backgroundColor;
+                // Конвертируем цвет в RGB формат для сравнения
+                const rgb = bgColor.match(/\d+/g);
+                if (rgb && rgb.length >= 3) {
+                    colorFilters.push(`rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
+                } else {
+                    // Если это название цвета (black, white и т.д.), сохраняем как есть
+                    colorFilters.push(bgColor);
+                }
+            });
+        
+        // Получаем минимальный рейтинг
+        let minRating = 0;
+        const ratingButtons = document.querySelectorAll('.rating-btn.active');
+        if (ratingButtons.length > 0) {
+            const ratingBtn = ratingButtons[0];
+            const stars = ratingBtn.querySelectorAll('.fa-solid.fa-star').length;
+            minRating = stars;
+        }
+        
+        let visibleCount = 0;
+        
+        products.forEach(product => {
+            let show = true;
+            
+            // Поиск по названию и описанию
+            if (searchTerm) {
+                const title = product.querySelector('.product-title').textContent.toLowerCase();
+                const description = product.querySelector('.product-description').textContent.toLowerCase();
+                if (!title.includes(searchTerm) && !description.includes(searchTerm)) {
+                    show = false;
+                }
+            }
+            
+            // Фильтр по категории
+            if (show && categoryFilters.length > 0) {
+                const category = product.getAttribute('data-category');
+                if (!categoryFilters.includes(category)) {
+                    show = false;
+                }
+            }
+            
+            // Фильтр по материалу
+            if (show && materialFilters.length > 0) {
+                const material = product.getAttribute('data-material');
+                if (!materialFilters.includes(material)) {
+                    show = false;
+                }
+            }
+            
+            // Фильтр по цене
+            if (show) {
+                const price = parseFloat(product.getAttribute('data-price'));
+                if (price > maxPrice) {
+                    show = false;
+                }
+            }
+            
+            // Фильтр по рейтингу
+            if (show && minRating > 0) {
+                const rating = parseInt(product.getAttribute('data-rating'));
+                if (rating < minRating) {
+                    show = false;
+                }
+            }
+            
+            // Фильтр по цвету
+            if (show && colorFilters.length > 0) {
+                const productColor = product.getAttribute('data-color');
+                let colorMatch = false;
+                
+                // Проверяем соответствие по data-color атрибуту (black, white, rose, navy, sage и т.д.)
+                if (productColor) {
+                    // Мапинг цветов для проверки
+                    const colorMap = {
+                        'black': ['black', '#000', 'rgb(0, 0, 0)'],
+                        'white': ['white', '#fff', '#ffffff', 'rgb(255, 255, 255)'],
+                        'red': ['red', '#dc2626', 'rgb(220, 38, 38)'],
+                        'rose': ['#fda4af', 'rgb(253, 164, 175)'],
+                        'navy': ['#1e3a8a', 'rgb(30, 58, 138)'],
+                        'green': ['#059669', 'rgb(5, 150, 105)'],
+                        'purple': ['#9333ea', 'rgb(147, 51, 234)'],
+                        'yellow': ['#fef3c7', 'rgb(254, 243, 199)'],
+                        'gray': ['#9ca3af', 'rgb(156, 163, 175)'],
+                        'pink': ['#fb7185', 'rgb(251, 113, 133)'],
+                        'teal': ['#0d9488', 'rgb(13, 148, 136)'],
+                        'orange': ['#ea580c', 'rgb(234, 88, 12)']
+                    };
+                    
+                    colorFilters.forEach(filterColor => {
+                        const filterLower = filterColor.toLowerCase();
+                        if (colorMap[productColor] && colorMap[productColor].some(c => c.toLowerCase() === filterLower)) {
+                            colorMatch = true;
+                        }
+                    });
+                    
+                    if (!colorMatch) {
+                        show = false;
+                    }
+                } else {
+                    show = false;
+                }
+            }
+            
+            // Показываем/скрываем товар
+            if (show) {
+                product.style.display = '';
+                visibleCount++;
+            } else {
+                product.style.display = 'none';
+            }
+        });
+        
+        // Обновляем счетчик товаров
+        const productsCount = document.querySelector('.products-count span:nth-child(2)');
+        if (productsCount) {
+            productsCount.textContent = visibleCount;
+        }
+    }
+    
     function clearFilters() {
         const checkboxes = document.querySelectorAll('.filter-checkbox');
         checkboxes.forEach(checkbox => {
             checkbox.checked = false;
         });
+        
+        const priceSlider = document.querySelector('.price-slider');
+        if (priceSlider) {
+            priceSlider.value = 150;
+            const priceValue = document.getElementById('price-value');
+            if (priceValue) {
+                priceValue.textContent = '$150';
+            }
+        }
+        
+        document.querySelectorAll('.size-btn, .color-btn, .rating-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        filterProducts();
     }
     
     function toggleView(viewType) {
         console.log('Switching to ' + viewType + ' view');
     }
     
+    // Функция сортировки товаров
+    function sortProducts(sortType) {
+        const container = document.querySelector('.products-container');
+        const products = Array.from(container.querySelectorAll('.product-card'));
+        
+        products.sort((a, b) => {
+            switch(sortType) {
+                case 'priceLow':
+                    return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
+                case 'priceHigh':
+                    return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
+                case 'newest':
+                    // Для новинок можно добавить data-date
+                    return 0;
+                case 'bestseller':
+                    // Для бестселлеров можно использовать количество отзывов
+                    const reviewsA = parseInt(a.querySelector('.product-reviews').textContent.replace(/[()]/g, '')) || 0;
+                    const reviewsB = parseInt(b.querySelector('.product-reviews').textContent.replace(/[()]/g, '')) || 0;
+                    return reviewsB - reviewsA;
+                case 'topRated':
+                    return parseInt(b.getAttribute('data-rating')) - parseInt(a.getAttribute('data-rating'));
+                default:
+                    return 0;
+            }
+        });
+        
+        products.forEach(product => container.appendChild(product));
+    }
+    
     document.addEventListener('DOMContentLoaded', function() {
         // Применяем сохраненный язык при загрузке
         translatePage(currentLanguage);
         
+        // Обработчики для фильтров
+        document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', filterProducts);
+        });
+        
+        // Обработчик для слайдера цены
         const priceSlider = document.querySelector('.price-slider');
         if (priceSlider) {
             priceSlider.addEventListener('input', function() {
@@ -1013,6 +1337,46 @@
                 if (priceValue) {
                     priceValue.textContent = '$' + value;
                 }
+                filterProducts();
+            });
+        }
+        
+        // Обработчик для поиска
+        const searchInput = document.querySelector('.search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', filterProducts);
+        }
+        
+        // Обработчики для кнопок размеров
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.toggle('active');
+                filterProducts();
+            });
+        });
+        
+        // Обработчики для кнопок цветов
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.toggle('active');
+                filterProducts();
+            });
+        });
+        
+        // Обработчики для кнопок рейтинга
+        document.querySelectorAll('.rating-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                filterProducts();
+            });
+        });
+        
+        // Обработчик для сортировки
+        const sortSelect = document.querySelector('.sort-select');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                sortProducts(this.value);
             });
         }
     });
