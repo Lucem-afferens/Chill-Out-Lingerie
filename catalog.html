@@ -1065,7 +1065,7 @@
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             const translation = getTranslation(key, lang);
-            if (translation) {
+            if (translation && translation !== key) {
                 el.textContent = translation;
             }
         });
@@ -1322,7 +1322,38 @@
     function updateFilterCounts() {
         const products = document.querySelectorAll('.product-card');
         
-        // Считаем по категориям
+        // Получаем текущие активные фильтры (кроме категорий и материалов, для которых считаем)
+        const searchInput = document.querySelector('.search-input-toolbar');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        
+        const priceSlider = document.querySelector('.price-slider');
+        const maxPrice = priceSlider ? parseInt(priceSlider.value) : 300;
+        
+        const sizeFilters = [];
+        document.querySelectorAll('.size-btn.active').forEach(btn => {
+            sizeFilters.push(btn.textContent.trim());
+        });
+        
+        const colorFilters = [];
+        document.querySelectorAll('.color-btn.active').forEach(btn => {
+            const bgColor = btn.style.backgroundColor || window.getComputedStyle(btn).backgroundColor;
+            const rgb = bgColor.match(/\d+/g);
+            if (rgb && rgb.length >= 3) {
+                colorFilters.push(`rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
+            } else {
+                colorFilters.push(bgColor);
+            }
+        });
+        
+        let minRating = 0;
+        const ratingButtons = document.querySelectorAll('.rating-btn.active');
+        if (ratingButtons.length > 0) {
+            const ratingBtn = ratingButtons[0];
+            const stars = ratingBtn.querySelectorAll('.fa-solid.fa-star').length;
+            minRating = stars;
+        }
+        
+        // Считаем по категориям - с учетом всех фильтров кроме категорий
         const categoryCounts = {
             'bras': 0,
             'panties': 0,
@@ -1332,7 +1363,7 @@
             'bridal': 0
         };
         
-        // Считаем по материалам
+        // Считаем по материалам - с учетом всех фильтров кроме материалов
         const materialCounts = {
             'silk': 0,
             'lace': 0,
@@ -1340,17 +1371,69 @@
             'cotton': 0
         };
         
+        // Получаем активные фильтры категорий и материалов для исключения
+        const activeCategoryFilters = [];
+        document.querySelectorAll('.filter-checkbox[id^="cat-"]:checked').forEach(cb => {
+            activeCategoryFilters.push(cb.id.replace('cat-', ''));
+        });
+        
+        const activeMaterialFilters = [];
+        document.querySelectorAll('.filter-checkbox[id^="mat-"]:checked').forEach(cb => {
+            activeMaterialFilters.push(cb.id.replace('mat-', ''));
+        });
+        
         products.forEach(product => {
-            // Подсчитываем только видимые товары
-            if (product.style.display !== 'none') {
-                const category = product.getAttribute('data-category');
-                const material = product.getAttribute('data-material');
-                
-                if (category && categoryCounts.hasOwnProperty(category)) {
+            // Проверяем товар на соответствие всем фильтрам кроме категории/материала, для которого считаем
+            let matchesFilters = true;
+            
+            // Поиск
+            if (searchTerm) {
+                const titleEl = product.querySelector('.product-title');
+                const descEl = product.querySelector('.product-description');
+                const title = titleEl ? titleEl.textContent.toLowerCase() : '';
+                const description = descEl ? descEl.textContent.toLowerCase() : '';
+                if (!title.includes(searchTerm) && !description.includes(searchTerm)) {
+                    matchesFilters = false;
+                }
+            }
+            
+            // Цена
+            if (matchesFilters) {
+                const price = parseFloat(product.getAttribute('data-price'));
+                if (price > maxPrice) {
+                    matchesFilters = false;
+                }
+            }
+            
+            // Рейтинг
+            if (matchesFilters && minRating > 0) {
+                const rating = parseInt(product.getAttribute('data-rating'));
+                if (rating < minRating) {
+                    matchesFilters = false;
+                }
+            }
+            
+            // Размер (пропускаем, так как нет data-size атрибутов)
+            
+            // Цвет (пропускаем для упрощения, можно добавить позже)
+            
+            if (!matchesFilters) return;
+            
+            const category = product.getAttribute('data-category');
+            const material = product.getAttribute('data-material');
+            
+            // Считаем категории: если категория не выбрана, считаем товары с этой категорией
+            if (category && categoryCounts.hasOwnProperty(category)) {
+                // Если фильтры по категориям активны, считаем только если категория не выбрана или товар уже проходит фильтр
+                if (activeCategoryFilters.length === 0 || activeCategoryFilters.includes(category)) {
                     categoryCounts[category]++;
                 }
-                
-                if (material && materialCounts.hasOwnProperty(material)) {
+            }
+            
+            // Считаем материалы: если материал не выбран, считаем товары с этим материалом
+            if (material && materialCounts.hasOwnProperty(material)) {
+                // Если фильтры по материалам активны, считаем только если материал не выбран или товар уже проходит фильтр
+                if (activeMaterialFilters.length === 0 || activeMaterialFilters.includes(material)) {
                     materialCounts[material]++;
                 }
             }
