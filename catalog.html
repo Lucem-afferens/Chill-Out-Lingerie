@@ -67,8 +67,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -208,130 +207,7 @@
             color: #ffc0cb;
         }
 
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            background: rgba(255, 192, 203, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 182, 193, 0.15);
-            box-shadow: 0 4px 20px rgba(255, 182, 193, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .header-container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            transition: padding 0.3s ease;
-        }
-        
-        .header-container a:has(h1) {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            width: clamp(100px, 250px, 100%);
-            height: 100%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .menu-btn {
-            font-size: 1.5rem;
-            color: #ffb6c1;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            min-width: 40px;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .menu-btn:hover {
-            transform: scale(1.1);
-            color: #ffc0cb;
-        }
-
-        .logo {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.875rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: bold;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #d4af37 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 0.05em;
-            transition: font-size 0.3s ease, transform 0.3s ease;
-            white-space: nowrap;
-            min-width: 200px;
-            text-align: center;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-            transition: gap 0.3s ease;
-            flex-shrink: 0;
-        }
-        
-        .header-actions a, .header-actions button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .icon-btn {
-            background: none;
-            border: none;
-            color: #ffb6c1;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
-            width: 2.5rem;
-            height: 2.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .icon-btn:hover {
-            color: #ffc0cb;
-        }
-        
-        .header-actions button {
-            font-size: 1.5rem;
-            color: #ffb6c1;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: color 0.3s ease;
-            position: relative;
-            width: 2.5rem;
-            height: 2.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .header-actions button:hover {
-            color: #ffc0cb;
-        }
+        /* Header - дубликат удален, используется #header выше */
 
         .cart-badge {
             position: absolute;
@@ -361,7 +237,7 @@
         }
 
         .search-container {
-            max-width: 1280px;
+            max-width: 1440px;
             margin: 0 auto;
             padding: 1rem 2rem;
         }
@@ -1077,78 +953,85 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        .newsletter {
-            padding: 6rem 0;
-            background: #171717;
+        #vk-notice {
+            padding: 4rem 0;
+            background: linear-gradient(to right, #171717, rgba(60, 40, 50, 0.3), #171717);
+            border-top: 1px solid rgba(255, 182, 193, 0.2);
+            border-bottom: 1px solid rgba(255, 182, 193, 0.2);
         }
-
-        .newsletter-content {
-            max-width: 768px;
+        
+        .vk-notice-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 80rem;
             margin: 0 auto;
-            text-align: center;
-            padding: 0 2rem;
         }
-
-        .newsletter-content h2 {
-            font-size: 3rem;
+        
+        .vk-notice-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .vk-icon-wrapper {
+            width: 5rem;
+            height: 5rem;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(255, 182, 193, 0.15));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 182, 193, 0.2);
+        }
+        
+        .vk-icon-wrapper i {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .vk-notice-title {
+            font-size: 1.875rem;
             font-family: 'Cormorant Garamond', serif;
             font-weight: 300;
-            color: #d4af37;
-            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
         }
-
-        .newsletter-content > p {
-            font-size: 1.25rem;
-            color: #d1d5db;
-            font-family: 'Montserrat', sans-serif;
+        
+        .vk-notice-text {
+            font-size: 1.125rem;
+            color: #f5d5e0;
             font-weight: 300;
-            margin-bottom: 3rem;
         }
-
-        .newsletter-form {
+        
+        .btn-vk-large {
             display: flex;
-            gap: 1rem;
-            max-width: 672px;
-            margin: 0 auto;
-        }
-
-        .newsletter-input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            background: #262626;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            color: white;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .newsletter-input:focus {
-            outline: none;
-            border-color: #d4af37;
-        }
-
-        .newsletter-btn {
+            align-items: center;
+            gap: 0.75rem;
             padding: 1rem 3rem;
             background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
             color: #2b2b2b;
-            font-family: 'Montserrat', sans-serif;
             font-weight: 500;
             letter-spacing: 0.05em;
             border: none;
             cursor: pointer;
-            transition: all 0.3s;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
         }
-
-        .newsletter-btn:hover {
+        
+        .btn-vk-large:hover {
             background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 50%, #d4af37 100%);
+            box-shadow: 0 8px 25px rgba(255, 182, 193, 0.5);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 182, 193, 0.5);
-        }
-
-        .newsletter-disclaimer {
-            font-size: 0.875rem;
-            color: #6b7280;
-            font-family: 'Montserrat', sans-serif;
-            margin-top: 1.5rem;
         }
 
         footer {
@@ -1732,12 +1615,12 @@
 </div>
 
 <header id="header">
-    <div class="header-container">
+    <div class="header-container container">
         <button onclick="openMenu()" class="menu-btn">
             <i class="fa-solid fa-bars"></i>
         </button>
         
-        <a href="index.html" style="text-decoration: none; color: inherit;"><h1 class="logo">Chill Out Lingerie</h1></a>
+        <a href="index.html" style="text-decoration: none; color: inherit;"><h1 class="header-logo">Chill Out Lingerie</h1></a>
         
         <div class="header-actions">
             <a href="https://vk.com" target="_blank" class="icon-btn" title="ВКонтакте">
@@ -1745,13 +1628,6 @@
             </a>
             <button onclick="toggleSearchBar()" class="icon-btn">
                 <i class="fa-solid fa-search"></i>
-            </button>
-            <button>
-                <i class="fa-regular fa-user"></i>
-            </button>
-            <button>
-                <i class="fa-solid fa-shopping-bag"></i>
-                <span class="cart-badge">0</span>
             </button>
         </div>
     </div>
@@ -2343,15 +2219,25 @@
     </div>
 </section>
 
-<section id="newsletter" class="newsletter">
-    <div class="newsletter-content">
-        <h2>Join Our Community</h2>
-        <p>Subscribe to receive exclusive offers, styling tips, and early access to new collections.</p>
-        <form class="newsletter-form">
-            <input type="email" placeholder="Enter your email address" class="newsletter-input">
-            <button type="submit" class="newsletter-btn">SUBSCRIBE</button>
-        </form>
-        <p class="newsletter-disclaimer">By subscribing, you agree to our Privacy Policy and consent to receive updates.</p>
+<section id="vk-notice">
+    <div class="container">
+        <div class="vk-notice-content">
+            <div class="vk-notice-info">
+                <div class="vk-icon-wrapper">
+                    <i class="fa-brands fa-vk"></i>
+                </div>
+                <div>
+                    <h3 class="vk-notice-title">Покупайте через ВКонтакте</h3>
+                    <p class="vk-notice-text">
+                        Этот сайт создан для ознакомления с коллекцией. Все заказы принимаются в нашей группе ВКонтакте
+                    </p>
+                </div>
+            </div>
+            <a href="https://vk.com" target="_blank" class="btn-vk-large">
+                <i class="fa-brands fa-vk"></i>
+                <span>ПЕРЕЙТИ В VK</span>
+            </a>
+        </div>
     </div>
 </section>
 
