@@ -73,2549 +73,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet"></noscript>
-    <style>
-        ::-webkit-scrollbar { display: none; }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background-color: #2b2b2b;
-            color: #ffffff;
-            font-family: 'Montserrat', sans-serif;
-            overflow-x: hidden;
-        }
-        
-        .font-serif {
-            font-family: 'Cormorant Garamond', serif;
-        }
-        
-        .font-sans {
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        .container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .text-gold {
-            color: #d4af37;
-        }
-        
-        .bg-charcoal {
-            background-color: #2b2b2b;
-        }
-        
-        .bg-neutral-900 {
-            background-color: #171717;
-        }
-        
-        .bg-neutral-800 {
-            background-color: #262626;
-        }
-        
-        .glassmorphism {
-            background: rgba(255, 192, 203, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 182, 193, 0.15);
-        }
-        
-        .gold-gradient {
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 40%, #ffc0cb 60%, #d4af37 100%);
-        }
-        
-        /* Header */
-        #header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            background: rgba(255, 192, 203, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 182, 193, 0.15);
-            box-shadow: 0 4px 20px rgba(255, 182, 193, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.5rem 2rem;
-            position: relative;
-            max-width: 100%;
-            transition: padding 0.3s ease;
-        }
-        .header-container a:has(h1) {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            width: clamp(100px, 250px, 100%);
-            height: 100%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        
-        .header-logo {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.875rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: bold;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #d4af37 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 0.05em;
-            transition: font-size 0.3s ease, transform 0.3s ease;
-            white-space: nowrap;
-            min-width: 200px;
-            text-align: center;
-        }
-        
-        .header-actions {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-            transition: gap 0.3s ease;
-        }
-
-        .header-actions a, .header-actions button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .btn-vk {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1.5rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
-            color: #2b2b2b;
-            font-weight: 500;
-            font-size: 0.875rem;
-            letter-spacing: 0.05em;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
-        }
-        
-        .btn-vk:hover {
-            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 50%, #d4af37 100%);
-            box-shadow: 0 6px 20px rgba(255, 182, 193, 0.5);
-            transform: translateY(-2px);
-        }
-        
-        .icon-btn {
-            background: none;
-            border: none;
-            color: #ffb6c1;
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
-            width: 2rem;
-            height: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .icon-btn:hover {
-            color: #ffc0cb;
-        }
-        
-        .menu-btn {
-            background: none;
-            border: none;
-            color: #ffb6c1;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .menu-btn:hover {
-            transform: scale(1.1);
-            color: #ffc0cb;
-        }
-        
-        /* Menu Overlay */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(135deg, rgba(43, 43, 43, 0.98) 0%, rgba(60, 40, 45, 0.98) 50%, rgba(43, 43, 43, 0.98) 100%);
-            backdrop-filter: blur(10px);
-            z-index: 9999;
-            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .menu-overlay.active {
-            left: 0;
-        }
-        
-        .menu-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 100%;
-            padding: 0 2rem;
-        }
-        
-        .menu-close {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            background: none;
-            border: none;
-            color: #ffb6c1;
-            font-size: 2.5rem;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .menu-close:hover {
-            transform: rotate(90deg);
-            color: #ffc0cb;
-        }
-        
-        .menu-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .menu-nav a {
-            font-size: 3.75rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #ffffff;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .menu-nav a:hover {
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .menu-social {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 4rem;
-        }
-        
-        .menu-social a {
-            color: #ffb6c1;
-            font-size: 1.5rem;
-            transition: transform 0.3s ease;
-        }
-        
-        .menu-social a:hover {
-            transform: scale(1.1);
-            color: #ffc0cb;
-        }
-        
-        /* Hero Section */
-        #hero {
-            position: relative;
-            height: 100vh;
-            height: 100svh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        .hero-bg {
-            position: absolute;
-            inset: 0;
-        }
-        
-        .hero-bg img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(43, 43, 43, 0.2), rgba(60, 40, 50, 0.5), rgba(43, 43, 43, 0.65));
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            padding: 0 2rem;
-            animation: fadeIn 0.6s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .hero-title {
-            font-size: 6rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.05em;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .hero-subtitle {
-            font-size: 4rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            margin-bottom: 2rem;
-            color: #ffffff;
-        }
-        
-        .hero-text {
-            font-size: 1.25rem;
-            font-weight: 300;
-            margin-bottom: 3rem;
-            max-width: 48rem;
-            margin-left: auto;
-            margin-right: auto;
-            color: #f5d5e0;
-            letter-spacing: 0.025em;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-        }
-        
-        .cta-button {
-            position: relative;
-            padding: 1rem 3rem;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-            border: none;
-            cursor: pointer;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 182, 193, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .cta-button:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .cta-button span {
-            position: relative;
-            z-index: 10;
-        }
-        
-        .btn-outline {
-            border: 2px solid #ffb6c1;
-            color: #ffb6c1;
-            background: transparent;
-        }
-        
-        .btn-outline:hover {
-            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
-            color: #2b2b2b;
-            border-color: #ffc0cb;
-            box-shadow: 0 8px 25px rgba(255, 182, 193, 0.4);
-        }
-        
-        .btn-solid {
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
-            color: #2b2b2b;
-            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
-        }
-        
-        .btn-solid:hover {
-            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 50%, #d4af37 100%);
-            box-shadow: 0 8px 25px rgba(255, 182, 193, 0.5);
-            transform: translateY(-2px);
-        }
-        
-        .hero-scroll {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ffb6c1;
-            font-size: 1.875rem;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translate(-50%, 0); }
-            50% { transform: translate(-50%, 10px); }
-        }
-        
-        /* VK Notice Section */
-        #vk-notice {
-            padding: 4rem 0;
-            background: linear-gradient(to right, #171717, rgba(60, 40, 50, 0.3), #171717);
-            border-top: 1px solid rgba(255, 182, 193, 0.2);
-            border-bottom: 1px solid rgba(255, 182, 193, 0.2);
-        }
-        
-        .vk-notice-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 80rem;
-            margin: 0 auto;
-        }
-        
-        .vk-notice-info {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        
-        .vk-icon-wrapper {
-            width: 5rem;
-            height: 5rem;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(255, 182, 193, 0.15));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            border: 1px solid rgba(255, 182, 193, 0.2);
-        }
-        
-        .vk-icon-wrapper i {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .vk-notice-title {
-            font-size: 1.875rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-        
-        .vk-notice-text {
-            font-size: 1.125rem;
-            color: #f5d5e0;
-            font-weight: 300;
-        }
-        
-        .btn-vk-large {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 3rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
-            color: #2b2b2b;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
-        }
-        
-        .btn-vk-large:hover {
-            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 50%, #d4af37 100%);
-            box-shadow: 0 8px 25px rgba(255, 182, 193, 0.5);
-            transform: translateY(-2px);
-        }
-        
-        /* Value Proposition Section */
-        #value-proposition {
-            padding: 6rem 0;
-            background: linear-gradient(to bottom, rgba(43, 43, 43, 1), rgba(50, 35, 40, 0.5), rgba(23, 23, 23, 1));
-        }
-        
-        .value-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4rem;
-        }
-        
-        .value-item {
-            text-align: center;
-        }
-        
-        .value-icon {
-            width: 6rem;
-            height: 6rem;
-            margin: 0 auto 1.5rem;
-            background: rgba(255, 182, 193, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 182, 193, 0.15);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s ease;
-        }
-        
-        .value-item:hover .value-icon {
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(255, 182, 193, 0.3);
-        }
-        
-        .value-icon i {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .value-title {
-            font-size: 1.5rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .value-text {
-            color: #d5c4cc;
-            font-weight: 300;
-            line-height: 1.6;
-        }
-        
-        /* Featured Collection Section */
-        #featured-collection {
-            padding: 6rem 0;
-            background: #171717;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .featured-bg-1 {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 24rem;
-            height: 24rem;
-            background: rgba(255, 182, 193, 0.08);
-            border-radius: 50%;
-            filter: blur(80px);
-        }
-        
-        .featured-bg-2 {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 24rem;
-            height: 24rem;
-            background: rgba(255, 192, 203, 0.08);
-            border-radius: 50%;
-            filter: blur(80px);
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-        
-        .section-title {
-            font-size: 4rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .section-subtitle {
-            font-size: 1.25rem;
-            color: #d5c4cc;
-            font-weight: 300;
-        }
-        
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .product-card {
-            cursor: pointer;
-        }
-        
-        .product-image-wrapper {
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-            background: #262626;
-            height: 24rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .product-card:hover .product-image-wrapper {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
-        .product-image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .product-card:hover .product-image-wrapper img {
-            transform: scale(1.1);
-        }
-        
-        .product-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(43, 43, 43, 0.8), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            display: flex;
-            align-items: flex-end;
-            padding: 1.5rem;
-        }
-        
-        .product-card:hover .product-overlay {
-            opacity: 1;
-        }
-        
-        .quick-view-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            color: #2b2b2b;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .product-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            color: #2b2b2b;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
-            font-weight: bold;
-            letter-spacing: 0.05em;
-        }
-        
-        .product-badge.bestseller {
-            background: linear-gradient(135deg, #fb7185 0%, #ffc0cb 100%);
-            color: #ffffff;
-        }
-        
-        .product-name {
-            font-size: 1.125rem;
-            font-family: 'Cormorant Garamond', serif;
-            margin-bottom: 0.5rem;
-            color: #ffffff;
-        }
-        
-        .product-desc {
-            font-size: 0.875rem;
-            color: #9ca3af;
-            margin-bottom: 0.5rem;
-        }
-        
-        .product-price {
-            font-size: 1.25rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .section-cta {
-            text-align: center;
-            margin-top: 4rem;
-        }
-        
-        /* Bestsellers Section */
-        #bestsellers {
-            padding: 6rem 0;
-            background: #2b2b2b;
-        }
-        
-        .bestsellers-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 4rem;
-        }
-        
-        .carousel-controls {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .carousel-btn {
-            width: 3rem;
-            height: 3rem;
-            border: 1px solid #d4af37;
-            color: #d4af37;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .carousel-btn:hover {
-            background: #d4af37;
-            color: #2b2b2b;
-        }
-        
-        .carousel-container {
-            display: flex;
-            gap: 2rem;
-            overflow-x: auto;
-            padding-bottom: 2rem;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
-        }
-        
-        .carousel-container::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .carousel-item {
-            flex: 0 0 20rem;
-            cursor: pointer;
-        }
-        
-        .carousel-item .product-image-wrapper {
-            height: 28rem;
-        }
-        
-        .rating-badge {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            color: #2b2b2b;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            font-weight: bold;
-            letter-spacing: 0.05em;
-        }
-        
-        /* New Arrivals Section */
-        #new-arrivals {
-            padding: 6rem 0;
-            background: linear-gradient(to bottom, #2b2b2b, #171717);
-        }
-        
-        .new-arrivals-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 3rem;
-        }
-        
-        .featured-large {
-            position: relative;
-            overflow: hidden;
-            background: #262626;
-            height: 42rem;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .featured-large:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
-        .featured-large img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.7s ease;
-        }
-        
-        .featured-large:hover img {
-            transform: scale(1.05);
-        }
-        
-        .featured-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, #2b2b2b, transparent, transparent);
-        }
-        
-        .featured-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 3rem;
-        }
-        
-        .featured-info {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-        }
-        
-        .new-badge {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            color: #2b2b2b;
-            font-size: 0.75rem;
-            font-weight: bold;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-        }
-        
-        .featured-title {
-            font-size: 2.5rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #ffffff;
-            margin-bottom: 1rem;
-        }
-        
-        .featured-text {
-            font-size: 1.125rem;
-            color: #d1d5db;
-            font-weight: 300;
-            margin-bottom: 1.5rem;
-        }
-        
-        .featured-small-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
-        }
-        
-        .featured-small {
-            position: relative;
-            overflow: hidden;
-            background: #262626;
-            height: 20rem;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .featured-small:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
-        .featured-small img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .featured-small:hover img {
-            transform: scale(1.1);
-        }
-        
-        .featured-small-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(43, 43, 43, 0.9), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 1.5rem;
-        }
-        
-        .featured-small:hover .featured-small-overlay {
-            opacity: 1;
-        }
-        
-        .featured-small-title {
-            font-size: 1.5rem;
-            font-family: 'Cormorant Garamond', serif;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-        
-        .featured-small-price {
-            font-size: 1.25rem;
-            color: #d4af37;
-            font-weight: 600;
-        }
-        
-        /* Catalog Section */
-        #catalog {
-            padding: 6rem 0;
-            background: #171717;
-        }
-        
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-        }
-        
-        .catalog-item-large {
-            position: relative;
-            height: 500px;
-            cursor: pointer;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .catalog-item-large:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
-        .catalog-item-large img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .catalog-item-large:hover img {
-            transform: scale(1.1);
-        }
-        
-        .catalog-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, #2b2b2b, rgba(43, 43, 43, 0.6), transparent);
-        }
-        
-        .catalog-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 3rem;
-        }
-        
-        .catalog-title {
-            font-size: 3rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #ffffff;
-            margin-bottom: 0.75rem;
-        }
-        
-        .catalog-subtitle {
-            font-size: 1.125rem;
-            color: #d1d5db;
-            font-weight: 300;
-            margin-bottom: 1.5rem;
-        }
-        
-        .catalog-small-grid {
-            display: grid;
-            grid-template-rows: repeat(2, 1fr);
-            gap: 2rem;
-        }
-        
-        .catalog-item-small {
-            position: relative;
-            height: 246px;
-            cursor: pointer;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .catalog-item-small:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
-        .catalog-item-small img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .catalog-item-small:hover img {
-            transform: scale(1.1);
-        }
-        
-        .catalog-small-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(43, 43, 43, 0.9), transparent);
-        }
-        
-        .catalog-small-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 2rem;
-        }
-        
-        .catalog-small-title {
-            font-size: 1.875rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-        
-        .catalog-small-subtitle {
-            font-size: 0.875rem;
-            color: #d1d5db;
-            font-weight: 300;
-            margin-bottom: 1rem;
-        }
-        
-        .catalog-link {
-            color: #d4af37;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .catalog-link:hover {
-            color: #ffffff;
-        }
-        
-        /* Testimonials Section */
-        #testimonials {
-            padding: 6rem 0;
-            background: #2b2b2b;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .testimonials-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 800px;
-            height: 800px;
-            background: rgba(255, 182, 193, 0.05);
-            border-radius: 50%;
-            filter: blur(80px);
-        }
-        
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .testimonial-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .testimonial-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
-        .testimonial-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .testimonial-avatar {
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 1rem;
-        }
-        
-        .testimonial-name {
-            font-size: 1.125rem;
-            font-family: 'Cormorant Garamond', serif;
-            color: #ffffff;
-        }
-        
-        .testimonial-rating {
-            display: flex;
-            color: #d4af37;
-            font-size: 0.875rem;
-        }
-        
-        .testimonial-text {
-            color: #d1d5db;
-            font-weight: 300;
-            font-style: italic;
-            line-height: 1.6;
-        }
-        
-        /* Size Guide Section */
-        #size-guide {
-            padding: 6rem 0;
-            background: linear-gradient(to bottom, #2b2b2b, #171717);
-        }
-        
-        .size-guide-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 4rem;
-            align-items: center;
-        }
-        
-        .size-guide-title {
-            font-size: 4rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #d4af37;
-            margin-bottom: 2rem;
-        }
-        
-        .size-guide-text {
-            font-size: 1.125rem;
-            color: #d1d5db;
-            font-weight: 300;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-        
-        .size-guide-features {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-        
-        .size-guide-feature {
-            display: flex;
-            align-items: flex-start;
-        }
-        
-        .feature-icon {
-            width: 3rem;
-            height: 3rem;
-            background: rgba(255, 182, 193, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1.5rem;
-            flex-shrink: 0;
-        }
-        
-        .feature-icon i {
-            color: #d4af37;
-            font-size: 1.25rem;
-        }
-        
-        .feature-title {
-            font-size: 1.25rem;
-            font-family: 'Cormorant Garamond', serif;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-        
-        .feature-text {
-            color: #9ca3af;
-            font-weight: 300;
-        }
-        
-        .size-calculator {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3rem;
-        }
-        
-        .calculator-title {
-            font-size: 1.875rem;
-            font-family: 'Cormorant Garamond', serif;
-            color: #ffffff;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        
-        .calculator-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            font-size: 0.875rem;
-            color: #9ca3af;
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            background: #262626;
-            border: 1px solid rgba(255, 182, 193, 0.3);
-            color: #ffffff;
-            font-family: 'Montserrat', sans-serif;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #d4af37;
-        }
-        
-        .form-submit {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 100%);
-            color: #2b2b2b;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .form-submit:hover {
-            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 100%);
-            color: #2b2b2b;
-        }
-        
-        .form-note {
-            text-align: center;
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-top: 1.5rem;
-        }
-        
-        /* About Section */
-        #about {
-            padding: 6rem 0;
-            background: linear-gradient(to bottom, #2b2b2b, #171717);
-        }
-        
-        .about-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 4rem;
-            align-items: center;
-        }
-        
-        .about-images {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
-        
-        .about-col-1 {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .about-col-2 {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-top: 3rem;
-        }
-        
-        .about-image {
-            overflow: hidden;
-            background: #262626;
-        }
-        
-        .about-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .about-image-1 { height: 16rem; }
-        .about-image-2 { height: 20rem; }
-        .about-image-3 { height: 20rem; }
-        .about-image-4 { height: 16rem; }
-        
-        /* Sustainability Section */
-        #sustainability {
-            padding: 6rem 0;
-            background: #171717;
-        }
-        
-        .sustainability-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 4rem;
-            text-align: center;
-        }
-        
-        .sustainability-icon {
-            font-size: 4rem;
-            color: #d4af37;
-            margin-bottom: 2rem;
-        }
-        
-        .sustainability-title {
-            font-size: 3rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #ffffff;
-            margin-bottom: 1.5rem;
-        }
-        
-        .sustainability-text {
-            font-size: 1.25rem;
-            color: #d1d5db;
-            font-weight: 300;
-            line-height: 1.6;
-            max-width: 48rem;
-            margin: 0 auto 2rem;
-        }
-        
-        .sustainability-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: bold;
-            color: #d4af37;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-label {
-            font-size: 0.875rem;
-            color: #9ca3af;
-        }
-        
-        /* Newsletter Section */
-        #newsletter {
-            padding: 6rem 0;
-            background: #2b2b2b;
-        }
-        
-        .newsletter-content {
-            max-width: 48rem;
-            margin: 0 auto;
-            text-align: center;
-        }
-        
-        .newsletter-title {
-            font-size: 3rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #d4af37;
-            margin-bottom: 1.5rem;
-        }
-        
-        .newsletter-text {
-            font-size: 1.25rem;
-            color: #d1d5db;
-            font-weight: 300;
-            margin-bottom: 3rem;
-        }
-        
-        .newsletter-form {
-            display: flex;
-            gap: 1rem;
-            max-width: 42rem;
-            margin: 0 auto;
-        }
-        
-        .newsletter-input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            background: #262626;
-            border: 1px solid rgba(255, 182, 193, 0.3);
-            color: #ffffff;
-            font-family: 'Montserrat', sans-serif;
-            transition: border-color 0.3s ease;
-        }
-        
-        .newsletter-input:focus {
-            outline: none;
-            border-color: #d4af37;
-        }
-        
-        .newsletter-note {
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-top: 1.5rem;
-        }
-        
-        /* Contact Section */
-        #contact {
-            padding: 6rem 0;
-            background: linear-gradient(to bottom, #2b2b2b, #171717);
-        }
-        
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 4rem;
-        }
-        
-        .contact-title {
-            font-size: 3rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #d4af37;
-            margin-bottom: 2rem;
-        }
-        
-        .contact-text {
-            font-size: 1.125rem;
-            color: #d1d5db;
-            font-weight: 300;
-            margin-bottom: 3rem;
-        }
-        
-        .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .contact-item {
-            display: flex;
-            align-items: flex-start;
-        }
-        
-        .contact-icon {
-            width: 3rem;
-            height: 3rem;
-            background: rgba(255, 182, 193, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1.5rem;
-            flex-shrink: 0;
-        }
-        
-        .contact-icon i {
-            color: #d4af37;
-            font-size: 1.25rem;
-        }
-        
-        .contact-item-title {
-            font-size: 1.125rem;
-            font-family: 'Cormorant Garamond', serif;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-        
-        .contact-item-text {
-            color: #9ca3af;
-        }
-        
-        .contact-item-note {
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-top: 0.25rem;
-        }
-        
-        .contact-form {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2.5rem;
-        }
-        
-        .contact-form-title {
-            font-size: 1.875rem;
-            font-family: 'Cormorant Garamond', serif;
-            color: #ffffff;
-            margin-bottom: 2rem;
-        }
-        
-        .contact-form-fields {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .contact-form input,
-        .contact-form textarea {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            background: #262626;
-            border: 1px solid rgba(255, 182, 193, 0.3);
-            color: #ffffff;
-            font-family: 'Montserrat', sans-serif;
-            transition: border-color 0.3s ease;
-        }
-        
-        .contact-form input:focus,
-        .contact-form textarea:focus {
-            outline: none;
-            border-color: #d4af37;
-        }
-        
-        .contact-form textarea {
-            resize: none;
-        }
-        
-        /* Footer */
-        #footer {
-            background: #171717;
-            padding-top: 4rem;
-            padding-bottom: 2rem;
-            border-top: 1px solid rgba(255, 182, 193, 0.2);
-        }
-        
-        .footer-main {
-            margin-bottom: 3rem;
-        }
-        
-        .footer-brand {
-            font-size: 1.875rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: bold;
-            color: #d4af37;
-            margin-bottom: 1.5rem;
-        }
-        
-        .footer-desc {
-            color: #9ca3af;
-            font-weight: 300;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .footer-social a {
-            width: 2.5rem;
-            height: 2.5rem;
-            border: 1px solid rgba(255, 182, 193, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #d4af37;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .footer-social a.vk {
-            border: 2px solid #d4af37;
-            background: rgba(255, 182, 193, 0.1);
-        }
-        
-        .footer-social a:hover {
-            background: #d4af37;
-            color: #2b2b2b;
-        }
-        
-        .footer-title {
-            font-size: 1.125rem;
-            font-family: 'Cormorant Garamond', serif;
-            color: #d4af37;
-            margin-bottom: 1.5rem;
-        }
-        
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .footer-links a {
-            color: #9ca3af;
-            font-weight: 300;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: #d4af37;
-        }
-        
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 182, 193, 0.2);
-            padding-top: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .footer-copyright {
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-        
-        .footer-legal {
-            display: flex;
-            gap: 2rem;
-        }
-        
-        .footer-legal a {
-            font-size: 0.875rem;
-            color: #6b7280;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-legal a:hover {
-            color: #d4af37;
-        }
-        
-        /* Shop By Category Section */
-        #shop-by-category {
-            padding: 6rem 0;
-            background: #171717;
-        }
-        
-        .shop-category-container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .shop-category-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-        
-        .shop-category-label {
-            color: #d4af37;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.875rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            margin-bottom: 0.75rem;
-            font-weight: 300;
-        }
-        
-        .shop-category-title {
-            font-size: 4rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #d4af37;
-            margin-bottom: 1rem;
-        }
-        
-        .shop-category-grid-large {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .shop-category-grid-small {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-        
-        .shop-category-card {
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .shop-category-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
-        .shop-category-card-large {
-            height: 450px;
-        }
-        
-        .shop-category-card-small {
-            height: 320px;
-        }
-        
-        .shop-category-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.7s ease;
-        }
-        
-        .shop-category-card:hover .shop-category-image {
-            transform: scale(1.05);
-        }
-        
-        .shop-category-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(43, 43, 43, 0.85), rgba(43, 43, 43, 0.4), transparent);
-        }
-        
-        .shop-category-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 3rem;
-        }
-        
-        .shop-category-content-small {
-            padding: 2rem;
-        }
-        
-        .shop-category-card-title {
-            font-size: 2.5rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: #ffffff;
-            margin-bottom: 0.75rem;
-        }
-        
-        .shop-category-card-title-small {
-            font-size: 1.875rem;
-        }
-        
-        .shop-category-card-desc {
-            color: rgba(255, 255, 255, 0.9);
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
-            font-weight: 300;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-        
-        .shop-category-card-desc-small {
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-        }
-        
-        .shop-category-link {
-            color: #ffffff;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            font-size: 0.875rem;
-            letter-spacing: 0.05em;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: color 0.3s ease;
-        }
-        
-        .shop-category-link:hover {
-            color: #d4af37;
-        }
-        
-        .shop-category-link i {
-            transition: transform 0.3s ease;
-        }
-        
-        .shop-category-link:hover i {
-            transform: translateX(4px);
-        }
-        
-        /* Адаптивные стили для всех устройств - детальная настройка */
-        
-        /* Большие экраны (1400px+) */
-        @media (min-width: 1400px) {
-            .container {
-                max-width: 1320px;
-            }
-        }
-        
-        /* Планшеты в landscape и маленькие ноутбуки (1200px - 1399px) */
-        @media (max-width: 1399px) {
-            .container {
-                padding: 0 2rem;
-            }
-        }
-        
-        /* Планшеты и маленькие ноутбуки (1024px - 1199px) */
-        @media (max-width: 1199px) {
-            .header-container {
-                padding: 1.25rem 1.5rem;
-            }
-            
-            .header-logo {
-                font-size: 1.75rem;
-            }
-            
-            .icon-btn {
-                font-size: 1.375rem;
-                width: 2.25rem;
-                height: 2.25rem;
-            }
-            
-            .product-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1.5rem;
-            }
-            
-            .value-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 3rem;
-            }
-            
-            .testimonials-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        /* Планшеты (900px - 1023px) */
-        @media (max-width: 1023px) {
-            .container {
-                padding: 0 1.5rem;
-            }
-            
-            .header-container {
-                padding: 1rem 1.5rem;
-            }
-            
-            .header-logo {
-                font-size: 1.625rem;
-            }
-            
-            .hero-title {
-                font-size: 4.5rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 3.5rem;
-            }
-            
-            .new-arrivals-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .catalog-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .shop-category-grid-large {
-                grid-template-columns: 1fr;
-            }
-            
-            .shop-category-grid-small {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .about-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .size-guide-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-            
-        }
-        
-        /* Планшеты и большие телефоны (768px - 899px) */
-        @media (max-width: 899px) {
-            #header {
-                box-shadow: 0 2px 10px rgba(255, 182, 193, 0.1);
-            }
-            
-            .header-container {
-                padding: 1rem 1.25rem;
-                min-height: 65px;
-            }
-            
-            .header-logo {
-                font-size: 1.5rem;
-                max-width: 60%;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            
-            .header-actions {
-                gap: 0.875rem;
-                flex-shrink: 0;
-            }
-            
-            .icon-btn {
-                font-size: 1.375rem;
-                width: 2.25rem;
-                height: 2.25rem;
-                padding: 0;
-            }
-            
-            .hero-title {
-                font-size: 3.75rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 2.75rem;
-            }
-            
-            .hero-text {
-                font-size: 1.125rem;
-            }
-            
-            
-            
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.25rem;
-            }
-            
-            .value-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 2.5rem;
-            }
-            
-            .section-title {
-                font-size: 3rem;
-            }
-            
-            .vk-notice-content {
-                gap: 1.5rem;
-            }
-            
-            .catalog-item-large {
-                height: 450px;
-            }
-            
-            .catalog-item-small {
-                height: 220px;
-            }
-        }
-        
-        /* Мобильные устройства (640px - 767px) */
-        @media (max-width: 767px) {
-            #header {
-                box-shadow: 0 2px 8px rgba(255, 182, 193, 0.08);
-            }
-            
-            .header-container {
-                padding: 0.875rem 1rem;
-                min-height: 60px;
-                flex-wrap: nowrap;
-            }
-            
-            .header-logo {
-                font-size: 1.375rem;
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                max-width: calc(100% - 140px);
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            
-            .header-actions {
-                gap: 0.75rem;
-                flex-shrink: 0;
-                z-index: 10;
-            }
-            
-            .icon-btn {
-                font-size: 1.25rem;
-                width: 2rem;
-                height: 2rem;
-                padding: 0;
-                min-width: 2rem;
-                min-height: 2rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .menu-btn {
-                font-size: 1.375rem;
-                padding: 0.25rem;
-                min-width: 36px;
-                min-height: 36px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .hero-title {
-                font-size: 3rem;
-                line-height: 1.1;
-            }
-            
-            .hero-subtitle {
-                font-size: 2.25rem;
-                line-height: 1.2;
-            }
-            
-            .hero-text {
-                font-size: 1rem;
-                padding: 0 1rem;
-                line-height: 1.6;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                gap: 0.875rem;
-                width: 100%;
-                padding: 0 1rem;
-            }
-            
-            .cta-button {
-                width: 100%;
-                padding: 0.875rem 1.75rem;
-                font-size: 0.875rem;
-            }
-            
-            #hero {
-                padding-top: 70px;
-            }
-            
-            .vk-notice {
-                padding: 3rem 0;
-            }
-            
-            .vk-notice-content {
-                flex-direction: column;
-                gap: 2rem;
-                text-align: center;
-            }
-            
-            .vk-notice-info {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
-            }
-            
-            .vk-icon-wrapper {
-                width: 4rem;
-                height: 4rem;
-            }
-            
-            .vk-notice-title {
-                font-size: 1.625rem;
-            }
-            
-            .vk-notice-text {
-                font-size: 1rem;
-            }
-            
-            .btn-vk-large {
-                width: 100%;
-                justify-content: center;
-                padding: 0.875rem 2rem;
-            }
-            
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-            
-            .product-image-wrapper {
-                height: 20rem;
-            }
-            
-            .value-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .testimonials-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .section-title {
-                font-size: 2.5rem;
-                line-height: 1.2;
-            }
-            
-            .shop-category-title {
-                font-size: 3rem;
-            }
-            
-            .shop-category-card-large {
-                height: 400px;
-            }
-            
-            .shop-category-card-small {
-                height: 280px;
-            }
-            
-            .shop-category-content {
-                padding: 2rem;
-            }
-            
-            .shop-category-card-title {
-                font-size: 2rem;
-            }
-            
-            .shop-category-card-title-small {
-                font-size: 1.5rem;
-            }
-            
-            .section-subtitle {
-                font-size: 1.125rem;
-            }
-            
-            .catalog-item-large {
-                height: 400px;
-            }
-            
-            .catalog-item-small {
-                height: 200px;
-            }
-            
-            .catalog-title {
-                font-size: 2rem;
-            }
-            
-            .featured-large {
-                height: 32rem;
-            }
-            
-            .featured-small {
-                height: 15rem;
-            }
-            
-            .size-guide-title {
-                font-size: 2.5rem;
-            }
-            
-            .sustainability-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-            }
-            
-            .newsletter-form {
-                flex-direction: column;
-                gap: 0.875rem;
-            }
-            
-            .newsletter-input {
-                width: 100%;
-            }
-            
-            
-            .footer-bottom {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-            
-            .menu-nav a {
-                font-size: 2.5rem;
-            }
-            
-            .menu-close {
-                top: 1.5rem;
-                right: 1.5rem;
-                font-size: 2rem;
-            }
-        }
-        
-        /* Маленькие мобильные устройства (480px - 639px) */
-        @media (max-width: 639px) {
-            .container {
-                padding: 0 1rem;
-            }
-            
-            .header-container {
-                padding: 0.75rem 1rem;
-                min-height: 56px;
-            }
-            
-            .header-logo {
-                font-size: 1.25rem;
-            }
-            
-            .header-actions {
-                gap: 0.5rem;
-            }
-            
-            .icon-btn {
-                font-size: 1.125rem;
-                width: 1.875rem;
-                height: 1.875rem;
-            }
-            
-            .menu-btn {
-                font-size: 1.25rem;
-            }
-            
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 2rem;
-            }
-            
-            .hero-text {
-                font-size: 0.9375rem;
-            }
-            
-            #hero {
-                padding-top: 65px;
-            }
-            
-            .vk-notice {
-                padding: 2.5rem 0;
-            }
-            
-            .vk-notice-title {
-                font-size: 1.5rem;
-            }
-            
-            .vk-notice-text {
-                font-size: 0.9375rem;
-            }
-            
-            .product-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            
-            .product-image-wrapper {
-                height: 24rem;
-            }
-            
-            .section-title {
-                font-size: 2.25rem;
-            }
-            
-            .shop-category-grid-small {
-                grid-template-columns: 1fr;
-            }
-            
-            .shop-category-card-large {
-                height: 350px;
-            }
-            
-            .shop-category-card-small {
-                height: 250px;
-            }
-            
-            .shop-category-title {
-                font-size: 2.5rem;
-            }
-            
-            .carousel-item {
-                flex: 0 0 18rem;
-            }
-            
-            .carousel-item .product-image-wrapper {
-                height: 24rem;
-            }
-            
-            .catalog-item-large {
-                height: 350px;
-            }
-            
-            .catalog-item-small {
-                height: 180px;
-            }
-            
-            .catalog-title {
-                font-size: 1.75rem;
-            }
-            
-            .featured-large {
-                height: 28rem;
-            }
-            
-            .featured-small {
-                height: 13rem;
-            }
-            
-            .sustainability-stats {
-                grid-template-columns: 1fr;
-                gap: 1.25rem;
-            }
-            
-            .menu-nav a {
-                font-size: 2.25rem;
-            }
-        }
-        
-        /* Очень маленькие мобильные устройства (360px - 479px) */
-        @media (max-width: 479px) {
-            .header-container {
-                padding: 0.625rem 0.875rem;
-                min-height: 52px;
-            }
-            
-            .header-logo {
-                font-size: 1.125rem;
-                letter-spacing: 0.025em;
-            }
-            
-            .header-actions a{
-                display: none;
-            }
-            
-            .icon-btn {
-                font-size: 1rem;
-                width: 1.75rem;
-                height: 1.75rem;
-                padding: 0;
-            }
-            
-            .menu-btn {
-                font-size: 1.125rem;
-                padding: 0.25rem;
-            }
-            
-            .hero-title {
-                font-size: 2.25rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.75rem;
-            }
-            
-            .hero-text {
-                font-size: 0.875rem;
-                padding: 0 0.75rem;
-            }
-            
-            #hero {
-                padding-top: 60px;
-            }
-            
-            .hero-buttons {
-                gap: 0.75rem;
-                padding: 0 0.75rem;
-            }
-            
-            .cta-button {
-                padding: 0.75rem 1.5rem;
-                font-size: 0.8125rem;
-            }
-            
-            .vk-notice {
-                padding: 2rem 0;
-            }
-            
-            .vk-icon-wrapper {
-                width: 3.5rem;
-                height: 3.5rem;
-            }
-            
-            .vk-icon-wrapper i {
-                font-size: 2rem;
-            }
-            
-            .vk-notice-title {
-                font-size: 1.375rem;
-            }
-            
-            .vk-notice-text {
-                font-size: 0.875rem;
-            }
-            
-            .btn-vk-large {
-                padding: 0.75rem 1.5rem;
-                font-size: 0.875rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .section-subtitle {
-                font-size: 1rem;
-            }
-            
-            .product-image-wrapper {
-                height: 22rem;
-            }
-            
-            .carousel-item {
-                flex: 0 0 16rem;
-            }
-            
-            .carousel-item .product-image-wrapper {
-                height: 22rem;
-            }
-            
-            .catalog-item-large {
-                height: 300px;
-            }
-            
-            .catalog-item-small {
-                height: 160px;
-            }
-            
-            .catalog-title {
-                font-size: 1.5rem;
-            }
-            
-            .catalog-subtitle {
-                font-size: 1rem;
-            }
-            
-            .featured-large {
-                height: 24rem;
-            }
-            
-            .featured-small {
-                height: 12rem;
-            }
-            
-            .size-guide-title {
-                font-size: 2rem;
-            }
-            
-            .menu-nav a {
-                font-size: 2rem;
-            }
-            
-            .menu-close {
-                top: 1rem;
-                right: 1rem;
-                font-size: 1.75rem;
-            }
-        }
-        
-        /* Экстремально маленькие устройства (до 359px) */
-        @media (max-width: 359px) {
-            .header-container {
-                padding: 0.5rem 0.75rem;
-                min-height: 48px;
-            }
-            
-            .header-logo {
-                font-size: 1rem;
-            }
-            
-            .icon-btn {
-                font-size: 0.9375rem;
-                width: 1.625rem;
-                height: 1.625rem;
-            }
-            
-            .menu-btn {
-                font-size: 1rem;
-            }
-            
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.5rem;
-            }
-            
-            
-            
-            .section-title {
-                font-size: 1.75rem;
-            }
-            
-            .product-image-wrapper {
-                height: 20rem;
-            }
-            
-            .menu-nav a {
-                font-size: 1.75rem;
-            }
-        }
-        
-        /* Landscape ориентация на мобильных устройствах */
-        @media (max-width: 767px) and (orientation: landscape) {
-     
-            
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 2rem;
-            }
-            
-            .header-container {
-                padding: 0.5rem 1rem;
-                min-height: 50px;
-            }
-        }
-        
-        /* Улучшение для touch-устройств */
-        @media (hover: none) and (pointer: coarse) {
-            .cta-button,
-            .btn-vk,
-            .btn-vk-large,
-            .icon-btn,
-            .menu-btn {
-                min-height: 44px;
-                min-width: 44px;
-            }
-            
-            .carousel-btn {
-                min-width: 44px;
-                min-height: 44px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="src/main.css">
 </head>
 <body>
 
@@ -2625,12 +83,12 @@
             <i class="fa-solid fa-times"></i>
         </button>
         <nav class="menu-nav">
-            <a href="index.html" onclick="closeMenu()">HOME</a>
-            <a href="catalog.html" onclick="closeMenu()">CATALOG</a>
-            <a href="#bestsellers" onclick="closeMenu()">BESTSELLERS</a>
-            <a href="#new-arrivals" onclick="closeMenu()">NEW ARRIVALS</a>
-            <a href="#about" onclick="closeMenu()">ABOUT</a>
-            <a href="#contact" onclick="closeMenu()">CONTACT</a>
+            <a href="index.html" onclick="closeMenu()" data-i18n="menu.home">ГЛАВНАЯ</a>
+            <a href="catalog.html" onclick="closeMenu()" data-i18n="menu.catalog">КАТАЛОГ</a>
+            <a href="#bestsellers" onclick="closeMenu()" data-i18n="menu.bestsellers">ХИТЫ ПРОДАЖ</a>
+            <a href="#new-arrivals" onclick="closeMenu()" data-i18n="menu.newArrivals">НОВИНКИ</a>
+            <a href="#about" onclick="closeMenu()" data-i18n="menu.about">О НАС</a>
+            <a href="#contact" onclick="closeMenu()" data-i18n="menu.contact">КОНТАКТЫ</a>
         </nav>
         <div class="menu-social">
             <a href="#"><i class="fa-brands fa-instagram"></i></a>
@@ -2647,9 +105,15 @@
             <i class="fa-solid fa-bars"></i>
         </button>
         
-        <a href="index.html" style="text-decoration: none; color: inherit;"><h1 class="header-logo">Chill Out Lingerie</h1></a>
+        <a href="index.html" style="text-decoration: none; color: inherit;">
+            <img src="/logo.svg" alt="Chill Out Lingerie" class="header-logo-image">
+            <h1 class="header-logo">Chill Out Lingerie</h1>
+        </a>
         
         <div class="header-actions">
+            <button onclick="toggleLanguage()" class="icon-btn lang-switcher" title="Переключить язык">
+                <i class="fa-solid fa-language"></i>
+            </button>
             <a href="https://vk.com" target="_blank" class="icon-btn" title="ВКонтакте">
                 <i class="fa-brands fa-vk"></i>
             </a>
@@ -2668,18 +132,18 @@
     
     <div class="hero-content">
         <h2 class="hero-title">
-            <span class="text-gold">Chill Out</span>
+            <span class="text-gold">Chill Out Lingerie®</span>
         </h2>
-        <h3 class="hero-subtitle">Lingerie</h3>
-        <p class="hero-text">
-            Where elegance meets comfort. Discover our curated collection of premium lingerie designed for the modern woman.
+        <h3 class="hero-subtitle">Пижамы и нижнее бельё</h3>
+        <p class="hero-text" data-i18n="hero.text">
+            Где элегантность встречается с комфортом. Откройте для себя нашу тщательно подобранную коллекцию премиального нижнего белья, созданного для современной женщины.
         </p>
         <div class="hero-buttons">
             <a href="catalog.html" class="cta-button btn-outline" style="text-decoration: none;">
-                <span>EXPLORE COLLECTIONS</span>
+                <span data-i18n="hero.exploreCollections">СМОТРЕТЬ КОЛЛЕКЦИИ</span>
             </a>
             <button class="cta-button btn-solid">
-                <span>SHOP BESTSELLERS</span>
+                <span data-i18n="hero.shopBestsellers">ХИТЫ ПРОДАЖ</span>
             </button>
         </div>
     </div>
@@ -2718,9 +182,9 @@
                 <div class="value-icon">
                     <i class="fa-solid fa-gem"></i>
                 </div>
-                <h3 class="value-title">Premium Quality</h3>
-                <p class="value-text">
-                    Handpicked fabrics from the finest mills. Every piece crafted with meticulous attention to detail and luxury materials.
+                <h3 class="value-title" data-i18n="value.premiumQuality.title">Премиум Качество</h3>
+                <p class="value-text" data-i18n="value.premiumQuality.text">
+                    Ткани, отобранные вручную на лучших фабриках. Каждая вещь создана с тщательным вниманием к деталям и роскошными материалами.
                 </p>
             </div>
             
@@ -2728,9 +192,9 @@
                 <div class="value-icon">
                     <i class="fa-solid fa-heart"></i>
                 </div>
-                <h3 class="value-title">Inclusive Sizing</h3>
-                <p class="value-text">
-                    Celebrating every body. Our collection ranges from XS to 4XL, ensuring perfect fit and confidence for all.
+                <h3 class="value-title" data-i18n="value.inclusiveSizing.title">Расширенный Размерный Ряд</h3>
+                <p class="value-text" data-i18n="value.inclusiveSizing.text">
+                    Празднуем каждое тело. Наша коллекция представлена размерами от XS до 4XL, обеспечивая идеальную посадку и уверенность для всех.
                 </p>
             </div>
             
@@ -2738,9 +202,9 @@
                 <div class="value-icon">
                     <i class="fa-solid fa-truck"></i>
                 </div>
-                <h3 class="value-title">Free Shipping</h3>
-                <p class="value-text">
-                    Complimentary express delivery on all orders. Discreet packaging and hassle-free returns within 30 days.
+                <h3 class="value-title" data-i18n="value.freeShipping.title">Бесплатная Доставка</h3>
+                <p class="value-text" data-i18n="value.freeShipping.text">
+                    Бесплатная экспресс-доставка по всем заказам. Ненавязчивая упаковка и легкий возврат в течение 30 дней.
                 </p>
             </div>
         </div>
@@ -2753,8 +217,8 @@
     
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">Featured Collection</h2>
-            <p class="section-subtitle">Timeless pieces for every occasion</p>
+            <h2 class="section-title" data-i18n="featuredCollection.title">Избранная Коллекция</h2>
+            <p class="section-subtitle" data-i18n="featuredCollection.subtitle">Вневременные вещи на любой случай</p>
         </div>
         
         <div class="product-grid">
@@ -2762,7 +226,7 @@
                 <div class="product-image-wrapper">
                     <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png" alt="elegant black lace bralette on model, luxury lingerie photography, studio lighting" loading="lazy">
                     <div class="product-overlay">
-                        <button class="quick-view-btn">QUICK VIEW</button>
+                        <button class="quick-view-btn" data-i18n="product.quickView">БЫСТРЫЙ ПРОСМОТР</button>
                     </div>
                 </div>
                 <h4 class="product-name">Midnight Lace Bralette</h4>
@@ -2774,7 +238,7 @@
                 <div class="product-image-wrapper">
                     <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b56beff876-e29888d5a8ccd0f22677.png" alt="champagne silk slip dress lingerie on model, luxury sleepwear photography, elegant pose" loading="lazy">
                     <div class="product-overlay">
-                        <button class="quick-view-btn">QUICK VIEW</button>
+                        <button class="quick-view-btn" data-i18n="product.quickView">БЫСТРЫЙ ПРОСМОТР</button>
                     </div>
                     <div class="product-badge">NEW</div>
                 </div>
@@ -2787,7 +251,7 @@
                 <div class="product-image-wrapper">
                     <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/96fccf4507-ee48a6038febd71fdd60.png" alt="blush pink satin and lace bodysuit lingerie on model, high-end intimate apparel photography" loading="lazy">
                     <div class="product-overlay">
-                        <button class="quick-view-btn">QUICK VIEW</button>
+                        <button class="quick-view-btn" data-i18n="product.quickView">БЫСТРЫЙ ПРОСМОТР</button>
                     </div>
                 </div>
                 <h4 class="product-name">Rose Satin Bodysuit</h4>
@@ -2799,7 +263,7 @@
                 <div class="product-image-wrapper">
                     <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png" alt="ivory lace teddy lingerie on model, bridal lingerie photography, romantic lighting" loading="lazy">
                     <div class="product-overlay">
-                        <button class="quick-view-btn">QUICK VIEW</button>
+                        <button class="quick-view-btn" data-i18n="product.quickView">БЫСТРЫЙ ПРОСМОТР</button>
                     </div>
                     <div class="product-badge bestseller">BESTSELLER</div>
                 </div>
@@ -2811,7 +275,7 @@
         
         <div class="section-cta">
             <a href="catalog.html" class="cta-button btn-outline" style="text-decoration: none;">
-                <span>VIEW ALL PRODUCTS</span>
+                <span data-i18n="featuredCollection.viewAll">СМОТРЕТЬ ВСЕ ТОВАРЫ</span>
             </a>
         </div>
     </div>
@@ -2821,8 +285,8 @@
     <div class="container">
         <div class="bestsellers-header">
             <div>
-                <h2 class="section-title">Bestsellers</h2>
-                <p class="section-subtitle">Customer favorites that never go out of style</p>
+                <h2 class="section-title" data-i18n="bestsellers.title">Хиты Продаж</h2>
+                <p class="section-subtitle" data-i18n="bestsellers.subtitle">Фавориты клиентов, которые никогда не выходят из моды</p>
             </div>
             <div class="carousel-controls">
                 <button onclick="scrollCarousel('left')" class="carousel-btn">
@@ -2901,8 +365,8 @@
 <section id="new-arrivals">
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">New Arrivals</h2>
-            <p class="section-subtitle">Fresh styles just added to our collection</p>
+            <h2 class="section-title" data-i18n="newArrivals.title">Новинки</h2>
+            <p class="section-subtitle" data-i18n="newArrivals.subtitle">Новые стили, только что добавленные в нашу коллекцию</p>
         </div>
         
         <div class="new-arrivals-grid">
@@ -2911,11 +375,11 @@
                 <div class="featured-overlay"></div>
                 <div class="featured-content">
                     <div class="featured-info">
-                        <span class="new-badge">NEW ARRIVAL</span>
-                        <h3 class="featured-title">Champagne Dreams Collection</h3>
-                        <p class="featured-text">Indulge in pure luxury with our signature silk blend. Designed for ultimate comfort and timeless elegance.</p>
+                        <span class="new-badge" data-i18n="newArrivals.badge">НОВИНКА</span>
+                        <h3 class="featured-title" data-i18n="newArrivals.collectionTitle">Коллекция Champagne Dreams</h3>
+                        <p class="featured-text" data-i18n="newArrivals.collectionText">Насладитесь чистой роскошью с нашей фирменной шелковой смесью. Создано для максимального комфорта и вневременной элегантности.</p>
                         <button class="cta-button btn-solid">
-                            <span>SHOP NOW</span>
+                            <span data-i18n="newArrivals.shopNow">КУПИТЬ СЕЙЧАС</span>
                         </button>
                     </div>
                 </div>
@@ -2945,18 +409,18 @@
 <section id="shop-by-category">
     <div class="shop-category-container">
         <div class="shop-category-header">
-            <p class="shop-category-label">Discover</p>
-            <h2 class="shop-category-title">Shop By Category</h2>
+            <p class="shop-category-label" data-i18n="shopByCategory.label">Откройте</p>
+            <h2 class="shop-category-title" data-i18n="shopByCategory.title">Покупка По Категориям</h2>
         </div>
         <div class="shop-category-grid-large">
             <div class="shop-category-card shop-category-card-large">
                 <img class="shop-category-image" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/e1c675aa23-2d4d9f46c0df38e78bd4.png" alt="luxury lingerie collection display, elegant intimate apparel, premium bras and panties, sophisticated styling" loading="lazy">
                 <div class="shop-category-overlay"></div>
                 <div class="shop-category-content">
-                    <h3 class="shop-category-card-title">Lingerie</h3>
-                    <p class="shop-category-card-desc">Bras, Panties, Bodysuits & More</p>
+                    <h3 class="shop-category-card-title" data-i18n="shopByCategory.lingerie">Нижнее Белье</h3>
+                    <p class="shop-category-card-desc" data-i18n="shopByCategory.lingerieDesc">Бюстгальтеры, Трусики, Боди и Больше</p>
                     <a href="catalog.html" class="shop-category-link">
-                        <span>EXPLORE COLLECTION</span>
+                        <span data-i18n="shopByCategory.explore">СМОТРЕТЬ КОЛЛЕКЦИЮ</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -2965,10 +429,10 @@
                 <img class="shop-category-image" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/8d22e8b917-45930bbd52832d16a866.png" alt="luxury sleepwear collection, silk pajamas and robes, elegant nightwear display, premium fabrics" loading="lazy">
                 <div class="shop-category-overlay"></div>
                 <div class="shop-category-content">
-                    <h3 class="shop-category-card-title">Sleepwear</h3>
-                    <p class="shop-category-card-desc">Pajamas, Robes, Nightgowns & Sets</p>
+                    <h3 class="shop-category-card-title" data-i18n="shopByCategory.sleepwear">Домашняя Одежда</h3>
+                    <p class="shop-category-card-desc" data-i18n="shopByCategory.sleepwearDesc">Пижамы, Халаты, Ночные Сорочки и Комплекты</p>
                     <a href="catalog.html" class="shop-category-link">
-                        <span>EXPLORE COLLECTION</span>
+                        <span data-i18n="shopByCategory.explore">СМОТРЕТЬ КОЛЛЕКЦИЮ</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -2979,10 +443,10 @@
                 <img class="shop-category-image" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/e60a5848a9-ff667377d0accce2d5da.png" alt="luxury lingerie accessories, elegant garter belts and stockings, premium intimate accessories display" loading="lazy">
                 <div class="shop-category-overlay"></div>
                 <div class="shop-category-content shop-category-content-small">
-                    <h3 class="shop-category-card-title shop-category-card-title-small">Accessories</h3>
-                    <p class="shop-category-card-desc shop-category-card-desc-small">Complete Your Look</p>
+                    <h3 class="shop-category-card-title shop-category-card-title-small" data-i18n="shopByCategory.accessories">Аксессуары</h3>
+                    <p class="shop-category-card-desc shop-category-card-desc-small" data-i18n="shopByCategory.accessoriesDesc">Дополните Ваш Образ</p>
                     <a href="catalog.html" class="shop-category-link">
-                        <span>SHOP NOW</span>
+                        <span data-i18n="shopByCategory.shopNow">КУПИТЬ СЕЙЧАС</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -2991,10 +455,10 @@
                 <img class="shop-category-image" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/f7310dd007-d20be4269f968db0562f.png" alt="luxury bridal lingerie, white lace wedding night lingerie, elegant bridal intimate apparel" loading="lazy">
                 <div class="shop-category-overlay"></div>
                 <div class="shop-category-content shop-category-content-small">
-                    <h3 class="shop-category-card-title shop-category-card-title-small">Bridal</h3>
-                    <p class="shop-category-card-desc shop-category-card-desc-small">For Your Special Day</p>
+                    <h3 class="shop-category-card-title shop-category-card-title-small" data-i18n="shopByCategory.bridal">Свадебное</h3>
+                    <p class="shop-category-card-desc shop-category-card-desc-small" data-i18n="shopByCategory.bridalDesc">Для Вашего Особенного Дня</p>
                     <a href="catalog.html" class="shop-category-link">
-                        <span>SHOP NOW</span>
+                        <span data-i18n="shopByCategory.shopNow">КУПИТЬ СЕЙЧАС</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -3003,10 +467,10 @@
                 <img class="shop-category-image" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/ab6d4f4aea-48414ec65d2704a7fe52.png" alt="luxury loungewear, comfortable elegant homewear, premium casual intimate apparel" loading="lazy">
                 <div class="shop-category-overlay"></div>
                 <div class="shop-category-content shop-category-content-small">
-                    <h3 class="shop-category-card-title shop-category-card-title-small">Loungewear</h3>
-                    <p class="shop-category-card-desc shop-category-card-desc-small">Comfort Meets Style</p>
+                    <h3 class="shop-category-card-title shop-category-card-title-small" data-i18n="shopByCategory.loungewear">Для Дома</h3>
+                    <p class="shop-category-card-desc shop-category-card-desc-small" data-i18n="shopByCategory.loungewearDesc">Комфорт Встречается Со Стилем</p>
                     <a href="catalog.html" class="shop-category-link">
-                        <span>SHOP NOW</span>
+                        <span data-i18n="shopByCategory.shopNow">КУПИТЬ СЕЙЧАС</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -3020,8 +484,8 @@
     
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">What Our Customers Say</h2>
-            <p class="section-subtitle">Real reviews from real people</p>
+            <h2 class="section-title" data-i18n="testimonials.title">Что Говорят Наши Клиенты</h2>
+            <p class="section-subtitle" data-i18n="testimonials.subtitle">Настоящие отзывы от реальных людей</p>
         </div>
         
         <div class="testimonials-grid">
@@ -3089,9 +553,9 @@
     <div class="container">
         <div class="size-guide-grid">
             <div>
-                <h2 class="size-guide-title">Find Your Perfect Fit</h2>
-                <p class="size-guide-text">
-                    Not sure about your size? Our comprehensive size guide and fit experts are here to help you find pieces that fit perfectly and feel incredible.
+                <h2 class="size-guide-title" data-i18n="sizeGuide.title">Найдите Ваш Идеальный Размер</h2>
+                <p class="size-guide-text" data-i18n="sizeGuide.text">
+                    Не уверены в своем размере? Наше подробное руководство по размерам и эксперты по подбору здесь, чтобы помочь вам найти вещи, которые идеально сидят и ощущаются невероятно.
                 </p>
                 
                 <div class="size-guide-features">
@@ -3100,8 +564,8 @@
                             <i class="fa-solid fa-ruler"></i>
                         </div>
                         <div>
-                            <h4 class="feature-title">Detailed Measurements</h4>
-                            <p class="feature-text">Step-by-step guide with visual aids to measure yourself accurately at home.</p>
+                            <h4 class="feature-title" data-i18n="sizeGuide.detailedMeasurements.title">Подробные Измерения</h4>
+                            <p class="feature-text" data-i18n="sizeGuide.detailedMeasurements.text">Пошаговое руководство с визуальными подсказками для точного измерения себя дома.</p>
                         </div>
                     </div>
                     
@@ -3110,8 +574,8 @@
                             <i class="fa-solid fa-comments"></i>
                         </div>
                         <div>
-                            <h4 class="feature-title">Expert Consultation</h4>
-                            <p class="feature-text">Chat with our fit specialists for personalized recommendations.</p>
+                            <h4 class="feature-title" data-i18n="sizeGuide.expertConsultation.title">Консультация Эксперта</h4>
+                            <p class="feature-text" data-i18n="sizeGuide.expertConsultation.text">Общайтесь с нашими специалистами по подбору для персональных рекомендаций.</p>
                         </div>
                     </div>
                     
@@ -3120,48 +584,48 @@
                             <i class="fa-solid fa-sync"></i>
                         </div>
                         <div>
-                            <h4 class="feature-title">Easy Exchanges</h4>
-                            <p class="feature-text">Free exchanges within 30 days if the fit isn't quite right.</p>
+                            <h4 class="feature-title" data-i18n="sizeGuide.easyExchanges.title">Легкий Обмен</h4>
+                            <p class="feature-text" data-i18n="sizeGuide.easyExchanges.text">Бесплатный обмен в течение 30 дней, если размер не совсем подходит.</p>
                         </div>
                     </div>
                 </div>
                 
                 <button class="cta-button btn-solid">
-                    <span>VIEW SIZE GUIDE</span>
+                    <span data-i18n="sizeGuide.viewGuide">СМОТРЕТЬ РУКОВОДСТВО ПО РАЗМЕРАМ</span>
                 </button>
             </div>
             
             <div class="size-calculator">
-                <h3 class="calculator-title">Quick Size Calculator</h3>
+                <h3 class="calculator-title" data-i18n="sizeGuide.calculator.title">Быстрый Калькулятор Размеров</h3>
                 <form class="calculator-form">
                     <div class="form-group">
-                        <label>Band Size (inches)</label>
-                        <input type="number" placeholder="e.g., 34">
+                        <label data-i18n="sizeGuide.calculator.bandSize">Обхват Под Грудью (см)</label>
+                        <input type="number" placeholder="например, 75" data-i18n-placeholder="sizeGuide.calculator.bandSizePlaceholder">
                     </div>
                     
                     <div class="form-group">
-                        <label>Bust Size (inches)</label>
-                        <input type="number" placeholder="e.g., 38">
+                        <label data-i18n="sizeGuide.calculator.bustSize">Обхват Груди (см)</label>
+                        <input type="number" placeholder="например, 85" data-i18n-placeholder="sizeGuide.calculator.bustSizePlaceholder">
                     </div>
                     
                     <div class="form-group">
-                        <label>Body Type</label>
+                        <label data-i18n="sizeGuide.calculator.bodyType">Тип Телосложения</label>
                         <select>
-                            <option>Select body type</option>
-                            <option>Petite</option>
-                            <option>Average</option>
-                            <option>Tall</option>
-                            <option>Plus Size</option>
+                            <option data-i18n="sizeGuide.calculator.selectBodyType">Выберите тип телосложения</option>
+                            <option data-i18n="sizeGuide.calculator.petite">Маленькое</option>
+                            <option data-i18n="sizeGuide.calculator.average">Среднее</option>
+                            <option data-i18n="sizeGuide.calculator.tall">Высокое</option>
+                            <option data-i18n="sizeGuide.calculator.plusSize">Большое</option>
                         </select>
                     </div>
                     
-                    <button type="submit" class="form-submit">
-                        CALCULATE MY SIZE
+                    <button type="submit" class="form-submit" data-i18n="sizeGuide.calculator.calculate">
+                        РАССЧИТАТЬ РАЗМЕР
                     </button>
                 </form>
                 
-                <p class="form-note">
-                    Results are recommendations. Fit may vary by style.
+                <p class="form-note" data-i18n="sizeGuide.calculator.note">
+                    Результаты являются рекомендациями. Посадка может варьироваться в зависимости от стиля.
                 </p>
             </div>
         </div>
@@ -3172,18 +636,18 @@
     <div class="container">
         <div class="about-grid">
             <div>
-                <h2 class="size-guide-title">Our Story</h2>
-                <p class="size-guide-text">
-                    Founded in 2018, Chill Out Lingerie was born from a simple belief: every woman deserves to feel beautiful, comfortable, and confident in her intimate apparel.
+                <h2 class="size-guide-title" data-i18n="about.title">Наша История</h2>
+                <p class="size-guide-text" data-i18n="about.text1">
+                    Основанная в 2018 году, Chill Out Lingerie родилась из простой веры: каждая женщина заслуживает чувствовать себя красивой, комфортной и уверенной в своем нижнем белье.
                 </p>
-                <p class="size-guide-text">
-                    We meticulously source the finest fabrics from around the world, working with artisan mills in France, Italy, and Switzerland to create pieces that are as luxurious as they are comfortable.
+                <p class="size-guide-text" data-i18n="about.text2">
+                    Мы тщательно отбираем лучшие ткани со всего мира, работая с ремесленными фабриками во Франции, Италии и Швейцарии, чтобы создавать вещи, которые так же роскошны, как и удобны.
                 </p>
-                <p class="size-guide-text">
-                    Our commitment to inclusive sizing and sustainable practices ensures that elegance is accessible to all, without compromising our planet.
+                <p class="size-guide-text" data-i18n="about.text3">
+                    Наша приверженность расширенному размерному ряду и устойчивым практикам гарантирует, что элегантность доступна всем, не жертвуя нашей планетой.
                 </p>
                 <button class="cta-button btn-outline">
-                    <span>LEARN MORE</span>
+                    <span data-i18n="about.learnMore">УЗНАТЬ БОЛЬШЕ</span>
                 </button>
             </div>
             
@@ -3213,26 +677,26 @@
     <div class="container">
         <div class="sustainability-card">
             <i class="fa-solid fa-leaf sustainability-icon"></i>
-            <h2 class="sustainability-title">Committed to Sustainability</h2>
-            <p class="sustainability-text">
-                We believe luxury and responsibility go hand in hand. Our packaging is 100% recyclable, we use ethically sourced materials, and partner with manufacturers who share our commitment to fair labor practices and environmental stewardship.
+            <h2 class="sustainability-title" data-i18n="sustainability.title">Приверженность Устойчивому Развитию</h2>
+            <p class="sustainability-text" data-i18n="sustainability.text">
+                Мы верим, что роскошь и ответственность идут рука об руку. Наша упаковка на 100% перерабатываемая, мы используем этично полученные материалы и сотрудничаем с производителями, которые разделяют нашу приверженность справедливым трудовым практикам и заботе об окружающей среде.
             </p>
             <div class="sustainability-stats">
                 <div>
                     <p class="stat-number">100%</p>
-                    <p class="stat-label">Recyclable Packaging</p>
+                    <p class="stat-label" data-i18n="sustainability.stats.recyclable">Перерабатываемая Упаковка</p>
                 </div>
                 <div>
                     <p class="stat-number">50+</p>
-                    <p class="stat-label">Ethical Partners</p>
+                    <p class="stat-label" data-i18n="sustainability.stats.partners">Этичные Партнеры</p>
                 </div>
                 <div>
                     <p class="stat-number">0</p>
-                    <p class="stat-label">Animal Products</p>
+                    <p class="stat-label" data-i18n="sustainability.stats.animal">Продуктов Животного Происхождения</p>
                 </div>
                 <div>
                     <p class="stat-number">5★</p>
-                    <p class="stat-label">Customer Rating</p>
+                    <p class="stat-label" data-i18n="sustainability.stats.rating">Рейтинг Клиентов</p>
                 </div>
             </div>
         </div>
@@ -3242,18 +706,18 @@
 <section id="newsletter">
     <div class="container">
         <div class="newsletter-content">
-            <h2 class="newsletter-title">Join Our Community</h2>
-            <p class="newsletter-text">
-                Subscribe to receive exclusive offers, styling tips, and early access to new collections.
+            <h2 class="newsletter-title" data-i18n="newsletter.title">Присоединяйтесь К Нашему Сообществу</h2>
+            <p class="newsletter-text" data-i18n="newsletter.text">
+                Подпишитесь, чтобы получать эксклюзивные предложения, советы по стилю и ранний доступ к новым коллекциям.
             </p>
             <form class="newsletter-form">
-                <input type="email" placeholder="Enter your email address" class="newsletter-input">
+                <input type="email" placeholder="Введите ваш email адрес" class="newsletter-input" data-i18n-placeholder="newsletter.placeholder">
                 <button type="submit" class="cta-button btn-solid">
-                    <span>SUBSCRIBE</span>
+                    <span data-i18n="newsletter.subscribe">ПОДПИСАТЬСЯ</span>
                 </button>
             </form>
-            <p class="newsletter-note">
-                By subscribing, you agree to our Privacy Policy and consent to receive updates.
+            <p class="newsletter-note" data-i18n="newsletter.note">
+                Подписываясь, вы соглашаетесь с нашей Политикой Конфиденциальности и даете согласие на получение обновлений.
             </p>
         </div>
     </div>
@@ -3263,9 +727,9 @@
     <div class="container">
         <div class="contact-grid">
             <div>
-                <h2 class="contact-title">Get In Touch</h2>
-                <p class="contact-text">
-                    Have a question? Our customer care team is here to help. Reach out and we'll get back to you within 24 hours.
+                <h2 class="contact-title" data-i18n="contact.title">Свяжитесь С Нами</h2>
+                <p class="contact-text" data-i18n="contact.text">
+                    Есть вопрос? Наша команда заботы о клиентах здесь, чтобы помочь. Свяжитесь с нами, и мы ответим в течение 24 часов.
                 </p>
                 
                 <div class="contact-info">
@@ -3274,9 +738,9 @@
                             <i class="fa-solid fa-phone"></i>
                         </div>
                         <div>
-                            <h4 class="contact-item-title">Phone</h4>
+                            <h4 class="contact-item-title" data-i18n="contact.phone.title">Телефон</h4>
                             <p class="contact-item-text">+1 (555) 123-4567</p>
-                            <p class="contact-item-note">Mon-Fri, 9am-6pm EST</p>
+                            <p class="contact-item-note" data-i18n="contact.phone.note">Пн-Пт, 9:00-18:00 EST</p>
                         </div>
                     </div>
                     
@@ -3285,9 +749,9 @@
                             <i class="fa-solid fa-envelope"></i>
                         </div>
                         <div>
-                            <h4 class="contact-item-title">Email</h4>
+                            <h4 class="contact-item-title" data-i18n="contact.email.title">Email</h4>
                             <p class="contact-item-text">hello@chilloutlingerie.com</p>
-                            <p class="contact-item-note">We'll respond within 24 hours</p>
+                            <p class="contact-item-note" data-i18n="contact.email.note">Мы ответим в течение 24 часов</p>
                         </div>
                     </div>
                     
@@ -3296,31 +760,31 @@
                             <i class="fa-solid fa-location-dot"></i>
                         </div>
                         <div>
-                            <h4 class="contact-item-title">Showroom</h4>
+                            <h4 class="contact-item-title" data-i18n="contact.showroom.title">Шоурум</h4>
                             <p class="contact-item-text">123 Madison Avenue<br>New York, NY 10016</p>
-                            <p class="contact-item-note">By appointment only</p>
+                            <p class="contact-item-note" data-i18n="contact.showroom.note">Только по предварительной записи</p>
                         </div>
                     </div>
                 </div>
             </div>
             
             <div class="contact-form">
-                <h3 class="contact-form-title">Send Us a Message</h3>
+                <h3 class="contact-form-title" data-i18n="contact.form.title">Отправьте Нам Сообщение</h3>
                 <form class="contact-form-fields">
                     <div>
-                        <input type="text" placeholder="Your Name">
+                        <input type="text" placeholder="Ваше Имя" data-i18n-placeholder="contact.form.namePlaceholder">
                     </div>
                     <div>
-                        <input type="email" placeholder="Your Email">
+                        <input type="email" placeholder="Ваш Email" data-i18n-placeholder="contact.form.emailPlaceholder">
                     </div>
                     <div>
-                        <input type="text" placeholder="Subject">
+                        <input type="text" placeholder="Тема" data-i18n-placeholder="contact.form.subjectPlaceholder">
                     </div>
                     <div>
-                        <textarea rows="5" placeholder="Your Message"></textarea>
+                        <textarea rows="5" placeholder="Ваше Сообщение" data-i18n-placeholder="contact.form.messagePlaceholder"></textarea>
                     </div>
                     <button type="submit" class="cta-button btn-solid" style="width: 100%;">
-                        <span>SEND MESSAGE</span>
+                        <span data-i18n="contact.form.send">ОТПРАВИТЬ СООБЩЕНИЕ</span>
                     </button>
                 </form>
             </div>
@@ -3333,8 +797,8 @@
         <div class="footer-main">
             <div>
                 <h3 class="footer-brand">Chill Out Lingerie</h3>
-                <p class="footer-desc">
-                    Elevating intimate apparel with timeless elegance, premium quality, and inclusive designs for the modern woman.
+                <p class="footer-desc" data-i18n="footer.description">
+                    Повышаем уровень интимного белья с вневременной элегантностью, премиальным качеством и инклюзивными дизайнами для современной женщины.
                 </p>
                 <div class="footer-social">
                     <a href="https://vk.com" target="_blank" class="vk">
@@ -3363,6 +827,479 @@
 </footer>
 
 <script>
+    // Система переводов
+    const translations = {
+        ru: {
+            menu: {
+                home: 'ГЛАВНАЯ',
+                catalog: 'КАТАЛОГ',
+                bestsellers: 'ХИТЫ ПРОДАЖ',
+                newArrivals: 'НОВИНКИ',
+                about: 'О НАС',
+                contact: 'КОНТАКТЫ'
+            },
+            hero: {
+                text: 'Где элегантность встречается с комфортом. Откройте для себя нашу тщательно подобранную коллекцию премиального нижнего белья, созданного для современной женщины.',
+                exploreCollections: 'СМОТРЕТЬ КОЛЛЕКЦИИ',
+                shopBestsellers: 'ХИТЫ ПРОДАЖ'
+            },
+            value: {
+                premiumQuality: {
+                    title: 'Премиум Качество',
+                    text: 'Ткани, отобранные вручную на лучших фабриках. Каждая вещь создана с тщательным вниманием к деталям и роскошными материалами.'
+                },
+                inclusiveSizing: {
+                    title: 'Расширенный Размерный Ряд',
+                    text: 'Празднуем каждое тело. Наша коллекция представлена размерами от XS до 4XL, обеспечивая идеальную посадку и уверенность для всех.'
+                },
+                freeShipping: {
+                    title: 'Бесплатная Доставка',
+                    text: 'Бесплатная экспресс-доставка по всем заказам. Ненавязчивая упаковка и легкий возврат в течение 30 дней.'
+                }
+            },
+            featuredCollection: {
+                title: 'Избранная Коллекция',
+                subtitle: 'Вневременные вещи на любой случай',
+                viewAll: 'СМОТРЕТЬ ВСЕ ТОВАРЫ'
+            },
+            bestsellers: {
+                title: 'Хиты Продаж',
+                subtitle: 'Фавориты клиентов, которые никогда не выходят из моды'
+            },
+            newArrivals: {
+                title: 'Новинки',
+                subtitle: 'Новые стили, только что добавленные в нашу коллекцию',
+                badge: 'НОВИНКА',
+                collectionTitle: 'Коллекция Champagne Dreams',
+                collectionText: 'Насладитесь чистой роскошью с нашей фирменной шелковой смесью. Создано для максимального комфорта и вневременной элегантности.',
+                shopNow: 'КУПИТЬ СЕЙЧАС'
+            },
+            shopByCategory: {
+                label: 'Откройте',
+                title: 'Покупка По Категориям',
+                lingerie: 'Нижнее Белье',
+                lingerieDesc: 'Бюстгальтеры, Трусики, Боди и Больше',
+                sleepwear: 'Домашняя Одежда',
+                sleepwearDesc: 'Пижамы, Халаты, Ночные Сорочки и Комплекты',
+                accessories: 'Аксессуары',
+                accessoriesDesc: 'Дополните Ваш Образ',
+                bridal: 'Свадебное',
+                bridalDesc: 'Для Вашего Особенного Дня',
+                loungewear: 'Для Дома',
+                loungewearDesc: 'Комфорт Встречается Со Стилем',
+                explore: 'СМОТРЕТЬ КОЛЛЕКЦИЮ',
+                shopNow: 'КУПИТЬ СЕЙЧАС'
+            },
+            testimonials: {
+                title: 'Что Говорят Наши Клиенты',
+                subtitle: 'Настоящие отзывы от реальных людей'
+            },
+            sizeGuide: {
+                title: 'Найдите Ваш Идеальный Размер',
+                text: 'Не уверены в своем размере? Наше подробное руководство по размерам и эксперты по подбору здесь, чтобы помочь вам найти вещи, которые идеально сидят и ощущаются невероятно.',
+                detailedMeasurements: {
+                    title: 'Подробные Измерения',
+                    text: 'Пошаговое руководство с визуальными подсказками для точного измерения себя дома.'
+                },
+                expertConsultation: {
+                    title: 'Консультация Эксперта',
+                    text: 'Общайтесь с нашими специалистами по подбору для персональных рекомендаций.'
+                },
+                easyExchanges: {
+                    title: 'Легкий Обмен',
+                    text: 'Бесплатный обмен в течение 30 дней, если размер не совсем подходит.'
+                },
+                viewGuide: 'СМОТРЕТЬ РУКОВОДСТВО ПО РАЗМЕРАМ',
+                calculator: {
+                    title: 'Быстрый Калькулятор Размеров',
+                    bandSize: 'Обхват Под Грудью (см)',
+                    bandSizePlaceholder: 'например, 75',
+                    bustSize: 'Обхват Груди (см)',
+                    bustSizePlaceholder: 'например, 85',
+                    bodyType: 'Тип Телосложения',
+                    selectBodyType: 'Выберите тип телосложения',
+                    petite: 'Маленькое',
+                    average: 'Среднее',
+                    tall: 'Высокое',
+                    plusSize: 'Большое',
+                    calculate: 'РАССЧИТАТЬ РАЗМЕР',
+                    note: 'Результаты являются рекомендациями. Посадка может варьироваться в зависимости от стиля.'
+                }
+            },
+            about: {
+                title: 'Наша История',
+                text1: 'Основанная в 2018 году, Chill Out Lingerie родилась из простой веры: каждая женщина заслуживает чувствовать себя красивой, комфортной и уверенной в своем нижнем белье.',
+                text2: 'Мы тщательно отбираем лучшие ткани со всего мира, работая с ремесленными фабриками во Франции, Италии и Швейцарии, чтобы создавать вещи, которые так же роскошны, как и удобны.',
+                text3: 'Наша приверженность расширенному размерному ряду и устойчивым практикам гарантирует, что элегантность доступна всем, не жертвуя нашей планетой.',
+                learnMore: 'УЗНАТЬ БОЛЬШЕ'
+            },
+            sustainability: {
+                title: 'Приверженность Устойчивому Развитию',
+                text: 'Мы верим, что роскошь и ответственность идут рука об руку. Наша упаковка на 100% перерабатываемая, мы используем этично полученные материалы и сотрудничаем с производителями, которые разделяют нашу приверженность справедливым трудовым практикам и заботе об окружающей среде.',
+                stats: {
+                    recyclable: 'Перерабатываемая Упаковка',
+                    partners: 'Этичные Партнеры',
+                    animal: 'Продуктов Животного Происхождения',
+                    rating: 'Рейтинг Клиентов'
+                }
+            },
+            newsletter: {
+                title: 'Присоединяйтесь К Нашему Сообществу',
+                text: 'Подпишитесь, чтобы получать эксклюзивные предложения, советы по стилю и ранний доступ к новым коллекциям.',
+                placeholder: 'Введите ваш email адрес',
+                subscribe: 'ПОДПИСАТЬСЯ',
+                note: 'Подписываясь, вы соглашаетесь с нашей Политикой Конфиденциальности и даете согласие на получение обновлений.'
+            },
+            contact: {
+                title: 'Свяжитесь С Нами',
+                text: 'Есть вопрос? Наша команда заботы о клиентах здесь, чтобы помочь. Свяжитесь с нами, и мы ответим в течение 24 часов.',
+                phone: {
+                    title: 'Телефон',
+                    note: 'Пн-Пт, 9:00-18:00 EST'
+                },
+                email: {
+                    title: 'Email',
+                    note: 'Мы ответим в течение 24 часов'
+                },
+                showroom: {
+                    title: 'Шоурум',
+                    note: 'Только по предварительной записи'
+                },
+                form: {
+                    title: 'Отправьте Нам Сообщение',
+                    namePlaceholder: 'Ваше Имя',
+                    emailPlaceholder: 'Ваш Email',
+                    subjectPlaceholder: 'Тема',
+                    messagePlaceholder: 'Ваше Сообщение',
+                    send: 'ОТПРАВИТЬ СООБЩЕНИЕ'
+                }
+            },
+            footer: {
+                description: 'Повышаем уровень интимного белья с вневременной элегантностью, премиальным качеством и инклюзивными дизайнами для современной женщины.'
+            },
+            product: {
+                quickView: 'БЫСТРЫЙ ПРОСМОТР',
+                badge: {
+                    new: 'НОВИНКА',
+                    bestseller: 'ХИТ ПРОДАЖ'
+                }
+            },
+            catalog: {
+                searchPlaceholder: 'Поиск товаров...',
+                hero: {
+                    title: 'Наша Коллекция',
+                    text: 'Откройте для себя 156 изделий премиального нижнего белья, созданных для любого случая'
+                },
+                filters: {
+                    title: 'Фильтры',
+                    clearAll: 'Очистить Все',
+                    category: 'Категория',
+                    categories: {
+                        bras: 'Бюстгальтеры и Бралетты',
+                        panties: 'Трусики',
+                        sleepwear: 'Домашняя Одежда',
+                        bodysuits: 'Боди',
+                        robes: 'Халаты и Кимоно',
+                        bridal: 'Свадебная Коллекция'
+                    },
+                    priceRange: 'Диапазон Цен',
+                    size: 'Размер',
+                    color: 'Цвет',
+                    material: 'Материал',
+                    materials: {
+                        silk: 'Шелк',
+                        lace: 'Кружево',
+                        satin: 'Атлас',
+                        cotton: 'Хлопок'
+                    },
+                    rating: 'Рейтинг'
+                },
+                products: {
+                    showing: 'Показано',
+                    products: 'товаров'
+                },
+                sort: {
+                    label: 'Сортировать:',
+                    featured: 'Рекомендуемые',
+                    priceLow: 'Цена: По Возрастанию',
+                    priceHigh: 'Цена: По Убыванию',
+                    newest: 'Новинки',
+                    bestselling: 'Хиты Продаж',
+                    topRated: 'Высокий Рейтинг'
+                },
+                categories: {
+                    title: 'Покупка По Стилю',
+                    subtitle: 'Найдите свой идеальный вариант',
+                    romantic: 'Романтичный',
+                    elegant: 'Элегантный',
+                    seductive: 'Соблазнительный',
+                    comfort: 'Комфорт'
+                }
+            }
+        },
+        en: {
+            menu: {
+                home: 'HOME',
+                catalog: 'CATALOG',
+                bestsellers: 'BESTSELLERS',
+                newArrivals: 'NEW ARRIVALS',
+                about: 'ABOUT',
+                contact: 'CONTACT'
+            },
+            hero: {
+                text: 'Where elegance meets comfort. Discover our curated collection of premium lingerie designed for the modern woman.',
+                exploreCollections: 'EXPLORE COLLECTIONS',
+                shopBestsellers: 'SHOP BESTSELLERS'
+            },
+            value: {
+                premiumQuality: {
+                    title: 'Premium Quality',
+                    text: 'Handpicked fabrics from the finest mills. Every piece crafted with meticulous attention to detail and luxury materials.'
+                },
+                inclusiveSizing: {
+                    title: 'Inclusive Sizing',
+                    text: 'Celebrating every body. Our collection ranges from XS to 4XL, ensuring perfect fit and confidence for all.'
+                },
+                freeShipping: {
+                    title: 'Free Shipping',
+                    text: 'Complimentary express delivery on all orders. Discreet packaging and hassle-free returns within 30 days.'
+                }
+            },
+            featuredCollection: {
+                title: 'Featured Collection',
+                subtitle: 'Timeless pieces for every occasion',
+                viewAll: 'VIEW ALL PRODUCTS'
+            },
+            bestsellers: {
+                title: 'Bestsellers',
+                subtitle: 'Customer favorites that never go out of style'
+            },
+            newArrivals: {
+                title: 'New Arrivals',
+                subtitle: 'Fresh styles just added to our collection',
+                badge: 'NEW ARRIVAL',
+                collectionTitle: 'Champagne Dreams Collection',
+                collectionText: 'Indulge in pure luxury with our signature silk blend. Designed for ultimate comfort and timeless elegance.',
+                shopNow: 'SHOP NOW'
+            },
+            shopByCategory: {
+                label: 'Discover',
+                title: 'Shop By Category',
+                lingerie: 'Lingerie',
+                lingerieDesc: 'Bras, Panties, Bodysuits & More',
+                sleepwear: 'Sleepwear',
+                sleepwearDesc: 'Pajamas, Robes, Nightgowns & Sets',
+                accessories: 'Accessories',
+                accessoriesDesc: 'Complete Your Look',
+                bridal: 'Bridal',
+                bridalDesc: 'For Your Special Day',
+                loungewear: 'Loungewear',
+                loungewearDesc: 'Comfort Meets Style',
+                explore: 'EXPLORE COLLECTION',
+                shopNow: 'SHOP NOW'
+            },
+            testimonials: {
+                title: 'What Our Customers Say',
+                subtitle: 'Real reviews from real people'
+            },
+            sizeGuide: {
+                title: 'Find Your Perfect Fit',
+                text: 'Not sure about your size? Our comprehensive size guide and fit experts are here to help you find pieces that fit perfectly and feel incredible.',
+                detailedMeasurements: {
+                    title: 'Detailed Measurements',
+                    text: 'Step-by-step guide with visual aids to measure yourself accurately at home.'
+                },
+                expertConsultation: {
+                    title: 'Expert Consultation',
+                    text: 'Chat with our fit specialists for personalized recommendations.'
+                },
+                easyExchanges: {
+                    title: 'Easy Exchanges',
+                    text: 'Free exchanges within 30 days if the fit isn\'t quite right.'
+                },
+                viewGuide: 'VIEW SIZE GUIDE',
+                calculator: {
+                    title: 'Quick Size Calculator',
+                    bandSize: 'Band Size (inches)',
+                    bandSizePlaceholder: 'e.g., 34',
+                    bustSize: 'Bust Size (inches)',
+                    bustSizePlaceholder: 'e.g., 38',
+                    bodyType: 'Body Type',
+                    selectBodyType: 'Select body type',
+                    petite: 'Petite',
+                    average: 'Average',
+                    tall: 'Tall',
+                    plusSize: 'Plus Size',
+                    calculate: 'CALCULATE MY SIZE',
+                    note: 'Results are recommendations. Fit may vary by style.'
+                }
+            },
+            about: {
+                title: 'Our Story',
+                text1: 'Founded in 2018, Chill Out Lingerie was born from a simple belief: every woman deserves to feel beautiful, comfortable, and confident in her intimate apparel.',
+                text2: 'We meticulously source the finest fabrics from around the world, working with artisan mills in France, Italy, and Switzerland to create pieces that are as luxurious as they are comfortable.',
+                text3: 'Our commitment to inclusive sizing and sustainable practices ensures that elegance is accessible to all, without compromising our planet.',
+                learnMore: 'LEARN MORE'
+            },
+            sustainability: {
+                title: 'Committed to Sustainability',
+                text: 'We believe luxury and responsibility go hand in hand. Our packaging is 100% recyclable, we use ethically sourced materials, and partner with manufacturers who share our commitment to fair labor practices and environmental stewardship.',
+                stats: {
+                    recyclable: 'Recyclable Packaging',
+                    partners: 'Ethical Partners',
+                    animal: 'Animal Products',
+                    rating: 'Customer Rating'
+                }
+            },
+            newsletter: {
+                title: 'Join Our Community',
+                text: 'Subscribe to receive exclusive offers, styling tips, and early access to new collections.',
+                placeholder: 'Enter your email address',
+                subscribe: 'SUBSCRIBE',
+                note: 'By subscribing, you agree to our Privacy Policy and consent to receive updates.'
+            },
+            contact: {
+                title: 'Get In Touch',
+                text: 'Have a question? Our customer care team is here to help. Reach out and we\'ll get back to you within 24 hours.',
+                phone: {
+                    title: 'Phone',
+                    note: 'Mon-Fri, 9am-6pm EST'
+                },
+                email: {
+                    title: 'Email',
+                    note: 'We\'ll respond within 24 hours'
+                },
+                showroom: {
+                    title: 'Showroom',
+                    note: 'By appointment only'
+                },
+                form: {
+                    title: 'Send Us a Message',
+                    namePlaceholder: 'Your Name',
+                    emailPlaceholder: 'Your Email',
+                    subjectPlaceholder: 'Subject',
+                    messagePlaceholder: 'Your Message',
+                    send: 'SEND MESSAGE'
+                }
+            },
+            footer: {
+                description: 'Elevating intimate apparel with timeless elegance, premium quality, and inclusive designs for the modern woman.'
+            },
+            product: {
+                quickView: 'QUICK VIEW',
+                badge: {
+                    new: 'NEW',
+                    bestseller: 'BESTSELLER'
+                }
+            },
+            catalog: {
+                searchPlaceholder: 'Search for products...',
+                hero: {
+                    title: 'Our Collection',
+                    text: 'Discover 156 pieces of premium lingerie designed for every occasion'
+                },
+                filters: {
+                    title: 'Filters',
+                    clearAll: 'Clear All',
+                    category: 'Category',
+                    categories: {
+                        bras: 'Bras & Bralettes',
+                        panties: 'Panties',
+                        sleepwear: 'Sleepwear',
+                        bodysuits: 'Bodysuits',
+                        robes: 'Robes & Kimonos',
+                        bridal: 'Bridal Collection'
+                    },
+                    priceRange: 'Price Range',
+                    size: 'Size',
+                    color: 'Color',
+                    material: 'Material',
+                    materials: {
+                        silk: 'Silk',
+                        lace: 'Lace',
+                        satin: 'Satin',
+                        cotton: 'Cotton'
+                    },
+                    rating: 'Rating'
+                },
+                products: {
+                    showing: 'Showing',
+                    products: 'products'
+                },
+                sort: {
+                    label: 'Sort by:',
+                    featured: 'Featured',
+                    priceLow: 'Price: Low to High',
+                    priceHigh: 'Price: High to Low',
+                    newest: 'Newest Arrivals',
+                    bestselling: 'Best Selling',
+                    topRated: 'Top Rated'
+                },
+                categories: {
+                    title: 'Shop by Style',
+                    subtitle: 'Find your perfect match',
+                    romantic: 'Romantic',
+                    elegant: 'Elegant',
+                    seductive: 'Seductive',
+                    comfort: 'Comfort'
+                }
+            }
+        }
+    };
+
+    // Текущий язык (по умолчанию русский)
+    let currentLanguage = localStorage.getItem('language') || 'ru';
+
+    // Функция получения перевода
+    function getTranslation(key, lang = currentLanguage) {
+        const keys = key.split('.');
+        let value = translations[lang];
+        for (const k of keys) {
+            value = value?.[k];
+        }
+        return value || key;
+    }
+
+    // Функция перевода страницы
+    function translatePage(lang) {
+        currentLanguage = lang;
+        localStorage.setItem('language', lang);
+        document.documentElement.lang = lang;
+
+        // Переводим все элементы с data-i18n
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            const translation = getTranslation(key, lang);
+            if (translation) {
+                el.textContent = translation;
+            }
+        });
+
+        // Переводим placeholder
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            const translation = getTranslation(key, lang);
+            if (translation) {
+                el.placeholder = translation;
+            }
+        });
+
+        // Обновляем селекты
+        document.querySelectorAll('select option[data-i18n]').forEach(option => {
+            const key = option.getAttribute('data-i18n');
+            const translation = getTranslation(key, lang);
+            if (translation) {
+                option.textContent = translation;
+            }
+        });
+    }
+
+    // Функция переключения языка
+    function toggleLanguage() {
+        const newLang = currentLanguage === 'ru' ? 'en' : 'ru';
+        translatePage(newLang);
+    }
+
     function openMenu() {
         document.getElementById('menu-overlay').classList.add('active');
     }
@@ -3383,6 +1320,9 @@
     }
     
     document.addEventListener('DOMContentLoaded', function() {
+        // Применяем сохраненный язык при загрузке
+        translatePage(currentLanguage);
+        
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -100px 0px'

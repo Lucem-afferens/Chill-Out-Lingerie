@@ -189,6 +189,29 @@ body {
     color: #ffc0cb;
 }
 
+.lang-switcher {
+    position: relative;
+}
+
+.lang-switcher::after {
+    content: 'RU';
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    font-size: 0.6rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #d4af37;
+    background: rgba(43, 43, 43, 0.9);
+    border-radius: 3px;
+    padding: 1px 3px;
+    line-height: 1;
+}
+
+[lang="en"] .lang-switcher::after {
+    content: 'EN';
+}
+
 .menu-btn {
     background: none;
     border: none;
