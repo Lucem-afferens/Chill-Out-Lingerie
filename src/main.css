@@ -3954,61 +3954,153 @@ body {
     }
 }
 
-/* Экстремально маленькие устройства (до 359px) */
+/* Экстремально маленькие устройства (до 359px, включая 320px) */
 @media (max-width: 359px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+    
     .header-container {
         padding: 0.5rem 0.75rem;
         min-height: 48px;
     }
     
     .header-logo {
-        font-size: 1rem;
+        font-size: 0.875rem;
     }
     
     .header-logo-image {
-        max-height: 1.5rem;
-        max-width: 50px;
+        max-height: 1.25rem;
+        max-width: 40px;
         margin-right: 0.25rem;
     }
     
-    .header-container a:has(.header-logo-image) .header-logo {
-        font-size: 0.9375rem;
+    .header-container > a {
+        transform: translateX(-50%);
+        max-width: calc(100% - 100px);
+    }
+    
+    .header-container > a .header-logo {
+        font-size: 0.8125rem;
     }
     
     .lang-switcher {
-        padding: 0.3125rem 0.4375rem;
-        font-size: 0.4375rem;
-        min-width: 1.625rem;
+        padding: 0.25rem 0.375rem;
+        font-size: 0.375rem;
+        min-width: 1.5rem;
     }
     
     .lang-switcher-text {
-        font-size: 0.4375rem;
+        font-size: 0.375rem;
+    }
+    
+    .icon-btn {
+        font-size: 0.875rem;
+        width: 1.5rem;
+        height: 1.5rem;
     }
     
     .catalog-hero {
-        height: 220px;
+        height: 200px;
+        margin-top: 48px;
     }
     
     .catalog-hero h2 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+    }
+    
+    .catalog-hero p {
+        font-size: 0.875rem;
+    }
+    
+    .catalog-main {
+        padding: 2rem 0;
+    }
+    
+    .catalog-layout {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .filters-sidebar {
+        width: 100%;
+        position: static;
+    }
+    
+    .products-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
     
     .product-image-wrapper {
-        height: 20rem;
+        height: 18rem;
+    }
+    
+    .toolbar-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .toolbar-left,
+    .toolbar-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .sort-select {
+        padding: 0.625rem 1rem;
+        font-size: 0.8125rem;
     }
     
     .section-header h2 {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
+    }
+    
+    .section-header p {
+        font-size: 0.8125rem;
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .category-card {
+        height: 200px;
+    }
+    
+    .size-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .color-grid {
+        grid-template-columns: repeat(4, 1fr);
     }
     
     .menu-nav a {
-        font-size: 2rem;
+        font-size: 1.875rem;
     }
     
     .menu-close {
-        top: 1rem;
-        right: 1rem;
-        font-size: 1.75rem;
+        top: 0.75rem;
+        right: 0.75rem;
+        font-size: 1.5rem;
+    }
+    
+    .btn-vk-large {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.8125rem;
+    }
+    
+    .pagination-content {
+        flex-wrap: wrap;
+        gap: 0.375rem;
+    }
+    
+    .page-btn {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.8125rem;
     }
 }
 
