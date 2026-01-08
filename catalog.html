@@ -57,9 +57,9 @@
         }
         
         .glassmorphism {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 192, 203, 0.08);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 182, 193, 0.15);
         }
         
         .text-gold {
@@ -89,7 +89,7 @@
             left: -100%;
             width: 100%;
             height: 100vh;
-            background: rgba(43, 43, 43, 0.98);
+            background: linear-gradient(135deg, rgba(43, 43, 43, 0.98) 0%, rgba(60, 40, 45, 0.98) 50%, rgba(43, 43, 43, 0.98) 100%);
             backdrop-filter: blur(10px);
             z-index: 9999;
             transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -113,16 +113,17 @@
             position: absolute;
             top: 2rem;
             right: 2rem;
-            font-size: 2.25rem;
-            color: #d4af37;
+            font-size: 2.5rem;
+            color: #ffb6c1;
             background: none;
             border: none;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: transform 0.3s ease;
         }
 
         .menu-close:hover {
             transform: rotate(90deg);
+            color: #ffc0cb;
         }
 
         .menu-nav {
@@ -140,9 +141,15 @@
             transition: color 0.3s;
         }
 
-        .menu-nav a:hover,
+        .menu-nav a:hover {
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
         .menu-nav a.active {
-            color: #d4af37;
+            color: #ffb6c1;
         }
 
         .menu-social {
@@ -153,12 +160,13 @@
 
         .menu-social a {
             font-size: 1.5rem;
-            color: #d4af37;
-            transition: transform 0.3s;
+            color: #ffb6c1;
+            transition: transform 0.3s ease;
         }
 
         .menu-social a:hover {
             transform: scale(1.1);
+            color: #ffc0cb;
         }
 
         header {
@@ -167,14 +175,15 @@
             left: 0;
             right: 0;
             z-index: 50;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 192, 203, 0.08);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 182, 193, 0.15);
+            box-shadow: 0 4px 20px rgba(255, 182, 193, 0.1);
             transition: all 0.3s ease;
         }
 
         .header-container {
-            max-width: 1280px;
+            max-width: 1440px;
             margin: 0 auto;
             padding: 1.5rem 2rem;
             display: flex;
@@ -183,14 +192,26 @@
             position: relative;
             transition: padding 0.3s ease;
         }
+        
+        .header-container a:has(h1) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            width: clamp(100px, 250px, 100%);
+            height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 
         .menu-btn {
             font-size: 1.5rem;
-            color: #d4af37;
+            color: #ffb6c1;
             background: none;
             border: none;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: transform 0.3s ease;
             min-width: 40px;
             min-height: 40px;
             display: flex;
@@ -200,6 +221,7 @@
 
         .menu-btn:hover {
             transform: scale(1.1);
+            color: #ffc0cb;
         }
 
         .logo {
@@ -208,41 +230,68 @@
             transform: translateX(-50%);
             font-size: 1.875rem;
             font-family: 'Cormorant Garamond', serif;
-            font-weight: 700;
-            color: #d4af37;
+            font-weight: bold;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             letter-spacing: 0.05em;
             transition: font-size 0.3s ease, transform 0.3s ease;
             white-space: nowrap;
-            max-width: 70%;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            min-width: 200px;
+            text-align: center;
         }
 
         .header-actions {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 1.5rem;
             transition: gap 0.3s ease;
             flex-shrink: 0;
         }
-
+        
+        .header-actions a, .header-actions button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #ffb6c1;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon-btn:hover {
+            color: #ffc0cb;
+        }
+        
         .header-actions button {
-            font-size: 1.25rem;
-            color: white;
+            font-size: 1.5rem;
+            color: #ffb6c1;
             background: none;
             border: none;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: color 0.3s ease;
             position: relative;
-            min-width: 40px;
-            min-height: 40px;
+            width: 2.5rem;
+            height: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .header-actions button:hover {
-            color: #d4af37;
+            color: #ffc0cb;
         }
 
         .cart-badge {
@@ -263,7 +312,7 @@
 
         .search-bar {
             display: none;
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            border-top: 1px solid rgba(255, 182, 193, 0.2);
             background: rgba(43, 43, 43, 0.95);
             backdrop-filter: blur(60px);
         }
@@ -286,7 +335,7 @@
             width: 100%;
             padding: 1rem 1.5rem 1rem 3rem;
             background: #262626;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(255, 182, 193, 0.3);
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-size: 1rem;
@@ -294,7 +343,7 @@
 
         .search-input:focus {
             outline: none;
-            border-color: #d4af37;
+            border-color: #ffb6c1;
         }
 
         .search-icon {
@@ -302,7 +351,7 @@
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #d4af37;
+            color: #ffb6c1;
         }
 
         .catalog-hero {
@@ -336,14 +385,17 @@
             font-family: 'Cormorant Garamond', serif;
             font-weight: 300;
             margin-bottom: 1rem;
-            color: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .catalog-hero p {
             font-size: 1.25rem;
             font-family: 'Montserrat', sans-serif;
             font-weight: 300;
-            color: #d1d5db;
+            color: #f5d5e0;
             letter-spacing: 0.05em;
         }
 
@@ -385,9 +437,9 @@
         }
 
         .filter-box {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 192, 203, 0.08);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 182, 193, 0.15);
             padding: 1.5rem;
             margin-bottom: 1.5rem;
         }
@@ -402,7 +454,10 @@
         .filter-header h3 {
             font-size: 1.5rem;
             font-family: 'Cormorant Garamond', serif;
-            color: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .clear-btn {
@@ -416,13 +471,13 @@
         }
 
         .clear-btn:hover {
-            color: #d4af37;
+            color: #ffb6c1;
         }
 
         .filter-section {
             margin-bottom: 2rem;
             padding-bottom: 2rem;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            border-bottom: 1px solid rgba(255, 182, 193, 0.2);
         }
 
         .filter-section:last-child {
@@ -454,18 +509,18 @@
             justify-content: space-between;
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(255, 182, 193, 0.3);
             cursor: pointer;
             transition: background-color 0.3s, border-color 0.3s;
         }
 
         .filter-label:hover {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(255, 182, 193, 0.1);
         }
 
         .filter-checkbox:checked + .filter-label {
-            background: rgba(212, 175, 55, 0.2);
-            border-color: #d4af37;
+            background: rgba(255, 182, 193, 0.2);
+            border-color: #ffb6c1;
         }
 
         .filter-label span:first-child {
@@ -494,7 +549,7 @@
             appearance: none;
             width: 20px;
             height: 20px;
-            background: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
             cursor: pointer;
             border-radius: 50%;
         }
@@ -502,7 +557,7 @@
         .price-slider::-moz-range-thumb {
             width: 20px;
             height: 20px;
-            background: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
             cursor: pointer;
             border-radius: 50%;
             border: none;
@@ -525,7 +580,7 @@
         }
 
         .price-range span:nth-child(2) {
-            color: #d4af37;
+            color: #ffb6c1;
             font-weight: 600;
         }
 
@@ -537,7 +592,7 @@
 
         .size-btn {
             padding: 0.5rem 0.75rem;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(255, 182, 193, 0.3);
             color: #d1d5db;
             font-size: 0.875rem;
             font-family: 'Montserrat', sans-serif;
@@ -547,7 +602,7 @@
         }
 
         .size-btn:hover {
-            background: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
             color: #2b2b2b;
         }
 
@@ -561,13 +616,13 @@
             width: 2.5rem;
             height: 2.5rem;
             border-radius: 50%;
-            border: 2px solid rgba(212, 175, 55, 0.3);
+            border: 2px solid rgba(255, 182, 193, 0.3);
             cursor: pointer;
             transition: border-color 0.3s;
         }
 
         .color-btn:hover {
-            border-color: #d4af37;
+            border-color: #ffb6c1;
         }
 
         .rating-btn {
@@ -575,7 +630,7 @@
             align-items: center;
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(255, 182, 193, 0.3);
             background: none;
             cursor: pointer;
             transition: background-color 0.3s;
@@ -833,7 +888,7 @@
             font-size: 1.25rem;
             font-family: 'Montserrat', sans-serif;
             font-weight: 600;
-            color: #d4af37;
+            color: #ffb6c1;
         }
 
         .price-wrapper {
@@ -850,9 +905,9 @@
         }
 
         .pagination {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 192, 203, 0.08);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 182, 193, 0.15);
             padding: 1.5rem;
             margin-top: 3rem;
         }
@@ -870,7 +925,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(255, 182, 193, 0.3);
             background: none;
             color: white;
             font-family: 'Montserrat', sans-serif;
@@ -879,12 +934,12 @@
         }
 
         .page-btn:hover {
-            background: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
             color: #2b2b2b;
         }
 
         .page-btn.active {
-            background: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
             color: #2b2b2b;
             font-weight: 600;
         }
@@ -908,7 +963,10 @@
             font-size: 3.75rem;
             font-family: 'Cormorant Garamond', serif;
             font-weight: 300;
-            color: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1rem;
         }
 
@@ -1031,7 +1089,7 @@
 
         .newsletter-btn {
             padding: 1rem 3rem;
-            background: #d4af37;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
             color: #2b2b2b;
             font-family: 'Montserrat', sans-serif;
             font-weight: 500;
@@ -1042,7 +1100,9 @@
         }
 
         .newsletter-btn:hover {
-            background: white;
+            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 50%, #d4af37 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 182, 193, 0.5);
         }
 
         .newsletter-disclaimer {
@@ -1056,7 +1116,7 @@
             background: #171717;
             padding-top: 4rem;
             padding-bottom: 2rem;
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            border-top: 1px solid rgba(255, 182, 193, 0.2);
         }
 
         .footer-container {
@@ -1075,8 +1135,11 @@
         .footer-brand h3 {
             font-size: 1.875rem;
             font-family: 'Cormorant Garamond', serif;
-            font-weight: 700;
-            color: #d4af37;
+            font-weight: bold;
+            background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1.5rem;
         }
 
@@ -1096,13 +1159,18 @@
         .social-btn {
             width: 2.5rem;
             height: 2.5rem;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(255, 182, 193, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #d4af37;
             text-decoration: none;
             transition: all 0.3s;
+        }
+        
+        .social-btn.vk {
+            border: 2px solid #d4af37;
+            background: rgba(255, 182, 193, 0.1);
         }
 
         .social-btn:hover {
@@ -1137,7 +1205,7 @@
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            border-top: 1px solid rgba(255, 182, 193, 0.2);
             padding-top: 2rem;
             display: flex;
             align-items: center;
@@ -1234,9 +1302,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .footer-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
         
         /* Планшеты и большие телефоны (768px - 899px) */
@@ -1378,16 +1443,6 @@
                 height: 280px;
             }
             
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .footer-bottom {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
             
             .menu-nav a {
                 font-size: 2.5rem;
@@ -2265,57 +2320,17 @@
                 <h3>Chill Out Lingerie</h3>
                 <p>Elevating intimate apparel with timeless elegance, premium quality, and inclusive designs for the modern woman.</p>
                 <div class="footer-social">
+                    <a href="https://vk.com" target="_blank" class="social-btn vk"><i class="fa-brands fa-vk"></i></a>
                     <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
                     <a href="#" class="social-btn"><i class="fa-brands fa-facebook"></i></a>
                     <a href="#" class="social-btn"><i class="fa-brands fa-pinterest"></i></a>
                     <a href="#" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
                 </div>
             </div>
-            
-            <div class="footer-column">
-                <h4>Shop</h4>
-                <ul class="footer-links">
-                    <li><a href="#">Bras</a></li>
-                    <li><a href="#">Panties</a></li>
-                    <li><a href="#">Sleepwear</a></li>
-                    <li><a href="#">Bodysuits</a></li>
-                    <li><a href="#">New Arrivals</a></li>
-                    <li><a href="#">Bestsellers</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-column">
-                <h4>Customer Care</h4>
-                <ul class="footer-links">
-                    <li><a href="#">Size Guide</a></li>
-                    <li><a href="#">Shipping Info</a></li>
-                    <li><a href="#">Returns</a></li>
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Track Order</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-column">
-                <h4>Company</h4>
-                <ul class="footer-links">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Sustainability</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Press</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Affiliates</a></li>
-                </ul>
-            </div>
         </div>
         
         <div class="footer-bottom">
             <p class="footer-copyright">© 2024 Chill Out Lingerie. All rights reserved.</p>
-            <div class="footer-legal">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Cookie Policy</a>
-            </div>
         </div>
     </div>
 </footer>
