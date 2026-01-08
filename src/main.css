@@ -2176,6 +2176,16 @@ body {
         max-width: calc(100% - 90px);
     }
     
+    .lang-switcher {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.625rem;
+        min-width: 2rem;
+    }
+    
+    .lang-switcher-text {
+        font-size: 0.625rem;
+    }
+    
     .header-actions {
         gap: 0.75rem;
         flex-shrink: 0;
@@ -2404,6 +2414,16 @@ body {
         font-size: 1.125rem;
     }
     
+    .lang-switcher {
+        padding: 0.375rem 0.5625rem;
+        font-size: 0.5625rem;
+        min-width: 1.875rem;
+    }
+    
+    .lang-switcher-text {
+        font-size: 0.5625rem;
+    }
+    
     .header-actions {
         gap: 0.5rem;
     }
@@ -2533,6 +2553,16 @@ body {
     
     .header-container a:has(.header-logo-image) .header-logo {
         font-size: 1rem;
+    }
+    
+    .lang-switcher {
+        padding: 0.3125rem 0.5rem;
+        font-size: 0.5rem;
+        min-width: 1.75rem;
+    }
+    
+    .lang-switcher-text {
+        font-size: 0.5rem;
     }
     
     .header-actions a{
@@ -2682,6 +2712,16 @@ body {
     
     .header-container a:has(.header-logo-image) .header-logo {
         font-size: 0.9375rem;
+    }
+    
+    .lang-switcher {
+        padding: 0.3125rem 0.4375rem;
+        font-size: 0.4375rem;
+        min-width: 1.625rem;
+    }
+    
+    .lang-switcher-text {
+        font-size: 0.4375rem;
     }
     
     .icon-btn {
@@ -3443,6 +3483,16 @@ body {
         margin-right: 0.625rem;
     }
     
+    .lang-switcher {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.8125rem;
+        min-width: 2.75rem;
+    }
+    
+    .lang-switcher-text {
+        font-size: 0.8125rem;
+    }
+    
     .products-container {
         grid-template-columns: repeat(3, 1fr);
     }
@@ -3516,6 +3566,16 @@ body {
     
     .header-container a:has(.header-logo-image) {
         gap: 0.5rem;
+    }
+    
+    .lang-switcher {
+        padding: 0.4375rem 0.75rem;
+        font-size: 0.75rem;
+        min-width: 2.5rem;
+    }
+    
+    .lang-switcher-text {
+        font-size: 0.75rem;
     }
     
     .header-actions {
@@ -3699,6 +3759,16 @@ body {
     
     .header-container a:has(.header-logo-image) .header-logo {
         font-size: 1.125rem;
+    }
+    
+    .lang-switcher {
+        padding: 0.375rem 0.5625rem;
+        font-size: 0.5625rem;
+        min-width: 1.875rem;
+    }
+    
+    .lang-switcher-text {
+        font-size: 0.5625rem;
     }
     
     .vk-notice {
@@ -3886,6 +3956,16 @@ body {
     
     .header-container a:has(.header-logo-image) .header-logo {
         font-size: 0.9375rem;
+    }
+    
+    .lang-switcher {
+        padding: 0.3125rem 0.4375rem;
+        font-size: 0.4375rem;
+        min-width: 1.625rem;
+    }
+    
+    .lang-switcher-text {
+        font-size: 0.4375rem;
     }
     
     .catalog-hero {
