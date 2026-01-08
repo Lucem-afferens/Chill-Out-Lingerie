@@ -26,11 +26,12 @@ export default defineConfig({
     // Очищать выходную директорию перед сборкой
     emptyOutDir: true,
     
-    // Настройки rollup (Vite использует Rollup для сборки)
-    rollupOptions: {
-      input: {
-        main: './index.html'
-      },
+      // Настройки rollup (Vite использует Rollup для сборки)
+      rollupOptions: {
+        input: {
+          main: './index.html',
+          catalog: './catalog.html'
+        },
       // Настройки вывода
       output: {
         // Формат имени файлов для чанков
