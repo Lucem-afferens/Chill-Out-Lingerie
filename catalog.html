@@ -139,38 +139,38 @@
                             <div class="filter-options">
                                 <input type="checkbox" id="cat-bras" class="filter-checkbox">
                                 <label for="cat-bras" class="filter-label">
-                                    <span data-i18n="catalog.filters.categories.bras">Бюстгальтеры и Бралетты</span>
-                                    <span>(32)</span>
+                                <span data-i18n="catalog.filters.categories.bras">Бюстгальтеры и Бралетты</span>
+                                <span class="category-count" data-category="bras">(2)</span>
                                 </label>
                                 
                                 <input type="checkbox" id="cat-panties" class="filter-checkbox">
                                 <label for="cat-panties" class="filter-label">
-                                    <span data-i18n="catalog.filters.categories.panties">Трусики</span>
-                                    <span>(45)</span>
+                                <span data-i18n="catalog.filters.categories.panties">Трусики</span>
+                                <span class="category-count" data-category="panties">(0)</span>
                                 </label>
                                 
                                 <input type="checkbox" id="cat-sleepwear" class="filter-checkbox">
                                 <label for="cat-sleepwear" class="filter-label">
-                                    <span data-i18n="catalog.filters.categories.sleepwear">Домашняя Одежда</span>
-                                    <span>(28)</span>
+                                <span data-i18n="catalog.filters.categories.sleepwear">Домашняя Одежда</span>
+                                <span class="category-count" data-category="sleepwear">(6)</span>
                                 </label>
                                 
                                 <input type="checkbox" id="cat-bodysuits" class="filter-checkbox">
                                 <label for="cat-bodysuits" class="filter-label">
-                                    <span data-i18n="catalog.filters.categories.bodysuits">Боди</span>
-                                    <span>(19)</span>
+                                <span data-i18n="catalog.filters.categories.bodysuits">Боди</span>
+                                <span class="category-count" data-category="bodysuits">(2)</span>
                                 </label>
                                 
                                 <input type="checkbox" id="cat-robes" class="filter-checkbox">
                                 <label for="cat-robes" class="filter-label">
-                                    <span data-i18n="catalog.filters.categories.robes">Халаты и Кимоно</span>
-                                    <span>(15)</span>
+                                <span data-i18n="catalog.filters.categories.robes">Халаты и Кимоно</span>
+                                <span class="category-count" data-category="robes">(1)</span>
                                 </label>
                                 
                                 <input type="checkbox" id="cat-bridal" class="filter-checkbox">
                                 <label for="cat-bridal" class="filter-label">
-                                    <span data-i18n="catalog.filters.categories.bridal">Свадебная Коллекция</span>
-                                    <span>(17)</span>
+                                <span data-i18n="catalog.filters.categories.bridal">Свадебная Коллекция</span>
+                                <span class="category-count" data-category="bridal">(0)</span>
                                 </label>
                             </div>
                         </div>
@@ -223,25 +223,25 @@
                                 <input type="checkbox" id="mat-silk" class="filter-checkbox">
                                 <label for="mat-silk" class="filter-label">
                                     <span data-i18n="catalog.filters.materials.silk">Шелк</span>
-                                    <span>(42)</span>
+                                    <span class="material-count" data-material="silk">(6)</span>
                                 </label>
                                 
                                 <input type="checkbox" id="mat-lace" class="filter-checkbox">
                                 <label for="mat-lace" class="filter-label">
                                     <span data-i18n="catalog.filters.materials.lace">Кружево</span>
-                                    <span>(68)</span>
+                                    <span class="material-count" data-material="lace">(4)</span>
                                 </label>
                                 
                                 <input type="checkbox" id="mat-satin" class="filter-checkbox">
                                 <label for="mat-satin" class="filter-label">
                                     <span data-i18n="catalog.filters.materials.satin">Атлас</span>
-                                    <span>(35)</span>
+                                    <span class="material-count" data-material="satin">(2)</span>
                                 </label>
                                 
                                 <input type="checkbox" id="mat-cotton" class="filter-checkbox">
                                 <label for="mat-cotton" class="filter-label">
                                     <span data-i18n="catalog.filters.materials.cotton">Хлопок</span>
-                                    <span>(23)</span>
+                                    <span class="material-count" data-material="cotton">(1)</span>
                                 </label>
                             </div>
                         </div>
@@ -256,7 +256,7 @@
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
                                 </div>
-                                <span class="rating-text">& Up</span>
+                                <span class="rating-text" data-i18n="catalog.filters.rating.up">& Up</span>
                             </button>
                             <button class="rating-btn">
                                 <div class="rating-stars">
@@ -266,7 +266,7 @@
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-regular fa-star"></i>
                                 </div>
-                                <span class="rating-text">& Up</span>
+                                <span class="rating-text" data-i18n="catalog.filters.rating.up">& Up</span>
                             </button>
                             <button class="rating-btn">
                                 <div class="rating-stars">
@@ -276,7 +276,7 @@
                                     <i class="fa-regular fa-star"></i>
                                     <i class="fa-regular fa-star"></i>
                                 </div>
-                                <span class="rating-text">& Up</span>
+                                <span class="rating-text" data-i18n="catalog.filters.rating.up">& Up</span>
                             </button>
                         </div>
                     </div>
@@ -288,7 +288,7 @@
                     <div class="toolbar-content">
                         <div class="toolbar-left">
                             <p class="products-count">
-                                <span data-i18n="catalog.products.showing">Показано</span> <span>156</span> <span data-i18n="catalog.products.products">товаров</span>
+                                <span data-i18n="catalog.products.showing">Показано</span> <span class="products-visible-count">11</span> <span data-i18n="catalog.products.products">товаров</span>
                             </p>
                             <div class="view-toggle">
                                 <button onclick="toggleView('grid')" class="view-btn active">
@@ -872,7 +872,8 @@
                         satin: 'Атлас',
                         cotton: 'Хлопок'
                     },
-                    rating: 'Рейтинг'
+                    rating: 'Рейтинг',
+                    up: '& Up'
                 },
                 products: {
                     showing: 'Показано',
@@ -999,7 +1000,8 @@
                         satin: 'Satin',
                         cotton: 'Cotton'
                     },
-                    rating: 'Rating'
+                    rating: 'Rating',
+                    up: '& Up'
                 },
                 products: {
                     showing: 'Showing',
@@ -1249,9 +1251,125 @@
         });
         
         // Обновляем счетчик товаров
-        const productsCount = document.querySelector('.products-count span:nth-child(2)');
+        const productsCount = document.querySelector('.products-visible-count');
         if (productsCount) {
             productsCount.textContent = visibleCount;
+        }
+        
+        // Обновляем счетчики категорий и материалов
+        updateFilterCounts();
+    }
+    
+    // Функция для подсчета и обновления счетчиков в фильтрах
+    function updateFilterCounts() {
+        const products = document.querySelectorAll('.product-card');
+        
+        // Считаем по категориям
+        const categoryCounts = {
+            'bras': 0,
+            'panties': 0,
+            'sleepwear': 0,
+            'bodysuits': 0,
+            'robes': 0,
+            'bridal': 0
+        };
+        
+        // Считаем по материалам
+        const materialCounts = {
+            'silk': 0,
+            'lace': 0,
+            'satin': 0,
+            'cotton': 0
+        };
+        
+        products.forEach(product => {
+            // Подсчитываем только видимые товары
+            if (product.style.display !== 'none') {
+                const category = product.getAttribute('data-category');
+                const material = product.getAttribute('data-material');
+                
+                if (category && categoryCounts.hasOwnProperty(category)) {
+                    categoryCounts[category]++;
+                }
+                
+                if (material && materialCounts.hasOwnProperty(material)) {
+                    materialCounts[material]++;
+                }
+            }
+        });
+        
+        // Обновляем счетчики категорий
+        Object.keys(categoryCounts).forEach(cat => {
+            const countElement = document.querySelector(`.category-count[data-category="${cat}"]`);
+            if (countElement) {
+                countElement.textContent = `(${categoryCounts[cat]})`;
+            }
+        });
+        
+        // Обновляем счетчики материалов
+        Object.keys(materialCounts).forEach(mat => {
+            const countElement = document.querySelector(`.material-count[data-material="${mat}"]`);
+            if (countElement) {
+                countElement.textContent = `(${materialCounts[mat]})`;
+            }
+        });
+    }
+    
+    // Функция для инициализации начальных счетчиков
+    function initializeCounts() {
+        const products = document.querySelectorAll('.product-card');
+        
+        // Считаем по категориям
+        const categoryCounts = {
+            'bras': 0,
+            'panties': 0,
+            'sleepwear': 0,
+            'bodysuits': 0,
+            'robes': 0,
+            'bridal': 0
+        };
+        
+        // Считаем по материалам
+        const materialCounts = {
+            'silk': 0,
+            'lace': 0,
+            'satin': 0,
+            'cotton': 0
+        };
+        
+        products.forEach(product => {
+            const category = product.getAttribute('data-category');
+            const material = product.getAttribute('data-material');
+            
+            if (category && categoryCounts.hasOwnProperty(category)) {
+                categoryCounts[category]++;
+            }
+            
+            if (material && materialCounts.hasOwnProperty(material)) {
+                materialCounts[material]++;
+            }
+        });
+        
+        // Обновляем счетчики категорий
+        Object.keys(categoryCounts).forEach(cat => {
+            const countElement = document.querySelector(`.category-count[data-category="${cat}"]`);
+            if (countElement) {
+                countElement.textContent = `(${categoryCounts[cat]})`;
+            }
+        });
+        
+        // Обновляем счетчики материалов
+        Object.keys(materialCounts).forEach(mat => {
+            const countElement = document.querySelector(`.material-count[data-material="${mat}"]`);
+            if (countElement) {
+                countElement.textContent = `(${materialCounts[mat]})`;
+            }
+        });
+        
+        // Обновляем общий счетчик товаров
+        const productsCount = document.querySelector('.products-visible-count');
+        if (productsCount) {
+            productsCount.textContent = products.length;
         }
     }
     
@@ -1281,38 +1399,59 @@
         console.log('Switching to ' + viewType + ' view');
     }
     
-    // Функция сортировки товаров
+    // Функция сортировки товаров (только видимых)
     function sortProducts(sortType) {
         const container = document.querySelector('.products-container');
-        const products = Array.from(container.querySelectorAll('.product-card'));
+        // Получаем все видимые товары
+        const allProducts = Array.from(container.querySelectorAll('.product-card'));
+        const visibleProducts = allProducts.filter(p => p.style.display !== 'none');
+        const hiddenProducts = allProducts.filter(p => p.style.display === 'none');
         
-        products.sort((a, b) => {
+        // Сортируем только видимые товары
+        visibleProducts.sort((a, b) => {
             switch(sortType) {
                 case 'priceLow':
                     return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
                 case 'priceHigh':
                     return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
                 case 'newest':
-                    // Для новинок можно добавить data-date
+                    // Сортируем по наличию badge-new (новинки первыми)
+                    const aIsNew = a.querySelector('.badge-new') !== null;
+                    const bIsNew = b.querySelector('.badge-new') !== null;
+                    if (aIsNew && !bIsNew) return -1;
+                    if (!aIsNew && bIsNew) return 1;
                     return 0;
-                case 'bestseller':
-                    // Для бестселлеров можно использовать количество отзывов
-                    const reviewsA = parseInt(a.querySelector('.product-reviews').textContent.replace(/[()]/g, '')) || 0;
-                    const reviewsB = parseInt(b.querySelector('.product-reviews').textContent.replace(/[()]/g, '')) || 0;
+                case 'bestselling':
+                    // Для бестселлеров используем количество отзывов
+                    const reviewsElA = a.querySelector('.product-reviews');
+                    const reviewsElB = b.querySelector('.product-reviews');
+                    const reviewsA = reviewsElA ? parseInt(reviewsElA.textContent.replace(/[()]/g, '')) || 0 : 0;
+                    const reviewsB = reviewsElB ? parseInt(reviewsElB.textContent.replace(/[()]/g, '')) || 0 : 0;
                     return reviewsB - reviewsA;
                 case 'topRated':
                     return parseInt(b.getAttribute('data-rating')) - parseInt(a.getAttribute('data-rating'));
                 default:
+                    // По умолчанию - порядок как в DOM
                     return 0;
             }
         });
         
-        products.forEach(product => container.appendChild(product));
+        // Очищаем контейнер
+        container.innerHTML = '';
+        
+        // Добавляем отсортированные видимые товары
+        visibleProducts.forEach(product => container.appendChild(product));
+        
+        // Добавляем скрытые товары в конец
+        hiddenProducts.forEach(product => container.appendChild(product));
     }
     
     document.addEventListener('DOMContentLoaded', function() {
         // Применяем сохраненный язык при загрузке
         translatePage(currentLanguage);
+        
+        // Инициализируем счетчики
+        initializeCounts();
         
         // Обработчики для фильтров
         document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
@@ -1371,6 +1510,13 @@
             });
         }
     });
+    
+    // Обновляем счетчики при изменении фильтров
+    const originalFilterProducts = filterProducts;
+    filterProducts = function() {
+        originalFilterProducts();
+        updateFilterCounts();
+    };
 </script>
 
 </body>
