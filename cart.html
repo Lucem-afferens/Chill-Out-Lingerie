@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="ru" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +19,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <script>
         (function() {
-            var theme = 'light';
+            var theme = 'dark';
             try {
                 var saved = localStorage.getItem('theme');
                 if (saved === 'dark' || saved === 'light') theme = saved;
@@ -67,7 +67,7 @@
             <span class="header-logo">Virelle</span>
         </a>
         <div class="header-actions">
-                        <button type="button" onclick="toggleTheme()" id="theme-toggle" class="icon-btn theme-toggle" title="Тёмная тема" aria-label="Переключить на тёмную тему">
+                        <button type="button" onclick="toggleTheme()" id="theme-toggle" class="icon-btn theme-toggle" title="Светлая тема" aria-label="Переключить на светлую тему">
                 <span class="icon icon--sun icon--current" aria-hidden="true">
                     <svg class="theme-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
                         <circle cx="12" cy="12" r="3.75" stroke="currentColor" stroke-width="1.35"/>

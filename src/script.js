@@ -1373,13 +1373,13 @@ function setThemeToggleState(theme) {
 }
 
 function syncThemeIcon() {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
     setThemeToggleState(currentTheme);
 }
 
 function toggleTheme() {
     const html = document.documentElement;
-    const currentTheme = html.getAttribute('data-theme') || 'light';
+    const currentTheme = html.getAttribute('data-theme') || 'dark';
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
     html.setAttribute('data-theme', newTheme);
@@ -1391,7 +1391,7 @@ function toggleTheme() {
 }
 
 function initTheme() {
-    let savedTheme = 'light';
+    let savedTheme = 'dark';
     try {
         const stored = localStorage.getItem('theme');
         if (stored === 'dark' || stored === 'light') savedTheme = stored;
