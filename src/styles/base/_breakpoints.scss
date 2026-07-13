@@ -1,0 +1,43 @@
+/* Breakpoint map — mobile-first mixins (TASK 013) */
+
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+$bp-2xl: 1440px;
+
+@mixin bp-up($min) {
+    @media (min-width: $min) {
+        @content;
+    }
+}
+
+@mixin bp-sm {
+    @include bp-up($bp-sm) {
+        @content;
+    }
+}
+
+@mixin bp-md {
+    @include bp-up($bp-md) {
+        @content;
+    }
+}
+
+@mixin bp-lg {
+    @include bp-up($bp-lg) {
+        @content;
+    }
+}
+
+@mixin bp-xl {
+    @include bp-up($bp-xl) {
+        @content;
+    }
+}
+
+@mixin bp-2xl {
+    @include bp-up($bp-2xl) {
+        @content;
+    }
+}

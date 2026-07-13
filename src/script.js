@@ -1,26 +1,557 @@
-// Импорт стилей для правильной работы с Vite HMR
 import './styles/style.scss';
+import { catalogProducts, getProductById, getFeaturedProducts } from './data/products.js';
+import { formatPrice, isValidRuPhone, isValidEmail } from './config.js';
+import { getFavorites, isFavorite, toggleFavoriteId } from './favorites.js';
+import {
+    getCart,
+    setCart,
+    addToCart,
+    updateCartQty,
+    removeFromCart,
+    clearCart,
+    getCartCount,
+    getCartSubtotal,
+    CART_MAX_QTY
+} from './cart.js';
+import { injectSharedModals } from './shared-modals.js';
+
+injectSharedModals();
+
+let catalogSearchQuery = '';
+let selectedProductSize = '';
+let selectedQuickViewSize = '';
+let quickViewProductId = null;
+
+/* ---- Body scroll lock (prevents layout jump when scrollbar disappears) ---- */
+let bodyScrollLockCount = 0;
+let programmaticScrollUntil = 0;
+
+function getScrollbarWidth() {
+    return Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+}
+
+function lockBodyScroll() {
+    bodyScrollLockCount += 1;
+    if (bodyScrollLockCount > 1) return;
+
+    const offset = getScrollbarWidth();
+    document.documentElement.classList.add('is-scroll-locked');
+    document.body.style.overflow = 'hidden';
+    if (offset > 0) {
+        document.documentElement.style.setProperty('--scroll-lock-offset', `${offset}px`);
+        document.body.style.paddingRight = `${offset}px`;
+    }
+}
+
+function unlockBodyScroll() {
+    bodyScrollLockCount = Math.max(0, bodyScrollLockCount - 1);
+    if (bodyScrollLockCount > 0) return;
+
+    document.documentElement.classList.remove('is-scroll-locked');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    document.documentElement.style.removeProperty('--scroll-lock-offset');
+}
+
+function beginProgrammaticScroll(durationMs = 900) {
+    programmaticScrollUntil = Date.now() + durationMs;
+    const header = document.getElementById('header');
+    if (header) header.classList.remove('header-hidden');
+}
+
+function isProgrammaticScrollActive() {
+    return Date.now() < programmaticScrollUntil;
+}
+
+function setFavoriteButtonState(el, active) {
+    if (!el) return;
+    el.classList.toggle('is-active', active);
+    el.setAttribute('aria-pressed', String(active));
+
+    // Prefer a single <i> glyph (FA CSS). Wipe leftover nested SVGs from old FA JS mode.
+    el.querySelectorAll('svg').forEach((svg) => svg.remove());
+
+    let icon = el.querySelector('i.fa-heart, i[class*="fa-heart"], i');
+    if (!icon) {
+        icon = document.createElement('i');
+        icon.setAttribute('aria-hidden', 'true');
+        el.insertBefore(icon, el.firstChild);
+    }
+    icon.className = active ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+    icon.setAttribute('aria-hidden', 'true');
+}
+
+function toggleFavorite(id, btn, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    const active = toggleFavoriteId(id);
+    if (btn) setFavoriteButtonState(btn, active);
+    updateFavoritesBadge();
+    document.querySelectorAll(`[data-favorite-id="${id}"]`).forEach((el) => {
+        if (el === btn) return;
+        setFavoriteButtonState(el, active);
+    });
+}
+
+function updateFavoritesBadge() {
+    const count = getFavorites().length;
+    document.querySelectorAll('[data-favorites-count]').forEach((el) => {
+        el.textContent = String(count);
+        el.hidden = count === 0;
+    });
+}
+
+function updateCartBadge() {
+    const count = getCartCount();
+    document.querySelectorAll('[data-cart-count]').forEach((el) => {
+        el.textContent = String(count);
+        el.hidden = count === 0;
+    });
+}
+
+function renderSelectableSizes(container, sizes, selected, onSelect) {
+    if (!container) return;
+    const list = Array.isArray(sizes) ? sizes : [];
+    container.innerHTML = list
+        .map(
+            (s) =>
+                `<button type="button" class="product-size-chip${selected === s ? ' is-selected' : ''}" data-size="${s}" aria-pressed="${selected === s}">${s}</button>`
+        )
+        .join('');
+    container.querySelectorAll('[data-size]').forEach((btn) => {
+        btn.addEventListener('click', () => onSelect(btn.getAttribute('data-size')));
+    });
+}
+
+function handleAddToCart(productId, size) {
+    const product = getProductById(productId);
+    if (!product) {
+        showNotification('Ошибка', 'Товар не найден.', 'error', 3000);
+        return false;
+    }
+    const result = addToCart(productId, size, 1);
+    updateCartBadge();
+    if (!result.ok) {
+        showNotification('Не удалось добавить', result.error || 'Попробуйте ещё раз.', 'error', 3500);
+        return false;
+    }
+    showNotification(
+        'В корзине',
+        result.merged
+            ? `${product.name} (${size}) — количество обновлено.`
+            : `${product.name} (${size}) добавлен в корзину.`,
+        'success',
+        2800
+    );
+    if (document.getElementById('cart-page')) {
+        renderCartPage();
+    }
+    return true;
+}
+
+function clearFormErrors(form) {
+    form.querySelectorAll('.form-field').forEach((field) => field.classList.remove('is-invalid'));
+    form.querySelectorAll('.form-error').forEach((el) => {
+        el.textContent = '';
+    });
+}
+
+function setFieldError(form, name, message) {
+    const field = form.querySelector(`[data-field="${name}"]`);
+    const error = form.querySelector(`[data-error-for="${name}"]`);
+    if (field) field.classList.add('is-invalid');
+    if (error) error.textContent = message || '';
+}
+
+function validateCheckoutForm(form) {
+    clearFormErrors(form);
+    const data = {
+        name: form.name.value.trim(),
+        phone: form.phone.value.trim(),
+        email: form.email.value.trim(),
+        city: form.city.value.trim(),
+        address: form.address.value.trim(),
+        comment: form.comment.value.trim(),
+        agree: form.agree.checked,
+        company: form.company?.value?.trim() || ''
+    };
+
+    const errors = {};
+    if (data.company) {
+        errors.honeypot = true;
+    }
+    if (data.name.length < 2) errors.name = 'Укажите имя.';
+    if (!isValidRuPhone(data.phone)) errors.phone = 'Укажите корректный телефон.';
+    if (!isValidEmail(data.email)) errors.email = 'Проверьте email.';
+    if (data.city.length < 2) errors.city = 'Укажите город.';
+    if (data.address.length < 5) errors.address = 'Укажите адрес доставки.';
+    if (data.comment.length > 500) errors.comment = 'Слишком длинный комментарий.';
+    if (!data.agree) errors.agree = 'Нужно согласие на обработку данных.';
+
+    Object.entries(errors).forEach(([key, message]) => {
+        if (key === 'honeypot') return;
+        setFieldError(form, key, message);
+    });
+
+    return { ok: Object.keys(errors).length === 0, data, errors };
+}
+
+function renderCartPage() {
+    const root = document.getElementById('cart-page');
+    if (!root) return;
+
+    const empty = document.getElementById('cart-empty');
+    const wrap = document.getElementById('cart-lines-wrap');
+    const list = document.getElementById('cart-lines');
+    const form = document.getElementById('checkout-form');
+    const success = document.getElementById('checkout-success');
+    const emptyHint = document.getElementById('checkout-empty-hint');
+    const countEl = document.getElementById('cart-items-count');
+    const subtotalEl = document.getElementById('cart-subtotal');
+
+    const cart = getCart();
+    const validLines = cart.filter((line) => getProductById(line.productId));
+    if (validLines.length !== cart.length) {
+        setCart(validLines);
+    }
+    const lines = getCart();
+    const isEmpty = lines.length === 0;
+    const orderDone = success && !success.hidden;
+
+    if (empty) empty.hidden = !isEmpty || orderDone;
+    if (wrap) wrap.hidden = isEmpty || orderDone;
+    if (form) form.hidden = isEmpty || orderDone;
+    if (emptyHint) emptyHint.hidden = !isEmpty || orderDone;
+
+    if (list && !isEmpty && !orderDone) {
+        list.innerHTML = lines
+            .map((line) => {
+                const product = getProductById(line.productId);
+                if (!product) return '';
+                const lineTotal = product.price * line.qty;
+                return `
+                <li class="cart-line" data-product-id="${line.productId}" data-size="${line.size}">
+                    <img class="cart-line-image" src="${product.image}" alt="" width="72" height="88" loading="lazy">
+                    <div class="cart-line-body">
+                        <div class="cart-line-top">
+                            <h3 class="cart-line-name"><a href="product.html?id=${product.id}">${product.name}</a></h3>
+                            <p class="cart-line-price">${formatPrice(lineTotal)}</p>
+                        </div>
+                        <p class="cart-line-meta">Размер: ${line.size} · ${formatPrice(product.price)} / шт.</p>
+                        <div class="cart-line-actions">
+                            <div class="cart-qty" role="group" aria-label="Количество">
+                                <button type="button" data-cart-qty="-1" aria-label="Уменьшить" ${line.qty <= 1 ? 'disabled' : ''}>−</button>
+                                <span class="cart-qty-value">${line.qty}</span>
+                                <button type="button" data-cart-qty="1" aria-label="Увеличить" ${line.qty >= CART_MAX_QTY ? 'disabled' : ''}>+</button>
+                            </div>
+                            <button type="button" class="cart-line-remove" data-cart-remove>Удалить</button>
+                        </div>
+                    </div>
+                </li>`;
+            })
+            .join('');
+    }
+
+    if (countEl) countEl.textContent = `${getCartCount(lines)} шт.`;
+    if (subtotalEl) subtotalEl.textContent = formatPrice(getCartSubtotal(lines, getProductById));
+    updateCartBadge();
+}
+
+function initCartPage() {
+    const root = document.getElementById('cart-page');
+    if (!root) return;
+
+    renderCartPage();
+
+    const list = document.getElementById('cart-lines');
+    if (list && !list.dataset.bound) {
+        list.dataset.bound = '1';
+        list.addEventListener('click', (e) => {
+            const line = e.target.closest('.cart-line');
+            if (!line) return;
+            const productId = line.getAttribute('data-product-id');
+            const size = line.getAttribute('data-size');
+
+            if (e.target.closest('[data-cart-remove]')) {
+                removeFromCart(productId, size);
+                showNotification('Удалено', 'Позиция убрана из корзины.', 'success', 2200);
+                renderCartPage();
+                return;
+            }
+
+            const qtyBtn = e.target.closest('[data-cart-qty]');
+            if (qtyBtn) {
+                const delta = Number(qtyBtn.getAttribute('data-cart-qty'));
+                const current = getCart().find(
+                    (l) => String(l.productId) === String(productId) && l.size === size
+                );
+                if (!current) return;
+                const next = current.qty + delta;
+                if (next < 1) {
+                    removeFromCart(productId, size);
+                } else {
+                    const result = updateCartQty(productId, size, next);
+                    if (!result.ok && result.error) {
+                        showNotification('Лимит', result.error, 'error', 2500);
+                    }
+                }
+                renderCartPage();
+            }
+        });
+    }
+
+    const form = document.getElementById('checkout-form');
+    if (form && !form.dataset.bound) {
+        form.dataset.bound = '1';
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const submitBtn = document.getElementById('checkout-submit');
+
+            if (getCart().length === 0) {
+                showNotification('Корзина пуста', 'Добавьте товары перед оформлением.', 'error', 3000);
+                renderCartPage();
+                return;
+            }
+
+            const { ok, data, errors } = validateCheckoutForm(form);
+            if (errors.honeypot) {
+                // Silent success for bots
+                form.reset();
+                return;
+            }
+            if (!ok) {
+                showNotification('Проверьте форму', 'Заполните обязательные поля.', 'error', 3000);
+                const firstInvalid = form.querySelector('.form-field.is-invalid input, .form-field.is-invalid textarea, .form-field.is-invalid input[type="checkbox"]');
+                firstInvalid?.focus();
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.setAttribute('aria-busy', 'true');
+            }
+
+            // Stub network delay
+            await new Promise((r) => setTimeout(r, 650));
+
+            const orderId = `VR-${Date.now().toString(36).toUpperCase()}`;
+            const snapshot = {
+                orderId,
+                createdAt: new Date().toISOString(),
+                customer: {
+                    name: data.name,
+                    phone: data.phone,
+                    email: data.email || null,
+                    city: data.city,
+                    address: data.address,
+                    comment: data.comment || null
+                },
+                items: getCart(),
+                total: getCartSubtotal(getCart(), getProductById)
+            };
+
+            try {
+                sessionStorage.setItem('virelle-last-order', JSON.stringify(snapshot));
+            } catch {
+                /* ignore quota */
+            }
+
+            clearCart();
+            updateCartBadge();
+            form.reset();
+            clearFormErrors(form);
+
+            const success = document.getElementById('checkout-success');
+            const successText = document.getElementById('checkout-success-text');
+            if (successText) {
+                successText.textContent = `Номер заявки ${orderId}. Мы свяжемся по телефону ${data.phone} для подтверждения.`;
+            }
+            if (success) success.hidden = false;
+            form.hidden = true;
+            const emptyHintEl = document.getElementById('checkout-empty-hint');
+            if (emptyHintEl) emptyHintEl.hidden = true;
+
+            const empty = document.getElementById('cart-empty');
+            const wrap = document.getElementById('cart-lines-wrap');
+            if (empty) empty.hidden = true;
+            if (wrap) wrap.hidden = true;
+
+            showNotification(
+                'Заказ отправлен',
+                `Заявка ${orderId} принята. Это демо-отправка без сервера.`,
+                'success',
+                4500
+            );
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.removeAttribute('aria-busy');
+            }
+
+            success?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
+}
+
+function handleCatalogSearch(event) {
+    catalogSearchQuery = (event?.target?.value || '').trim().toLowerCase();
+    applyFiltersToProducts();
+}
+
+function initCatalogSearch() {
+    const input = document.getElementById('catalog-search');
+    if (!input) return;
+    input.addEventListener('input', handleCatalogSearch);
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+    if (q) {
+        input.value = q;
+        catalogSearchQuery = q.trim().toLowerCase();
+    }
+}
+
+function initProductPage() {
+    const root = document.getElementById('product-page');
+    if (!root) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    const product = getProductById(id);
+
+    const empty = document.getElementById('product-empty');
+    const content = document.getElementById('product-content');
+
+    if (!product) {
+        if (empty) empty.hidden = false;
+        if (content) content.hidden = true;
+        return;
+    }
+
+    if (empty) empty.hidden = true;
+    if (content) content.hidden = false;
+
+    document.title = `${product.name} | Virelle`;
+
+    const img = document.getElementById('product-image');
+    if (img) {
+        img.src = product.image;
+        img.alt = product.name;
+    }
+    const name = document.getElementById('product-title');
+    if (name) name.textContent = product.name;
+    const desc = document.getElementById('product-description');
+    if (desc) desc.textContent = product.description;
+    const price = document.getElementById('product-price');
+    if (price) price.textContent = formatPrice(product.price);
+    const original = document.getElementById('product-original-price');
+    if (original) {
+        if (product.originalPrice) {
+            original.textContent = formatPrice(product.originalPrice);
+            original.hidden = false;
+        } else {
+            original.hidden = true;
+        }
+    }
+    const materials = document.getElementById('product-materials');
+    if (materials) {
+        materials.textContent = product.materials || product.description;
+    }
+    const care = document.getElementById('product-care');
+    if (care) {
+        care.textContent = product.care || 'Деликатная стирка, сушить в расправленном виде.';
+    }
+    const sizes = document.getElementById('product-sizes');
+    selectedProductSize = '';
+    const bindProductSizes = (selected) => {
+        selectedProductSize = selected || '';
+        renderSelectableSizes(sizes, product.sizes || [], selectedProductSize, (size) => bindProductSizes(size));
+        const addBtn = document.getElementById('product-order-btn');
+        if (addBtn) addBtn.disabled = !selectedProductSize;
+    };
+    bindProductSizes('');
+
+    const order = document.getElementById('product-order-btn');
+    if (order) {
+        order.disabled = true;
+        order.onclick = (e) => {
+            e.preventDefault();
+            if (!selectedProductSize) {
+                showNotification('Выберите размер', 'Укажите размер перед добавлением в корзину.', 'error', 3000);
+                return;
+            }
+            handleAddToCart(product.id, selectedProductSize);
+        };
+    }
+
+    const favBtn = document.getElementById('product-favorite-btn');
+    if (favBtn) {
+        const active = isFavorite(product.id);
+        favBtn.dataset.favoriteId = String(product.id);
+        favBtn.onclick = (event) => toggleFavorite(product.id, favBtn, event);
+        setFavoriteButtonState(favBtn, active);
+    }
+
+    const related = document.getElementById('product-related-grid');
+    if (related) {
+        const items = catalogProducts
+            .filter((p) => p.id !== product.id)
+            .filter((p) => p.type.some((t) => product.type.includes(t)) || p.category.some((c) => product.category.includes(c)))
+            .slice(0, 4);
+        related.innerHTML = (items.length ? items : getFeaturedProducts(4)).map((p) => createProductCard(p)).join('');
+        initProductCarousels();
+        initTouchProductOverlays();
+    }
+}
+
+
+function ensureMenuScrim() {
+    let scrim = document.getElementById('menu-scrim');
+    if (!scrim) {
+        scrim = document.createElement('div');
+        scrim.id = 'menu-scrim';
+        scrim.className = 'menu-scrim';
+        scrim.setAttribute('aria-hidden', 'true');
+        scrim.addEventListener('click', () => closeMenu());
+        document.body.appendChild(scrim);
+    }
+    return scrim;
+}
 
 function openMenu() {
     const menuOverlay = document.getElementById('menu-overlay');
     const menuBtn = document.querySelector('.menu-btn');
+    if (!menuOverlay) return;
+
+    const scrim = ensureMenuScrim();
+    scrim.classList.add('is-active');
+
     menuOverlay.classList.add('active');
     if (menuBtn) {
         menuBtn.setAttribute('aria-expanded', 'true');
     }
-    // Блокируем скролл body при открытом меню
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
+
+    const closeBtn = menuOverlay.querySelector('.menu-close');
+    if (closeBtn) {
+        setTimeout(() => closeBtn.focus(), 80);
+    }
 }
 
 function closeMenu() {
     const menuOverlay = document.getElementById('menu-overlay');
     const menuBtn = document.querySelector('.menu-btn');
-    menuOverlay.classList.remove('active');
+    const scrim = document.getElementById('menu-scrim');
+
+    if (menuOverlay?.classList.contains('active')) {
+        menuOverlay.classList.remove('active');
+        unlockBodyScroll();
+    }
+    if (scrim) scrim.classList.remove('is-active');
     if (menuBtn) {
         menuBtn.setAttribute('aria-expanded', 'false');
     }
-    // Восстанавливаем скролл body
-    document.body.style.overflow = '';
 }
 
 // Функции для уведомлений
@@ -44,9 +575,8 @@ function showNotification(title, message, type = 'success', duration = 5000) {
     notificationTitle.textContent = title;
     notificationText.textContent = message;
     
-    // Показываем уведомление
+    // Toast must not lock body scroll — that causes page jump
     notification.classList.add('active');
-    document.body.style.overflow = 'hidden';
     
     // Автоматическое закрытие через duration миллисекунд
     const autoCloseTimeout = setTimeout(() => {
@@ -67,7 +597,6 @@ function hideNotification() {
     }
     
     notification.classList.remove('active');
-    document.body.style.overflow = '';
 }
 
 // Обработчики форм с валидацией
@@ -90,65 +619,56 @@ function handleContactSubmit(event) {
     form.reset();
 }
 
-// Функция для обновления полей формы в зависимости от выбранного типа
+// Подсветка нужных обхватов и required — поля всегда видны
 function updateCalculatorFields() {
-    const productType = document.getElementById('product-type').value;
-    const braFields = document.getElementById('bra-fields');
-    const pantiesFields = document.getElementById('panties-fields');
+    const productType = document.getElementById('product-type')?.value || 'bra';
     const resultDiv = document.getElementById('calculator-result');
-    
-    // Скрываем все поля и результат
-    if (braFields) braFields.style.display = 'none';
-    if (pantiesFields) pantiesFields.style.display = 'none';
-    if (resultDiv) resultDiv.style.display = 'none';
-    
-    // Очищаем поля
+    const measures = document.getElementById('calculator-measures');
+
+    if (resultDiv) {
+        resultDiv.classList.add('hidden');
+        resultDiv.style.display = 'none';
+        resultDiv.innerHTML = '';
+    }
+
     const bandSizeInput = document.getElementById('band-size');
     const bustSizeInput = document.getElementById('bust-size');
+    const waistSizeInput = document.getElementById('waist-size');
     const hipSizeInput = document.getElementById('hip-size');
-    const clothingBustInput = document.getElementById('clothing-bust-size');
-    const clothingWaistInput = document.getElementById('clothing-waist-size');
-    const clothingHipInput = document.getElementById('clothing-hip-size');
-    const clothingFields = document.getElementById('clothing-fields');
-    
-    if (bandSizeInput) {
-        bandSizeInput.value = '';
-        bandSizeInput.removeAttribute('required');
+
+    [bandSizeInput, bustSizeInput, waistSizeInput, hipSizeInput].forEach((input) => {
+        if (input) input.removeAttribute('required');
+    });
+
+    if (measures) {
+        measures.querySelectorAll('[data-measure]').forEach((group) => {
+            group.classList.remove('form-group--needed');
+            group.classList.add('form-group--optional');
+        });
     }
-    if (bustSizeInput) {
-        bustSizeInput.value = '';
-        bustSizeInput.removeAttribute('required');
-    }
-    if (hipSizeInput) {
-        hipSizeInput.value = '';
-        hipSizeInput.removeAttribute('required');
-    }
-    if (clothingBustInput) {
-        clothingBustInput.value = '';
-        clothingBustInput.removeAttribute('required');
-    }
-    if (clothingWaistInput) {
-        clothingWaistInput.value = '';
-        clothingWaistInput.removeAttribute('required');
-    }
-    if (clothingHipInput) {
-        clothingHipInput.value = '';
-        clothingHipInput.removeAttribute('required');
-    }
-    
-    // Показываем нужные поля
+
+    const need = (keys) => {
+        keys.forEach((key) => {
+            const group = measures?.querySelector(`[data-measure="${key}"]`);
+            if (group) {
+                group.classList.add('form-group--needed');
+                group.classList.remove('form-group--optional');
+            }
+        });
+    };
+
     if (productType === 'bra') {
-        if (braFields) braFields.style.display = 'block';
+        need(['band', 'bust']);
         if (bandSizeInput) bandSizeInput.setAttribute('required', 'required');
         if (bustSizeInput) bustSizeInput.setAttribute('required', 'required');
     } else if (productType === 'panties') {
-        if (pantiesFields) pantiesFields.style.display = 'block';
+        need(['hip']);
         if (hipSizeInput) hipSizeInput.setAttribute('required', 'required');
     } else if (productType === 'clothing') {
-        if (clothingFields) clothingFields.style.display = 'block';
-        if (clothingBustInput) clothingBustInput.setAttribute('required', 'required');
-        if (clothingWaistInput) clothingWaistInput.setAttribute('required', 'required');
-        if (clothingHipInput) clothingHipInput.setAttribute('required', 'required');
+        need(['bust', 'waist', 'hip']);
+        if (bustSizeInput) bustSizeInput.setAttribute('required', 'required');
+        if (waistSizeInput) waistSizeInput.setAttribute('required', 'required');
+        if (hipSizeInput) hipSizeInput.setAttribute('required', 'required');
     }
 }
 
@@ -463,9 +983,9 @@ function handleSizeCalculatorSubmit(event) {
             `;
         }
     } else if (productType === 'clothing') {
-        const bustSize = parseInt(document.getElementById('clothing-bust-size').value);
-        const waistSize = parseInt(document.getElementById('clothing-waist-size').value);
-        const hipSize = parseInt(document.getElementById('clothing-hip-size').value);
+        const bustSize = parseInt(document.getElementById('bust-size').value);
+        const waistSize = parseInt(document.getElementById('waist-size').value);
+        const hipSize = parseInt(document.getElementById('hip-size').value);
         
         result = calculateClothingSize(bustSize, waistSize, hipSize);
         
@@ -512,6 +1032,7 @@ function handleSizeCalculatorSubmit(event) {
     
     if (resultHTML) {
         resultDiv.innerHTML = resultHTML;
+        resultDiv.classList.remove('hidden');
         resultDiv.style.display = 'block';
         
         // Прокручиваем к результату
@@ -531,6 +1052,10 @@ document.addEventListener('keydown', function(event) {
         if (sizeGuideModal && sizeGuideModal.classList.contains('active')) {
             closeSizeGuideModal();
         }
+        const sizeCalculatorModal = document.getElementById('size-calculator-modal');
+        if (sizeCalculatorModal && sizeCalculatorModal.classList.contains('active')) {
+            closeSizeCalculatorModal();
+        }
         // Закрытие уведомления
         const notification = document.getElementById('notification');
         if (notification && notification.classList.contains('active')) {
@@ -542,28 +1067,38 @@ document.addEventListener('keydown', function(event) {
 // Функции для модального окна руководства по размерам
 function openSizeGuideModal() {
     const modal = document.getElementById('size-guide-modal');
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    if (!modal || modal.classList.contains('active')) return;
+    closeSizeCalculatorModal();
+    modal.classList.add('active');
+    lockBodyScroll();
 }
 
 function closeSizeGuideModal() {
     const modal = document.getElementById('size-guide-modal');
-    if (modal) {
+    if (modal?.classList.contains('active')) {
         modal.classList.remove('active');
-        document.body.style.overflow = '';
+        unlockBodyScroll();
     }
 }
 
-function scrollCarousel(direction) {
-    const carousel = document.getElementById('carousel');
-    const scrollAmount = 350;
-    
-    if (direction === 'left') {
-        carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    } else {
-        carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+function openSizeCalculatorModal() {
+    const modal = document.getElementById('size-calculator-modal');
+    if (!modal || modal.classList.contains('active')) return;
+    closeSizeGuideModal();
+    modal.classList.add('active');
+    lockBodyScroll();
+    updateCalculatorFields();
+    const firstMeasure = modal.querySelector('#band-size');
+    if (firstMeasure) {
+        setTimeout(() => firstMeasure.focus(), 100);
+    }
+}
+
+function closeSizeCalculatorModal() {
+    const modal = document.getElementById('size-calculator-modal');
+    if (modal?.classList.contains('active')) {
+        modal.classList.remove('active');
+        unlockBodyScroll();
     }
 }
 
@@ -622,103 +1157,16 @@ function syncThemeIcon() {
     updateIconElement(nextSpan, nextIconClass);
 }
 
-// Переключение темы
+// Тема: quiet luxury — только light
 function toggleTheme() {
-    const html = document.documentElement;
-    const currentTheme = html.getAttribute('data-theme') || 'light';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    const themeToggle = document.getElementById('theme-toggle');
-    
-    if (!themeToggle) return;
-    
-    // Обновляем тему
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    
-    // Сначала обновляем иконки в соответствии с новой темой
-    // Затем меняем роли для плавной смены
-    const currentSpan = themeToggle.querySelector('.icon--current');
-    const nextSpan = themeToggle.querySelector('.icon--next');
-    
-    if (currentSpan && nextSpan) {
-        // Обновляем классы иконок Font Awesome для новой темы
-        const newCurrentIconClass = getIconClass(newTheme);
-        const newNextIconClass = getIconClass(newTheme === 'light' ? 'dark' : 'light');
-        
-        // Обновляем иконку, которая станет текущей (сейчас она next)
-        // Используем функцию updateIconElement для правильной работы с SVG
-        updateIconElement(nextSpan, newCurrentIconClass);
-        
-        // Обновляем иконку, которая станет следующей (сейчас она current)
-        updateIconElement(currentSpan, newNextIconClass);
-        
-        // Теперь меняем роли: текущая становится следующей, следующая становится текущей
-        // Это запустит CSS transition для плавной смены
-        currentSpan.classList.remove('icon--current');
-        currentSpan.classList.add('icon--next');
-        
-        nextSpan.classList.remove('icon--next');
-        nextSpan.classList.add('icon--current');
-    }
-    
-    // Обновляем aria-label
-        themeToggle.setAttribute('aria-label', newTheme === 'light' ? 'Переключить на темную тему' : 'Переключить на светлую тему');
+    /* dark theme removed */
 }
 
-// Инициализация темы при загрузке
 function initTheme() {
-    // Тема уже установлена inline скриптом в head, но проверим на всякий случай
-    const savedTheme = localStorage.getItem('theme') || 'dark'; // По умолчанию светлая тема
-    const html = document.documentElement;
-    const currentTheme = html.getAttribute('data-theme');
-    
-    // Если тема не установлена или не совпадает с сохраненной, обновляем
-    if (!currentTheme || currentTheme !== savedTheme) {
-        html.setAttribute('data-theme', savedTheme);
-    }
-    
-    const themeToggle = document.getElementById('theme-toggle');
-    if (!themeToggle) return;
-    
-    // Сразу обновляем иконки без проверки - это быстрее
-    const currentSpan = themeToggle.querySelector('.icon--current');
-    const nextSpan = themeToggle.querySelector('.icon--next');
-    
-    if (currentSpan && nextSpan) {
-        const currentIcon = currentSpan.querySelector('i');
-        const nextIcon = nextSpan.querySelector('i');
-        
-        if (currentIcon && nextIcon) {
-            // Определяем, какая иконка должна быть текущей
-            const expectedCurrentIcon = getIconClass(savedTheme);
-            const currentIconClass = currentIcon.classList.contains('fa-sun') ? 'fa-sun' : 'fa-moon';
-            
-            // Если иконки не соответствуют теме, обновляем их
-            if (currentIconClass !== expectedCurrentIcon) {
-                // Обновляем иконки через updateIconElement для правильной работы с Font Awesome
-                updateIconElement(currentSpan, expectedCurrentIcon);
-                updateIconElement(nextSpan, getIconClass(savedTheme === 'light' ? 'dark' : 'light'));
-            } else {
-                // Иконки правильные, но нужно убедиться, что следующая иконка тоже правильная
-                const expectedNextIcon = getIconClass(savedTheme === 'light' ? 'dark' : 'light');
-                const nextIconClass = nextIcon.classList.contains('fa-sun') ? 'fa-sun' : 'fa-moon';
-                if (nextIconClass !== expectedNextIcon) {
-                    updateIconElement(nextSpan, expectedNextIcon);
-                }
-            }
-        }
-    }
-    
-    // Синхронизируем иконки с темой (на случай, если Font Awesome уже загрузился)
-    syncThemeIcon();
-    
-    // Обновляем aria-label
-    themeToggle.setAttribute('aria-label', savedTheme === 'light' ? 'Переключить на темную тему' : 'Переключить на светлую тему');
-    
-    // Дополнительная проверка через небольшую задержку (на случай, если Font Awesome еще не загрузился)
-    setTimeout(() => {
-        syncThemeIcon();
-    }, 50); // Уменьшил задержку до 50ms для более быстрого обновления
+    document.documentElement.setAttribute('data-theme', 'light');
+    try {
+        localStorage.setItem('theme', 'light');
+    } catch (_) { /* ignore */ }
 }
 
 // ==========================================================================
@@ -729,49 +1177,38 @@ function initTheme() {
 // Вспомогательная функция для открытия модального окна из карточки товара
 function openQuickViewFromCard(button) {
     if (!button) return;
-    
-    // Находим родительскую карточку товара или элемент карусели
+
     const productCard = button.closest('.product-card');
-    const carouselItem = button.closest('.carousel-item');
-    const container = productCard || carouselItem;
-    
-    if (!container) return;
-    
-    // Получаем данные из карточки
-    const name = container.querySelector('.product-name')?.textContent || '';
-    const description = container.querySelector('.product-desc')?.textContent || '';
-    const priceText = container.querySelector('.product-price')?.textContent || '';
-    const image = container.querySelector('img')?.src || '';
-    const badge = container.querySelector('.product-badge');
-    
-    // Парсим цену
+    if (!productCard) return;
+
+    const productId = productCard.getAttribute('data-product-id');
+    if (productId) {
+        openQuickViewModal(productId);
+        return;
+    }
+
+    const name = productCard.querySelector('.product-name')?.textContent || '';
+    const description = productCard.querySelector('.product-desc')?.textContent || '';
+    const priceText = productCard.querySelector('.product-price')?.textContent || '';
+    const image = productCard.querySelector('img')?.src || '';
+    const badge = productCard.querySelector('.product-badge');
+
     const priceMatch = priceText.match(/[\d\s]+/);
     const price = priceMatch ? parseInt(priceMatch[0].replace(/\s/g, '')) : 0;
-    
-    // Получаем ID товара, если есть
-    const productId = productCard?.getAttribute('data-product-id');
-    
-    // Создаем объект товара
+
     const product = {
-        id: productId ? parseInt(productId) : Date.now(),
-        name: name,
-        description: description,
-        price: price,
+        id: null,
+        name,
+        description,
+        price,
         originalPrice: null,
-        image: image,
-        sizes: ['S', 'M', 'L', 'XL'], // По умолчанию
+        image,
+        sizes: ['S', 'M', 'L', 'XL'],
         isNew: badge?.classList.contains('badge-new') || false,
-        isBestseller: badge?.classList.contains('bestseller') || false
+        isBestseller: badge?.classList.contains('bestseller') || badge?.classList.contains('badge-bestseller') || false,
     };
-    
-    // Открываем модальное окно
-    if (window.openQuickViewModalWithData) {
-        window.openQuickViewModalWithData(product);
-    } else if (typeof openQuickViewModalWithData === 'function') {
-        openQuickViewModalWithData(product);
-    } else {
-        console.error('Функция openQuickViewModalWithData не доступна');
-    }
+
+    openQuickViewModalWithData(product);
 }
 
 // Функция открытия модального окна быстрого просмотра с данными товара
@@ -827,11 +1264,25 @@ function openQuickViewModalWithData(product) {
     
     // Размеры
     const sizesListEl = document.getElementById('quick-view-sizes-list');
-    if (sizesListEl && product.sizes) {
-        sizesListEl.innerHTML = product.sizes.map(size => 
-            `<span class="quick-view-size-item">${size}</span>`
-        ).join('');
-    }
+    selectedQuickViewSize = '';
+    quickViewProductId = product.id || null;
+    const bindQuickSizes = (selected) => {
+        selectedQuickViewSize = selected || '';
+        if (!sizesListEl) return;
+        const list = product.sizes || [];
+        sizesListEl.innerHTML = list
+            .map(
+                (s) =>
+                    `<button type="button" class="quick-view-size-item${selectedQuickViewSize === s ? ' is-selected' : ''}" data-size="${s}" aria-pressed="${selectedQuickViewSize === s}">${s}</button>`
+            )
+            .join('');
+        sizesListEl.querySelectorAll('[data-size]').forEach((btn) => {
+            btn.addEventListener('click', () => bindQuickSizes(btn.getAttribute('data-size')));
+        });
+        const addBtn = document.getElementById('quick-view-order-btn');
+        if (addBtn) addBtn.disabled = !selectedQuickViewSize;
+    };
+    bindQuickSizes('');
     
     // Бейдж
     const badgeEl = document.getElementById('quick-view-badge');
@@ -849,21 +1300,32 @@ function openQuickViewModalWithData(product) {
         }
     }
     
-    // Кнопка заказа - добавляем название товара в ссылку ВК
     const orderBtn = document.getElementById('quick-view-order-btn');
     if (orderBtn) {
-        // Можно добавить параметры в URL для передачи информации о товаре
-        const vkUrl = new URL('https://vk.com/chilloutlingerie');
-        // Если нужно, можно добавить параметры запроса
-        orderBtn.href = vkUrl.toString();
+        orderBtn.disabled = true;
+        orderBtn.onclick = () => {
+            if (!quickViewProductId) return;
+            if (!selectedQuickViewSize) {
+                showNotification('Выберите размер', 'Укажите размер перед добавлением в корзину.', 'error', 3000);
+                return;
+            }
+            if (handleAddToCart(quickViewProductId, selectedQuickViewSize)) {
+                // keep modal open so user can continue
+            }
+        };
+    }
+
+    const detailsBtn = document.getElementById('quick-view-details-btn');
+    if (detailsBtn && product.id) {
+        detailsBtn.href = `product.html?id=${product.id}`;
+        detailsBtn.classList.remove('hidden');
     }
     
     // Открываем модальное окно
-    console.log('Открываем модальное окно быстрого просмотра');
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    console.log('Модальное окно должно быть видимым. Класс active добавлен:', modal.classList.contains('active'));
-    
+    if (!modal.classList.contains('active')) {
+        modal.classList.add('active');
+        lockBodyScroll();
+    }
     // Устанавливаем aria-hidden для основного контента
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
@@ -879,20 +1341,22 @@ function openQuickViewModalWithData(product) {
 
 // Функция открытия модального окна быстрого просмотра
 function openQuickViewModal(productId) {
-    console.log('openQuickViewModal вызвана с productId:', productId);
-    // Сначала пытаемся найти товар в DOM (для главной страницы)
+    const fromData = getProductById(productId);
+    if (fromData) {
+        openQuickViewModalWithData(fromData);
+        return;
+    }
+
+    // Fallback: данные из DOM-карточки
     const productCard = document.querySelector(`[data-product-id="${productId}"]`);
-    console.log('Найденная карточка товара:', productCard);
     
     if (productCard) {
-        // Получаем данные из карточки товара на странице
         const name = productCard.querySelector('.product-name')?.textContent || '';
         const description = productCard.querySelector('.product-desc')?.textContent || '';
         const priceText = productCard.querySelector('.product-price')?.textContent || '';
         const image = productCard.querySelector('img')?.src || '';
         const badge = productCard.querySelector('.product-badge');
         
-        // Парсим цену
         const priceMatch = priceText.match(/[\d\s]+/);
         const price = priceMatch ? parseInt(priceMatch[0].replace(/\s/g, '')) : 0;
         
@@ -939,9 +1403,9 @@ function openQuickViewModal(productId) {
 // Функция закрытия модального окна быстрого просмотра
 function closeQuickViewModal() {
     const modal = document.getElementById('quick-view-modal');
-    if (modal) {
+    if (modal?.classList.contains('active')) {
         modal.classList.remove('active');
-        document.body.style.overflow = '';
+        unlockBodyScroll();
         
         // Убираем aria-hidden с основного контента
         const mainContent = document.getElementById('main-content');
@@ -960,8 +1424,24 @@ if (typeof window !== 'undefined') {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Инициализация темы
+    // Enable menu transitions only after first paint (prevents open→close FOUC)
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.documentElement.classList.add('ui-ready');
+        });
+    });
+
     initTheme();
+    renderFeaturedProducts();
+    initProductPage();
+    initCatalogSearch();
+    initCustomSelects();
+    updateFavoritesBadge();
+    updateCartBadge();
+    initCartPage();
+    bindProductCarouselMedia();
+    initProductCarousels();
+    initTouchProductOverlays();
     
     // Наблюдатель за изменением атрибута data-theme для синхронизации иконки
     const themeObserver = new MutationObserver(function(mutations) {
@@ -989,6 +1469,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const scrollY = window.scrollY || window.pageYOffset;
             const menuOverlay = document.getElementById('menu-overlay');
             if (menuOverlay && menuOverlay.classList.contains('active')) {
+                header.classList.remove('header-hidden');
+                lastScrollY = scrollY;
+                ticking = false;
+                return;
+            }
+            // Avoid header show/hide thrash during pagination / programmatic scroll
+            if (isProgrammaticScrollActive() || document.documentElement.classList.contains('is-scroll-locked')) {
                 header.classList.remove('header-hidden');
                 lastScrollY = scrollY;
                 ticking = false;
@@ -1053,44 +1540,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 hideNotification();
             });
         }
-    }
-    
-    // Обработчик формы подписки на рассылку
-    const newsletterForm = document.querySelector('.newsletter-form');
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const form = event.target;
-            const emailInput = form.querySelector('input[type="email"]');
-            
-            if (!emailInput || !emailInput.value) {
-                showNotification(
-                    'Ошибка',
-                    'Пожалуйста, введите корректный email адрес.',
-                    'error'
-                );
-                return;
-            }
-            
-            // Валидация email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(emailInput.value)) {
-                showNotification(
-                    'Ошибка',
-                    'Пожалуйста, введите корректный email адрес.',
-                    'error'
-                );
-                return;
-            }
-            
-            // Здесь будет отправка на сервер
-            showNotification(
-                'Подписка оформлена!',
-                'Спасибо за подписку! Вы будете получать наши новости и специальные предложения.',
-                'success'
-            );
-            form.reset();
-        });
     }
     
     const observerOptions = {
@@ -1159,7 +1608,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Сначала проверяем, есть ли data-product-id прямо на кнопке
         const buttonProductId = button.getAttribute('data-product-id');
         if (buttonProductId && openModal) {
-            console.log('Открываем модальное окно для товара с ID:', buttonProductId);
             openModal(parseInt(buttonProductId));
             return;
         }
@@ -1242,12 +1690,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Используем делегирование событий на document для надежности
     document.addEventListener('click', handleQuickViewClick);
-    console.log('Обработчик кликов для быстрого просмотра зарегистрирован');
-    console.log('Проверка доступности функций:', {
-        openQuickViewModal: typeof window.openQuickViewModal,
-        openQuickViewModalWithData: typeof window.openQuickViewModalWithData,
-        closeQuickViewModal: typeof window.closeQuickViewModal
-    });
     
     // Закрытие модального окна быстрого просмотра по ESC
     document.addEventListener('keydown', function(event) {
@@ -1273,1240 +1715,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ==========================================================================
 
 // Mock данные товаров
-const catalogProducts = [
-    {
-        id: 1,
-        name: "Бюстгальтер Midnight Lace",
-        description: "Нежное французское кружево",
-        price: 7800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["sexy", "everyday"],
-        sizes: ["75B", "75C", "80B", "80C", "85B"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 150,
-        dateAdded: "2024-01-15"
-    },
-    {
-        id: 2,
-        name: "Комплект Ivory Dream",
-        description: "Роскошный комплект из шелка",
-        price: 12500,
-        originalPrice: 15000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["set"],
-        category: ["bridal", "cozy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: true,
-        discount: 17,
-        popularity: 200,
-        dateAdded: "2023-12-10"
-    },
-    {
-        id: 3,
-        name: "Трусы Lace Delight",
-        description: "Кружевные трусы премиум качества",
-        price: 3200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["everyday", "sexy"],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 120,
-        dateAdded: "2024-01-20"
-    },
-    {
-        id: 4,
-        name: "Пижама Silk Comfort",
-        description: "Уютная пижама из натурального шелка",
-        price: 9800,
-        originalPrice: 12000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy", "everyday"],
-        sizes: ["XS", "S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: true,
-        discount: 18,
-        popularity: 180,
-        dateAdded: "2023-11-25"
-    },
-    {
-        id: 5,
-        name: "Тедди Black Elegance",
-        description: "Сексуальное тедди с кружевными вставками",
-        price: 11200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 95,
-        dateAdded: "2024-02-01"
-    },
-    {
-        id: 6,
-        name: "Бюстгальтер Rose Petal",
-        description: "Нежный розовый бюстгальтер",
-        price: 8500,
-        originalPrice: 10000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["bridal", "everyday"],
-        sizes: ["75C", "75D", "80B", "80C", "80D", "85B", "85C"],
-        isNew: false,
-        isBestseller: true,
-        discount: 15,
-        popularity: 220,
-        dateAdded: "2023-10-15"
-    },
-    {
-        id: 7,
-        name: "Комплект Sport Luxe",
-        description: "Спортивный комплект премиум класса",
-        price: 6800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b968491bc7-138dd7e45dcca10c68bc.png",
-        type: ["set"],
-        category: ["sport"],
-        sizes: ["XS", "S", "M", "L", "XL", "XXL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 75,
-        dateAdded: "2023-09-20"
-    },
-    {
-        id: 8,
-        name: "Трусы Cotton Bliss",
-        description: "Комфортные трусы из органического хлопка",
-        price: 2800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["cozy", "everyday"],
-        sizes: ["S", "M", "L", "XL", "XXL", "3XL", "4XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 110,
-        dateAdded: "2023-08-10"
-    },
-    {
-        id: 9,
-        name: "Пижама Velvet Night",
-        description: "Роскошная пижама из бархата",
-        price: 13500,
-        originalPrice: 16000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: true,
-        discount: 16,
-        popularity: 165,
-        dateAdded: "2023-12-05"
-    },
-    {
-        id: 10,
-        name: "Бюстгальтер Pearl White",
-        description: "Свадебный бюстгальтер с жемчужными деталями",
-        price: 11800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["bra"],
-        category: ["bridal"],
-        sizes: ["75B", "75C", "80B", "80C", "80D", "85B", "85C", "90B"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 140,
-        dateAdded: "2024-01-25"
-    },
-    {
-        id: 11,
-        name: "Тедди Red Passion",
-        description: "Страстное красное тедди",
-        price: 10500,
-        originalPrice: 13000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: false,
-        discount: 19,
-        popularity: 88,
-        dateAdded: "2023-11-15"
-    },
-    {
-        id: 12,
-        name: "Комплект Everyday Elegance",
-        description: "Элегантный повседневный комплект",
-        price: 9200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["set"],
-        category: ["everyday"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 130,
-        dateAdded: "2023-10-30"
-    },
-    {
-        id: 13,
-        name: "Бюстгальтер Lavender Mist",
-        description: "Нежный лавандовый оттенок",
-        price: 7200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["everyday", "cozy"],
-        sizes: ["70B", "70C", "75B", "75C", "80B"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 105,
-        dateAdded: "2024-02-10"
-    },
-    {
-        id: 14,
-        name: "Трусы Silk Touch",
-        description: "Шелковистые трусы премиум качества",
-        price: 3500,
-        originalPrice: 4200,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["sexy", "bridal"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: true,
-        discount: 17,
-        popularity: 175,
-        dateAdded: "2023-12-20"
-    },
-    {
-        id: 15,
-        name: "Пижама Moonlight",
-        description: "Романтичная пижама для особых вечеров",
-        price: 11000,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy", "bridal"],
-        sizes: ["XS", "S", "M", "L"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 125,
-        dateAdded: "2024-01-30"
-    },
-    {
-        id: 16,
-        name: "Тедди Emerald Dream",
-        description: "Изумрудное тедди с золотыми акцентами",
-        price: 12800,
-        originalPrice: 15000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: false,
-        discount: 15,
-        popularity: 92,
-        dateAdded: "2023-11-20"
-    },
-    {
-        id: 17,
-        name: "Комплект Vintage Rose",
-        description: "Винтажный комплект в розовых тонах",
-        price: 10200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["set"],
-        category: ["bridal", "everyday"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 145,
-        dateAdded: "2023-10-05"
-    },
-    {
-        id: 18,
-        name: "Бюстгальтер Classic Black",
-        description: "Классический черный бюстгальтер",
-        price: 6500,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["everyday"],
-        sizes: ["75B", "75C", "75D", "80B", "80C", "80D", "85B", "85C"],
-        isNew: false,
-        isBestseller: true,
-        discount: 0,
-        popularity: 250,
-        dateAdded: "2023-09-15"
-    },
-    {
-        id: 19,
-        name: "Трусы Lace Fantasy",
-        description: "Фантазийные кружевные трусы",
-        price: 2900,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 115,
-        dateAdded: "2024-02-15"
-    },
-    {
-        id: 20,
-        name: "Пижама Cozy Morning",
-        description: "Уютная пижама для утреннего кофе",
-        price: 8900,
-        originalPrice: 11000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy", "everyday"],
-        sizes: ["XS", "S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: true,
-        discount: 19,
-        popularity: 190,
-        dateAdded: "2023-12-01"
-    },
-    {
-        id: 21,
-        name: "Бюстгальтер Nude Perfect",
-        description: "Идеальный телесный оттенок",
-        price: 8800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["everyday"],
-        sizes: ["70C", "70D", "75B", "75C", "75D", "80B", "80C"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 160,
-        dateAdded: "2023-11-10"
-    },
-    {
-        id: 22,
-        name: "Комплект Royal Blue",
-        description: "Королевский синий комплект",
-        price: 11500,
-        originalPrice: 14000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["set"],
-        category: ["sexy", "bridal"],
-        sizes: ["S", "M", "L"],
-        isNew: true,
-        isBestseller: false,
-        discount: 18,
-        popularity: 135,
-        dateAdded: "2024-01-18"
-    },
-    {
-        id: 23,
-        name: "Трусы Sporty Comfort",
-        description: "Спортивные трусы для активного дня",
-        price: 2400,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b968491bc7-138dd7e45dcca10c68bc.png",
-        type: ["panties"],
-        category: ["sport", "everyday"],
-        sizes: ["S", "M", "L", "XL", "XXL", "3XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 85,
-        dateAdded: "2023-09-05"
-    },
-    {
-        id: 24,
-        name: "Тедди Cherry Blossom",
-        description: "Нежное тедди в цветах сакуры",
-        price: 9800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy", "bridal"],
-        sizes: ["S", "M", "L"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 100,
-        dateAdded: "2024-02-05"
-    },
-    {
-        id: 25,
-        name: "Пижама Winter Warmth",
-        description: "Теплая пижама для холодных вечеров",
-        price: 12500,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 155,
-        dateAdded: "2023-11-30"
-    },
-    {
-        id: 26,
-        name: "Бюстгальтер Push Up Delight",
-        description: "Бюстгальтер с эффектом пуш-ап",
-        price: 9500,
-        originalPrice: 11500,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["sexy", "everyday"],
-        sizes: ["75B", "75C", "80B", "80C", "85B", "85C"],
-        isNew: false,
-        isBestseller: true,
-        discount: 17,
-        popularity: 210,
-        dateAdded: "2023-10-20"
-    },
-    {
-        id: 27,
-        name: "Комплект Minimalist",
-        description: "Минималистичный комплект в бежевых тонах",
-        price: 8700,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["set"],
-        category: ["everyday"],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 140,
-        dateAdded: "2023-10-12"
-    },
-    {
-        id: 28,
-        name: "Трусы High Waist",
-        description: "Трусы с высокой талией",
-        price: 3100,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["everyday"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 108,
-        dateAdded: "2024-01-12"
-    },
-    {
-        id: 29,
-        name: "Бюстгальтер Lace Romance",
-        description: "Романтичный кружевной бюстгальтер",
-        price: 8200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["bridal", "sexy"],
-        sizes: ["70B", "70C", "75B", "75C", "80B", "80C"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 170,
-        dateAdded: "2023-11-05"
-    },
-    {
-        id: 30,
-        name: "Пижама Summer Breeze",
-        description: "Легкая пижама для летних ночей",
-        price: 7600,
-        originalPrice: 9500,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy", "everyday"],
-        sizes: ["XS", "S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: true,
-        discount: 20,
-        popularity: 195,
-        dateAdded: "2023-12-15"
-    },
-    {
-        id: 31,
-        name: "Тедди Midnight Blue",
-        description: "Темно-синее тедди с кружевом",
-        price: 11000,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 98,
-        dateAdded: "2023-11-25"
-    },
-    {
-        id: 32,
-        name: "Комплект Floral Garden",
-        description: "Цветочный комплект в пастельных тонах",
-        price: 10800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["set"],
-        category: ["bridal", "cozy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 128,
-        dateAdded: "2024-02-20"
-    },
-    {
-        id: 33,
-        name: "Бюстгальтер Seamless",
-        description: "Бесшовный бюстгальтер для комфорта",
-        price: 6800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["everyday", "sport"],
-        sizes: ["70B", "70C", "75B", "75C", "80B", "80C", "85B"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 148,
-        dateAdded: "2023-10-08"
-    },
-    {
-        id: 34,
-        name: "Трусы Brazilian",
-        description: "Бразильские трусы премиум качества",
-        price: 3300,
-        originalPrice: 4000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: true,
-        discount: 18,
-        popularity: 185,
-        dateAdded: "2023-12-08"
-    },
-    {
-        id: 35,
-        name: "Пижама Elegant Night",
-        description: "Элегантная пижама для особых случаев",
-        price: 14200,
-        originalPrice: 17000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["bridal", "cozy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: false,
-        discount: 16,
-        popularity: 142,
-        dateAdded: "2023-11-18"
-    },
-    {
-        id: 36,
-        name: "Бюстгальтер Strapless",
-        description: "Без бретелек для особых нарядов",
-        price: 9200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["sexy", "bridal"],
-        sizes: ["75B", "75C", "80B", "80C", "85B", "85C"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 118,
-        dateAdded: "2024-01-28"
-    },
-    {
-        id: 37,
-        name: "Комплект Sporty Chic",
-        description: "Спортивный комплект в стильном дизайне",
-        price: 7200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b968491bc7-138dd7e45dcca10c68bc.png",
-        type: ["set"],
-        category: ["sport"],
-        sizes: ["XS", "S", "M", "L", "XL", "XXL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 78,
-        dateAdded: "2023-09-12"
-    },
-    {
-        id: 38,
-        name: "Трусы Thong Premium",
-        description: "Премиум стринги из кружева",
-        price: 2700,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 132,
-        dateAdded: "2023-10-25"
-    },
-    {
-        id: 39,
-        name: "Тедди White Lace",
-        description: "Белое кружевное тедди",
-        price: 10200,
-        originalPrice: 12000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["bridal", "sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: true,
-        discount: 15,
-        popularity: 168,
-        dateAdded: "2023-12-22"
-    },
-    {
-        id: 40,
-        name: "Пижама Cozy Weekend",
-        description: "Уютная пижама для выходных",
-        price: 9400,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy", "everyday"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 152,
-        dateAdded: "2023-11-12"
-    },
-    {
-        id: 41,
-        name: "Бюстгальтер Plunge",
-        description: "Бюстгальтер с глубоким вырезом",
-        price: 8900,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["sexy"],
-        sizes: ["75C", "75D", "80B", "80C", "80D", "85B", "85C"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 138,
-        dateAdded: "2023-10-18"
-    },
-    {
-        id: 42,
-        name: "Комплект Luxury Set",
-        description: "Роскошный комплект с золотыми деталями",
-        price: 13800,
-        originalPrice: 16500,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["set"],
-        category: ["bridal", "sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: true,
-        isBestseller: false,
-        discount: 16,
-        popularity: 122,
-        dateAdded: "2024-02-08"
-    },
-    {
-        id: 43,
-        name: "Трусы Seamless Comfort",
-        description: "Бесшовные трусы для комфорта",
-        price: 2600,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["everyday", "sport"],
-        sizes: ["S", "M", "L", "XL", "XXL", "3XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 112,
-        dateAdded: "2023-09-28"
-    },
-    {
-        id: 44,
-        name: "Бюстгальтер T-Shirt",
-        description: "Бюстгальтер для футболок",
-        price: 7100,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["everyday"],
-        sizes: ["70B", "70C", "75B", "75C", "80B", "80C", "85B", "85C"],
-        isNew: false,
-        isBestseller: true,
-        discount: 0,
-        popularity: 225,
-        dateAdded: "2023-09-10"
-    },
-    {
-        id: 45,
-        name: "Пижама Spring Collection",
-        description: "Весенняя коллекция пижам",
-        price: 10100,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy"],
-        sizes: ["XS", "S", "M", "L", "XL"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 134,
-        dateAdded: "2024-02-12"
-    },
-    {
-        id: 46,
-        name: "Тедди Purple Velvet",
-        description: "Бархатное тедди в фиолетовых тонах",
-        price: 11600,
-        originalPrice: 13500,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: false,
-        discount: 14,
-        popularity: 102,
-        dateAdded: "2023-11-08"
-    },
-    {
-        id: 47,
-        name: "Комплект Classic White",
-        description: "Классический белый комплект",
-        price: 9600,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["set"],
-        category: ["bridal", "everyday"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 158,
-        dateAdded: "2023-10-22"
-    },
-    {
-        id: 48,
-        name: "Бюстгальтер Full Coverage",
-        description: "Бюстгальтер с полным покрытием",
-        price: 8400,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["everyday"],
-        sizes: ["75C", "75D", "75E", "80B", "80C", "80D", "85B", "85C", "85D"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 162,
-        dateAdded: "2023-11-02"
-    },
-    {
-        id: 49,
-        name: "Трусы Lace Trim",
-        description: "Трусы с кружевной отделкой",
-        price: 3000,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["everyday", "sexy"],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 114,
-        dateAdded: "2024-01-22"
-    },
-    {
-        id: 50,
-        name: "Пижама Autumn Leaves",
-        description: "Пижама в осенних тонах",
-        price: 10700,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 147,
-        dateAdded: "2023-10-28"
-    },
-    {
-        id: 51,
-        name: "Бюстгальтер Demi Cup",
-        description: "Бюстгальтер с чашкой деми",
-        price: 7900,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["sexy", "everyday"],
-        sizes: ["70B", "70C", "75B", "75C", "80B", "80C"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 136,
-        dateAdded: "2023-10-14"
-    },
-    {
-        id: 52,
-        name: "Комплект Pastel Dreams",
-        description: "Комплект в пастельных тонах",
-        price: 10400,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["set"],
-        category: ["bridal", "cozy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 129,
-        dateAdded: "2024-02-18"
-    },
-    {
-        id: 53,
-        name: "Трусы Bikini Style",
-        description: "Трусы в стиле бикини",
-        price: 2800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["everyday"],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 106,
-        dateAdded: "2023-09-22"
-    },
-    {
-        id: 54,
-        name: "Тедди Gold Accents",
-        description: "Тедди с золотыми акцентами",
-        price: 12400,
-        originalPrice: 14500,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy", "bridal"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: true,
-        discount: 14,
-        popularity: 178,
-        dateAdded: "2023-12-12"
-    },
-    {
-        id: 55,
-        name: "Пижама Holiday Special",
-        description: "Праздничная пижама",
-        price: 11800,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy", "bridal"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 149,
-        dateAdded: "2023-11-28"
-    },
-    {
-        id: 56,
-        name: "Бюстгальтер Longline",
-        description: "Длинный бюстгальтер",
-        price: 9900,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["sexy"],
-        sizes: ["75B", "75C", "80B", "80C", "85B", "85C"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 121,
-        dateAdded: "2024-01-08"
-    },
-    {
-        id: 57,
-        name: "Комплект Sporty Luxe",
-        description: "Спортивный комплект премиум",
-        price: 7500,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b968491bc7-138dd7e45dcca10c68bc.png",
-        type: ["set"],
-        category: ["sport"],
-        sizes: ["XS", "S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 82,
-        dateAdded: "2023-09-18"
-    },
-    {
-        id: 58,
-        name: "Трусы High Cut",
-        description: "Трусы с высоким вырезом",
-        price: 3100,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 124,
-        dateAdded: "2023-10-30"
-    },
-    {
-        id: 59,
-        name: "Бюстгальтер Wireless",
-        description: "Бюстгальтер без косточек",
-        price: 7600,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["cozy", "everyday"],
-        sizes: ["70B", "70C", "75B", "75C", "80B", "80C", "85B"],
-        isNew: false,
-        isBestseller: true,
-        discount: 0,
-        popularity: 205,
-        dateAdded: "2023-10-02"
-    },
-    {
-        id: 60,
-        name: "Пижама Cozy Nights",
-        description: "Уютные ночи в мягкой пижаме",
-        price: 11200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 153,
-        dateAdded: "2023-11-22"
-    },
-    {
-        id: 61,
-        name: "Тедди Red Velvet",
-        description: "Красное бархатное тедди",
-        price: 10900,
-        originalPrice: 12800,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: false,
-        discount: 15,
-        popularity: 96,
-        dateAdded: "2023-11-14"
-    },
-    {
-        id: 62,
-        name: "Комплект Elegant Touch",
-        description: "Элегантный комплект с изысканными деталями",
-        price: 12100,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["set"],
-        category: ["bridal", "sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 126,
-        dateAdded: "2024-02-14"
-    },
-    {
-        id: 63,
-        name: "Бюстгальтер Convertible",
-        description: "Многофункциональный бюстгальтер",
-        price: 9100,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["everyday"],
-        sizes: ["75B", "75C", "80B", "80C", "85B", "85C"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 144,
-        dateAdded: "2023-10-26"
-    },
-    {
-        id: 64,
-        name: "Трусы Seamless Invisible",
-        description: "Невидимые бесшовные трусы",
-        price: 2900,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["everyday"],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 119,
-        dateAdded: "2023-09-30"
-    },
-    {
-        id: 65,
-        name: "Пижама Silk Elegance",
-        description: "Шелковая пижама элегантного кроя",
-        price: 13200,
-        originalPrice: 15500,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["bridal", "cozy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: true,
-        discount: 15,
-        popularity: 172,
-        dateAdded: "2023-12-18"
-    },
-    {
-        id: 66,
-        name: "Бюстгальтер Racerback",
-        description: "Бюстгальтер с перекрестными лямками",
-        price: 7300,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["sport", "everyday"],
-        sizes: ["70B", "70C", "75B", "75C", "80B", "80C"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 131,
-        dateAdded: "2023-10-04"
-    },
-    {
-        id: 67,
-        name: "Комплект Romantic",
-        description: "Романтичный комплект для особых моментов",
-        price: 11300,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["set"],
-        category: ["bridal", "sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 141,
-        dateAdded: "2023-11-06"
-    },
-    {
-        id: 68,
-        name: "Трусы Lace Detail",
-        description: "Трусы с изысканной кружевной отделкой",
-        price: 3200,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["sexy", "bridal"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 116,
-        dateAdded: "2024-01-16"
-    },
-    {
-        id: 69,
-        name: "Тедди Black Lace",
-        description: "Черное кружевное тедди",
-        price: 10300,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 104,
-        dateAdded: "2023-10-16"
-    },
-    {
-        id: 70,
-        name: "Пижама Comfort Plus",
-        description: "Максимальный комфорт для отдыха",
-        price: 9700,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy", "everyday"],
-        sizes: ["XS", "S", "M", "L", "XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 156,
-        dateAdded: "2023-11-20"
-    },
-    {
-        id: 71,
-        name: "Бюстгальтер Balconette",
-        description: "Бюстгальтер балконет",
-        price: 8600,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["sexy", "everyday"],
-        sizes: ["70C", "75B", "75C", "80B", "80C", "85B"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 139,
-        dateAdded: "2023-10-10"
-    },
-    {
-        id: 72,
-        name: "Комплект Deluxe",
-        description: "Делюкс комплект премиум качества",
-        price: 14400,
-        originalPrice: 17000,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["set"],
-        category: ["bridal", "sexy"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: true,
-        discount: 15,
-        popularity: 188,
-        dateAdded: "2023-12-25"
-    },
-    {
-        id: 73,
-        name: "Трусы Classic Brief",
-        description: "Классические трусы",
-        price: 2500,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["panties"],
-        category: ["everyday"],
-        sizes: ["S", "M", "L", "XL", "XXL", "3XL", "4XL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 103,
-        dateAdded: "2023-09-08"
-    },
-    {
-        id: 74,
-        name: "Пижама Dreamy Nights",
-        description: "Сновидческие ночи в мягкой пижаме",
-        price: 10500,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/b4b7c4de51-082c1749c35819c5b24b.png",
-        type: ["pajamas"],
-        category: ["cozy"],
-        sizes: ["S", "M", "L", "XL"],
-        isNew: true,
-        isBestseller: false,
-        discount: 0,
-        popularity: 127,
-        dateAdded: "2024-02-02"
-    },
-    {
-        id: 75,
-        name: "Бюстгальтер Minimizer",
-        description: "Бюстгальтер-минимизатор",
-        price: 9000,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["bra"],
-        category: ["everyday"],
-        sizes: ["75C", "75D", "75E", "80C", "80D", "80E", "85C", "85D"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 146,
-        dateAdded: "2023-11-04"
-    },
-    {
-        id: 76,
-        name: "Тедди Silver Lining",
-        description: "Тедди с серебряными акцентами",
-        price: 11500,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/d34cd14776-fd8800389b5e3f0b7c82.png",
-        type: ["teddy"],
-        category: ["sexy", "bridal"],
-        sizes: ["S", "M", "L"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 101,
-        dateAdded: "2023-10-24"
-    },
-    {
-        id: 77,
-        name: "Комплект Ultimate Comfort",
-        description: "Максимальный комфорт в каждом элементе",
-        price: 9900,
-        originalPrice: null,
-        image: "https://storage.googleapis.com/uxpilot-auth.appspot.com/8f519f1bef-1895a91e1bd88105cd4a.png",
-        type: ["set"],
-        category: ["cozy", "everyday"],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        isNew: false,
-        isBestseller: false,
-        discount: 0,
-        popularity: 137,
-        dateAdded: "2023-10-20"
-    }
-];
+// catalogProducts imported from ./data/products.js
 
 // Глобальные переменные для каталога
 let filteredProducts = [...catalogProducts];
@@ -2539,13 +1748,13 @@ function goToNextPage() {
 function openFiltersModal() {
     const modal = document.getElementById('filters-modal');
     const filterBtn = document.getElementById('filter-btn');
-    if (modal && filterBtn) {
+    if (modal && filterBtn && !modal.classList.contains('active')) {
         // Восстанавливаем состояние чекбоксов из активных фильтров
         restoreFilterState();
         
         modal.classList.add('active');
         filterBtn.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden';
+        lockBodyScroll();
         
         // Фокус на первом элементе для доступности
         const firstInput = modal.querySelector('.filter-input');
@@ -2590,9 +1799,11 @@ function closeFiltersModal() {
         // (отменяем несохраненные изменения)
         restoreFilterState();
         
-        modal.classList.remove('active');
+        if (modal.classList.contains('active')) {
+            modal.classList.remove('active');
+            unlockBodyScroll();
+        }
         filterBtn.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
         
         // Возвращаем фокус на кнопку фильтра
         filterBtn.focus();
@@ -2617,9 +1828,9 @@ function updateFilterCount() {
     if (filterCountEl) {
         if (totalCount > 0) {
             filterCountEl.textContent = totalCount;
-            filterCountEl.style.display = 'inline-flex';
+            filterCountEl.classList.remove('hidden');
         } else {
-            filterCountEl.style.display = 'none';
+            filterCountEl.classList.add('hidden');
         }
     }
 }
@@ -2640,6 +1851,7 @@ function applyFilters() {
     
     // Применяем фильтры к товарам
     applyFiltersToProducts();
+    syncFiltersToURL();
     
     // Закрываем модальное окно
     closeFiltersModal();
@@ -2666,7 +1878,12 @@ function applyFiltersToProducts() {
             const hasSize = activeFilters.size.some(size => product.sizes.includes(size));
             if (!hasSize) return false;
         }
-        
+
+        if (catalogSearchQuery) {
+            const hay = `${product.name} ${product.description}`.toLowerCase();
+            if (!hay.includes(catalogSearchQuery)) return false;
+        }
+
         return true;
     });
     
@@ -2728,6 +1945,7 @@ function resetFilters() {
     renderProducts(filteredProducts);
     updateProductCount(filteredProducts.length);
     updateFilterCount();
+    syncFiltersToURL();
     
     // Если модальное окно открыто, не закрываем его (пользователь может продолжить выбор)
 }
@@ -2780,32 +1998,276 @@ function handleSortChange(event) {
     sortProducts(sortType);
 }
 
-// Функция создания карточки товара
+/**
+ * Custom select menus — native <select> popups mis-position under
+ * backdrop-filter / isolation / transformed ancestors (modals).
+ */
+function positionCustomSelectMenu(host) {
+    const trigger = host.querySelector('.custom-select-trigger');
+    const menu = host._customSelectMenu || host.querySelector('.custom-select-menu');
+    if (!trigger || !menu) return;
+
+    // Portal to body — fixed coords break under transformed ancestors (modals)
+    if (menu.parentElement !== document.body) {
+        document.body.appendChild(menu);
+    }
+
+    menu.hidden = false;
+    host.classList.remove('is-drop-up');
+
+    menu.style.maxHeight = '';
+    const triggerRect = trigger.getBoundingClientRect();
+    const viewportPad = 8;
+    const naturalHeight = menu.scrollHeight || 240;
+    const preferredHeight = Math.min(naturalHeight, window.innerHeight * 0.45);
+    const spaceBelow = window.innerHeight - triggerRect.bottom - viewportPad;
+    const spaceAbove = triggerRect.top - viewportPad;
+    const minComfort = 140;
+    const canFitBelow = spaceBelow >= Math.min(preferredHeight, minComfort);
+    const dropUp = !canFitBelow && spaceAbove > spaceBelow;
+    const maxHeight = Math.max(
+        96,
+        Math.min(preferredHeight, dropUp ? spaceAbove - 8 : spaceBelow - 8)
+    );
+
+    host.classList.toggle('is-drop-up', dropUp);
+    menu.classList.toggle('is-drop-up', dropUp);
+
+    const width = Math.max(triggerRect.width, 160);
+    let left = triggerRect.left;
+    if (left + width > window.innerWidth - viewportPad) {
+        left = Math.max(viewportPad, window.innerWidth - width - viewportPad);
+    }
+
+    menu.style.position = 'fixed';
+    menu.style.left = `${Math.round(left)}px`;
+    menu.style.width = `${Math.round(width)}px`;
+    menu.style.right = 'auto';
+    menu.style.zIndex = '3100';
+    menu.style.maxHeight = `${Math.round(maxHeight)}px`;
+
+    if (dropUp) {
+        menu.style.top = 'auto';
+        menu.style.bottom = `${Math.round(window.innerHeight - triggerRect.top + 6)}px`;
+    } else {
+        menu.style.bottom = 'auto';
+        menu.style.top = `${Math.round(triggerRect.bottom + 6)}px`;
+    }
+}
+
+function clearCustomSelectMenuPosition(menu) {
+    if (!menu) return;
+    menu.style.position = '';
+    menu.style.left = '';
+    menu.style.right = '';
+    menu.style.top = '';
+    menu.style.bottom = '';
+    menu.style.width = '';
+    menu.style.zIndex = '';
+    menu.style.maxHeight = '';
+    menu.classList.remove('is-drop-up');
+}
+
+function closeCustomSelect(host) {
+    if (!host) return;
+    host.classList.remove('is-open', 'is-drop-up');
+    const trigger = host.querySelector('.custom-select-trigger');
+    const menu = host._customSelectMenu || host.querySelector('.custom-select-menu');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    if (menu) {
+        menu.hidden = true;
+        clearCustomSelectMenuPosition(menu);
+        if (menu.parentElement !== host) {
+            host.appendChild(menu);
+        }
+    }
+}
+
+function closeAllCustomSelects(exceptHost = null) {
+    document.querySelectorAll('.custom-select.is-open').forEach((host) => {
+        if (host !== exceptHost) closeCustomSelect(host);
+    });
+}
+
+function enhanceSelect(select) {
+    if (!select || select.dataset.customized === '1') return;
+    select.dataset.customized = '1';
+
+    const host =
+        select.closest('[data-custom-select], .sort-wrapper, .form-group') ||
+        select.parentElement;
+    if (!host) return;
+
+    host.classList.add('custom-select');
+    select.classList.add('custom-select-native');
+    select.setAttribute('tabindex', '-1');
+    select.setAttribute('aria-hidden', 'true');
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'custom-select-trigger';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-expanded', 'false');
+    const ariaLabel = select.getAttribute('aria-label');
+    if (ariaLabel) trigger.setAttribute('aria-label', ariaLabel);
+    if (select.id) {
+        trigger.id = `${select.id}-trigger`;
+        const label = document.querySelector(`label[for="${select.id}"]`);
+        if (label) label.setAttribute('for', trigger.id);
+    }
+
+    const menu = document.createElement('ul');
+    menu.className = 'custom-select-menu';
+    menu.setAttribute('role', 'listbox');
+    menu.hidden = true;
+    if (ariaLabel) menu.setAttribute('aria-label', ariaLabel);
+
+    const syncFromSelect = () => {
+        const selected = select.options[select.selectedIndex];
+        trigger.textContent = selected ? selected.textContent : '';
+        [...menu.children].forEach((li) => {
+            li.setAttribute(
+                'aria-selected',
+                String(li.dataset.value === select.value)
+            );
+            li.classList.toggle('is-selected', li.dataset.value === select.value);
+        });
+    };
+
+    [...select.options].forEach((opt) => {
+        const li = document.createElement('li');
+        li.className = 'custom-select-option';
+        li.setAttribute('role', 'option');
+        li.dataset.value = opt.value;
+        li.textContent = opt.textContent;
+        li.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (select.value !== opt.value) {
+                select.value = opt.value;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            syncFromSelect();
+            closeCustomSelect(host);
+            trigger.focus();
+        });
+        menu.appendChild(li);
+    });
+
+    syncFromSelect();
+    host.appendChild(trigger);
+    host.appendChild(menu);
+    host._customSelectMenu = menu;
+    menu.dataset.customSelectHost = select.id || `select-${Math.random().toString(36).slice(2, 8)}`;
+
+    const open = () => {
+        closeAllCustomSelects(host);
+        host.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        positionCustomSelectMenu(host);
+        const selected = menu.querySelector('[aria-selected="true"]');
+        (selected || menu.firstElementChild)?.focus?.();
+    };
+
+    trigger.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (host.classList.contains('is-open')) {
+            closeCustomSelect(host);
+        } else {
+            open();
+        }
+    });
+
+    trigger.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            if (!host.classList.contains('is-open')) open();
+        }
+    });
+
+    select.addEventListener('change', syncFromSelect);
+}
+
+function initCustomSelects() {
+    document
+        .querySelectorAll('select.sort-select, #product-type')
+        .forEach(enhanceSelect);
+
+    if (document.documentElement.dataset.customSelectBound === '1') return;
+    document.documentElement.dataset.customSelectBound = '1';
+
+    document.addEventListener('click', (event) => {
+        if (
+            !event.target.closest('.custom-select') &&
+            !event.target.closest('.custom-select-menu')
+        ) {
+            closeAllCustomSelects();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeAllCustomSelects();
+    });
+
+    window.addEventListener(
+        'resize',
+        () => {
+            document.querySelectorAll('.custom-select.is-open').forEach(positionCustomSelectMenu);
+        },
+        { passive: true }
+    );
+
+    window.addEventListener(
+        'scroll',
+        () => closeAllCustomSelects(),
+        { passive: true, capture: true }
+    );
+}
+
+window.initCustomSelects = initCustomSelects;
+
 function createProductCard(product) {
     const badge = product.isNew ? '<div class="product-badge badge-new">NEW</div>' : 
                   product.isBestseller ? '<div class="product-badge bestseller">BESTSELLER</div>' : '';
     
     const priceHTML = product.originalPrice ? 
         `<p class="product-price">
-            <span style="text-decoration: line-through; opacity: 0.6; font-size: 1.2rem; margin-right: 0.5rem;">${product.originalPrice.toLocaleString('ru-RU')} ₽</span>
-            ${product.price.toLocaleString('ru-RU')} ₽
+            <span class="product-price-original">${formatPrice(product.originalPrice)}</span>
+            ${formatPrice(product.price)}
         </p>` :
-        `<p class="product-price">${product.price.toLocaleString('ru-RU')} ₽</p>`;
+        `<p class="product-price">${formatPrice(product.price)}</p>`;
+
+    const favActive = isFavorite(product.id) ? ' is-active' : '';
     
     return `
-        <div class="product-card" data-product-id="${product.id}">
+        <article class="product-card" data-product-id="${product.id}">
             <div class="product-image-wrapper">
-                <img src="${product.image}" alt="${product.name}" loading="lazy">
+                <a href="product.html?id=${product.id}" class="product-image-link" aria-label="${product.name}">
+                    <img src="${product.image}" alt="${product.name}" loading="lazy" width="600" height="800">
+                </a>
                 <div class="product-overlay">
-                    <button class="quick-view-btn" onclick="openQuickViewModal(${product.id})" aria-label="Быстрый просмотр товара ${product.name}">БЫСТРЫЙ ПРОСМОТР</button>
+                    <button class="btn-glass btn-glass--sm quick-view-btn" onclick="openQuickViewModal(${product.id})" type="button" aria-label="Быстрый просмотр: ${product.name}">Быстрый просмотр</button>
+                    <a class="btn-glass btn-glass--sm product-card-link" href="product.html?id=${product.id}">Подробнее</a>
                 </div>
+                <button type="button" class="favorite-btn${favActive}" data-favorite-id="${product.id}" onclick="toggleFavorite(${product.id}, this, event)" aria-label="В избранное" aria-pressed="${isFavorite(product.id)}">
+                    <i class="fa-${isFavorite(product.id) ? 'solid' : 'regular'} fa-heart" aria-hidden="true"></i>
+                </button>
                 ${badge}
             </div>
-            <h4 class="product-name">${product.name}</h4>
+            <h3 class="product-name"><a href="product.html?id=${product.id}">${product.name}</a></h3>
             <p class="product-desc">${product.description}</p>
             ${priceHTML}
-        </div>
+        </article>
     `;
+}
+
+function renderFeaturedProducts() {
+    const grid = document.getElementById('featured-products-grid');
+    if (!grid) return;
+    grid.innerHTML = getFeaturedProducts(8).map((p) => createProductCard(p)).join('');
+    initProductCarousels();
+    initTouchProductOverlays();
 }
 
 // Функция рендеринга товаров с пагинацией
@@ -2824,6 +2286,8 @@ function renderProducts(products) {
         if (pagination) {
             pagination.style.display = 'none';
         }
+        initProductCarousels();
+        initTouchProductOverlays();
     } else {
         grid.style.display = 'grid';
         if (emptyState) {
@@ -2857,16 +2321,321 @@ function renderProducts(products) {
                 pagination.style.display = 'none';
             }
         }
+        initProductCarousels();
+        initTouchProductOverlays();
     }
 }
+
+/** Touch: show card overlay when product sits in the mid viewport band */
+let touchOverlayObserver = null;
+let touchOverlayMediaBound = false;
+
+function isTouchProductOverlayMode() {
+    return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}
+
+function isMobileProductCarouselMode() {
+    return window.matchMedia('(max-width: 767px)').matches;
+}
+
+function setCarouselActiveCard(grid, activeCard) {
+    grid.querySelectorAll('.product-card.is-mid-viewport').forEach((card) => {
+        if (card !== activeCard) card.classList.remove('is-mid-viewport');
+    });
+    if (activeCard) activeCard.classList.add('is-mid-viewport');
+}
+
+function getNearestSnapCard(grid) {
+    const cards = [...grid.querySelectorAll('.product-card')];
+    if (!cards.length) return null;
+    const mid = grid.scrollLeft + grid.clientWidth / 2;
+    let best = cards[0];
+    let bestDist = Infinity;
+    cards.forEach((card) => {
+        const center = card.offsetLeft + card.offsetWidth / 2;
+        const dist = Math.abs(center - mid);
+        if (dist < bestDist) {
+            bestDist = dist;
+            best = card;
+        }
+    });
+    return best;
+}
+
+function syncCarouselChrome(grid, wrap) {
+    const cards = [...grid.querySelectorAll('.product-card')];
+    const active = getNearestSnapCard(grid);
+    const index = Math.max(0, cards.indexOf(active));
+
+    if (isTouchProductOverlayMode()) {
+        const rect = grid.getBoundingClientRect();
+        const vh = window.innerHeight || 1;
+        const inMidBand = rect.top < vh * 0.66 && rect.bottom > vh * 0.34;
+        setCarouselActiveCard(grid, inMidBand ? active : null);
+    }
+
+    const dots = wrap?.querySelectorAll('.product-carousel-dot');
+    if (dots?.length) {
+        dots.forEach((dot, i) => {
+            dot.setAttribute('aria-current', i === index ? 'true' : 'false');
+        });
+    }
+
+    if (wrap) {
+        const maxScroll = grid.scrollWidth - grid.clientWidth - 4;
+        wrap.classList.toggle('is-at-end', grid.scrollLeft >= maxScroll);
+        wrap.classList.toggle('is-at-start', grid.scrollLeft <= 4);
+    }
+}
+
+function ensureCarouselWrapper(grid) {
+    if (grid.parentElement?.classList.contains('product-carousel')) {
+        return grid.parentElement;
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'product-carousel';
+    grid.parentNode.insertBefore(wrap, grid);
+    wrap.appendChild(grid);
+    return wrap;
+}
+
+function renderCarouselDots(wrap, grid) {
+    const cards = grid.querySelectorAll('.product-card');
+    let dots = wrap.querySelector('.product-carousel-dots');
+    if (!dots) {
+        dots = document.createElement('div');
+        dots.className = 'product-carousel-dots';
+        dots.setAttribute('role', 'tablist');
+        dots.setAttribute('aria-label', 'Навигация по карточкам');
+        wrap.appendChild(dots);
+    }
+    dots.innerHTML = '';
+    cards.forEach((card, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'product-carousel-dot';
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('aria-label', `Карточка ${i + 1} из ${cards.length}`);
+        btn.setAttribute('aria-current', i === 0 ? 'true' : 'false');
+        btn.addEventListener('click', () => {
+            card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        });
+        dots.appendChild(btn);
+    });
+}
+
+function teardownCarousel(grid) {
+    grid.classList.remove('product-grid--carousel');
+    grid.removeAttribute('tabindex');
+    grid.removeAttribute('role');
+    grid.removeAttribute('aria-label');
+    if (grid._carouselOnScroll) {
+        grid.removeEventListener('scroll', grid._carouselOnScroll);
+        grid._carouselOnScroll = null;
+    }
+    const wrap = grid.parentElement;
+    if (wrap?.classList.contains('product-carousel')) {
+        const dots = wrap.querySelector('.product-carousel-dots');
+        if (dots) dots.remove();
+        wrap.classList.remove('is-at-end', 'is-at-start');
+        wrap.parentNode.insertBefore(grid, wrap);
+        wrap.remove();
+    }
+}
+
+function initProductCarousels() {
+    const mobile = isMobileProductCarouselMode();
+
+    document.querySelectorAll('.product-grid').forEach((grid) => {
+        // Catalog stays a 2-up commerce grid — never a swipe carousel
+        if (grid.id === 'products-grid' || grid.closest('.catalog-page')) {
+            teardownCarousel(grid);
+            return;
+        }
+
+        const cards = grid.querySelectorAll('.product-card');
+        const shouldCarousel = mobile && cards.length >= 3;
+
+        if (!shouldCarousel) {
+            teardownCarousel(grid);
+            return;
+        }
+
+        const wrap = ensureCarouselWrapper(grid);
+        grid.classList.add('product-grid--carousel');
+        grid.setAttribute('tabindex', '0');
+        grid.setAttribute('role', 'region');
+        grid.setAttribute('aria-label', 'Карусель товаров, свайпните влево или вправо');
+        renderCarouselDots(wrap, grid);
+
+        if (grid._carouselOnScroll) {
+            grid.removeEventListener('scroll', grid._carouselOnScroll);
+        }
+        let ticking = false;
+        grid._carouselOnScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                syncCarouselChrome(grid, wrap);
+                ticking = false;
+            });
+        };
+        grid.addEventListener('scroll', grid._carouselOnScroll, { passive: true });
+        syncCarouselChrome(grid, wrap);
+    });
+}
+
+let productCarouselMediaBound = false;
+
+function bindProductCarouselMedia() {
+    if (productCarouselMediaBound) return;
+    productCarouselMediaBound = true;
+    const mq = window.matchMedia('(max-width: 767px)');
+    const onChange = () => {
+        initProductCarousels();
+        initTouchProductOverlays();
+    };
+    if (typeof mq.addEventListener === 'function') {
+        mq.addEventListener('change', onChange);
+    } else if (typeof mq.addListener === 'function') {
+        mq.addListener(onChange);
+    }
+
+    let scrollTick = false;
+    window.addEventListener(
+        'scroll',
+        () => {
+            if (scrollTick || !isMobileProductCarouselMode()) return;
+            scrollTick = true;
+            requestAnimationFrame(() => {
+                document.querySelectorAll('.product-grid--carousel').forEach((grid) => {
+                    const wrap = grid.parentElement?.classList.contains('product-carousel')
+                        ? grid.parentElement
+                        : null;
+                    syncCarouselChrome(grid, wrap);
+                });
+                scrollTick = false;
+            });
+        },
+        { passive: true }
+    );
+}
+
+function initTouchProductOverlays() {
+    if (touchOverlayObserver) {
+        touchOverlayObserver.disconnect();
+        touchOverlayObserver = null;
+    }
+
+    document.querySelectorAll('.product-card.is-mid-viewport').forEach((card) => {
+        card.classList.remove('is-mid-viewport');
+    });
+
+    if (!isTouchProductOverlayMode()) return;
+
+    // Carousel cards: overlay follows snap-centered slide (handled in syncCarouselChrome)
+    const carouselCards = new Set(
+        [...document.querySelectorAll('.product-grid--carousel .product-card')]
+    );
+
+    touchOverlayObserver = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (carouselCards.has(entry.target)) return;
+                entry.target.classList.toggle('is-mid-viewport', entry.isIntersecting);
+            });
+        },
+        {
+            root: null,
+            rootMargin: '-44% 0px -44% 0px',
+            threshold: 0
+        }
+    );
+
+    document.querySelectorAll('.product-card').forEach((card) => {
+        if (carouselCards.has(card)) return;
+        touchOverlayObserver.observe(card);
+    });
+
+    document.querySelectorAll('.product-grid--carousel').forEach((grid) => {
+        const wrap = grid.parentElement?.classList.contains('product-carousel')
+            ? grid.parentElement
+            : null;
+        syncCarouselChrome(grid, wrap);
+    });
+
+    if (!touchOverlayMediaBound) {
+        touchOverlayMediaBound = true;
+        const mq = window.matchMedia('(hover: none) and (pointer: coarse)');
+        const onChange = () => initTouchProductOverlays();
+        if (typeof mq.addEventListener === 'function') {
+            mq.addEventListener('change', onChange);
+        } else if (typeof mq.addListener === 'function') {
+            mq.addListener(onChange);
+        }
+    }
+}
+
+window.initTouchProductOverlays = initTouchProductOverlays;
+window.initProductCarousels = initProductCarousels;
 
 // Функция обновления счетчика товаров
 function updateProductCount(count) {
     const countEl = document.getElementById('products-count');
     if (countEl) {
-        const word = count === 1 ? 'товар' : count < 5 ? 'товара' : 'товаров';
+        const mod10 = count % 10;
+        const mod100 = count % 100;
+        let word = 'товаров';
+        if (mod10 === 1 && mod100 !== 11) {
+            word = 'товар';
+        } else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) {
+            word = 'товара';
+        }
         countEl.textContent = `${count} ${word}`;
     }
+}
+
+/** Читает ?type=&category=&size= из URL и применяет к каталогу */
+function applyFiltersFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const types = params.getAll('type').flatMap(v => v.split(',')).filter(Boolean);
+    const categories = params.getAll('category').flatMap(v => v.split(',')).filter(Boolean);
+    const sizes = params.getAll('size').flatMap(v => v.split(',')).filter(Boolean);
+    const favoritesOnly = params.get('favorites') === '1';
+
+    if (favoritesOnly) {
+        const ids = getFavorites();
+        filteredProducts = catalogProducts.filter((p) => ids.includes(p.id));
+        currentPage = 1;
+        renderProducts(filteredProducts);
+        updateProductCount(filteredProducts.length);
+        const title = document.querySelector('#catalog-page .section-title');
+        if (title) title.textContent = 'Избранное';
+        return true;
+    }
+
+    if (!types.length && !categories.length && !sizes.length) {
+        return false;
+    }
+
+    activeFilters = { type: types, category: categories, size: sizes };
+    restoreFilterState();
+    applyFiltersToProducts();
+    return true;
+}
+
+/** Синхронизирует активные фильтры в query string (без перезагрузки) */
+function syncFiltersToURL() {
+    if (!document.getElementById('catalog-page')) return;
+
+    const params = new URLSearchParams();
+    activeFilters.type.forEach(t => params.append('type', t));
+    activeFilters.category.forEach(c => params.append('category', c));
+    activeFilters.size.forEach(s => params.append('size', s));
+
+    const query = params.toString();
+    const next = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+    window.history.replaceState({}, '', next);
 }
 
 // Функция перехода на страницу
@@ -2882,15 +2651,15 @@ function goToPage(page) {
     // Напрямую рендерим товары без сброса страницы
     renderProducts(filteredProducts);
     
-    // Прокручиваем к началу секции каталога
+    // Stable jump to catalog top — no smooth scroll (avoids header thrash + layout jump)
+    beginProgrammaticScroll(400);
     const catalogSection = document.getElementById('catalog-page');
     if (catalogSection) {
         const headerHeight = document.getElementById('header')?.offsetHeight || 0;
         const sectionTop = catalogSection.getBoundingClientRect().top + window.pageYOffset - headerHeight;
-        window.scrollTo({ top: sectionTop, behavior: 'smooth' });
+        window.scrollTo({ top: Math.max(0, sectionTop), behavior: 'auto' });
     } else {
-        // Если секция не найдена, прокручиваем в самый верх
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'auto' });
     }
 }
 
@@ -2994,8 +2763,12 @@ function initCatalog() {
     // Сбрасываем на первую страницу
     currentPage = 1;
     
-    // Устанавливаем сортировку по умолчанию (это также отобразит все товары)
-    sortProducts('popularity');
+    // URL deep-links с лендинга (?type= / ?category=)
+    const fromURL = applyFiltersFromURL();
+    if (!fromURL) {
+        // Сортировка по умолчанию (отобразит все товары)
+        sortProducts('popularity');
+    }
     
     // Обработчик ESC для закрытия модального окна (только один раз)
     if (!window.catalogEscHandlerAdded) {
@@ -3029,11 +2802,14 @@ window.toggleTheme = toggleTheme;
 window.showNotification = showNotification;
 window.hideNotification = hideNotification;
 window.handleContactSubmit = handleContactSubmit;
+window.initCartPage = initCartPage;
+window.updateCartBadge = updateCartBadge;
 window.updateCalculatorFields = updateCalculatorFields;
 window.handleSizeCalculatorSubmit = handleSizeCalculatorSubmit;
 window.openSizeGuideModal = openSizeGuideModal;
 window.closeSizeGuideModal = closeSizeGuideModal;
-window.scrollCarousel = scrollCarousel;
+window.openSizeCalculatorModal = openSizeCalculatorModal;
+window.closeSizeCalculatorModal = closeSizeCalculatorModal;
 window.openFiltersModal = openFiltersModal;
 window.closeFiltersModal = closeFiltersModal;
 window.applyFilters = applyFilters;
@@ -3043,8 +2819,10 @@ window.goToPage = goToPage;
 window.initCatalog = initCatalog;
 window.goToPrevPage = goToPrevPage;
 window.goToNextPage = goToNextPage;
-// Экспортируем функции быстрого просмотра для доступа из HTML (onclick)
+window.updateFilterCount = updateFilterCount;
 window.openQuickViewModal = openQuickViewModal;
 window.openQuickViewModalWithData = openQuickViewModalWithData;
 window.closeQuickViewModal = closeQuickViewModal;
 window.openQuickViewFromCard = openQuickViewFromCard;
+window.toggleFavorite = toggleFavorite;
+window.handleCatalogSearch = handleCatalogSearch;

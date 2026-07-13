@@ -1,0 +1,365 @@
+<!-- Shared modals injected by src/shared-modals.js -->
+<div id="size-calculator-modal" class="size-guide-modal" role="dialog" aria-modal="true" aria-labelledby="size-calculator-modal-title">
+    <div class="size-guide-modal-overlay" onclick="closeSizeCalculatorModal()"></div>
+    <div class="size-guide-modal-content size-calculator-modal-content">
+        <div class="size-guide-modal-header">
+            <h2 id="size-calculator-modal-title" class="size-guide-modal-title">Быстрый калькулятор</h2>
+            <button type="button" onclick="closeSizeCalculatorModal()" class="size-guide-modal-close" aria-label="Закрыть калькулятор размеров">
+                <i class="fa-solid fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="size-guide-modal-body">
+            <div class="size-calculator size-calculator--modal">
+                <form class="calculator-form" onsubmit="handleSizeCalculatorSubmit(event)" novalidate>
+                    <div class="form-group" data-custom-select>
+                        <label for="product-type">Что рассчитать</label>
+                        <select id="product-type" aria-label="Выберите тип товара" required onchange="updateCalculatorFields()">
+                            <option value="bra" selected>Бюстгальтер</option>
+                            <option value="panties">Трусы</option>
+                            <option value="clothing">Одежда / пижама</option>
+                        </select>
+                    </div>
+
+                    <div class="calculator-fields calculator-fields--always" id="calculator-measures">
+                        <p class="calculator-measures-hint">Укажите обхваты в сантиметрах</p>
+                        <div class="form-group" data-measure="band">
+                            <label for="band-size">Обхват под грудью (см)</label>
+                            <input type="number" id="band-size" name="band-size" placeholder="например, 75" aria-label="Обхват под грудью в сантиметрах" min="60" max="150" inputmode="numeric">
+                        </div>
+                        <div class="form-group" data-measure="bust">
+                            <label for="bust-size">Обхват груди (см)</label>
+                            <input type="number" id="bust-size" name="bust-size" placeholder="например, 90" aria-label="Обхват груди в сантиметрах" min="70" max="160" inputmode="numeric">
+                        </div>
+                        <div class="form-group" data-measure="waist">
+                            <label for="waist-size">Обхват талии (см)</label>
+                            <input type="number" id="waist-size" name="waist-size" placeholder="например, 64" aria-label="Обхват талии в сантиметрах" min="50" max="100" inputmode="numeric">
+                        </div>
+                        <div class="form-group" data-measure="hip">
+                            <label for="hip-size">Обхват бёдер (см)</label>
+                            <input type="number" id="hip-size" name="hip-size" placeholder="например, 95" aria-label="Обхват бёдер в сантиметрах" min="80" max="120" inputmode="numeric">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="form-submit" aria-label="Рассчитать размер">
+                        Рассчитать размер
+                    </button>
+                </form>
+
+                <div id="calculator-result" class="calculator-result hidden"></div>
+
+                <p class="form-note">
+                    Результат — ориентир. Посадка может отличаться в зависимости от модели.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно руководства по размерам -->
+
+<div id="size-guide-modal" class="size-guide-modal" role="dialog" aria-modal="true" aria-labelledby="size-guide-modal-title">
+    <div class="size-guide-modal-overlay" onclick="closeSizeGuideModal()"></div>
+    <div class="size-guide-modal-content">
+        <div class="size-guide-modal-header">
+            <h2 id="size-guide-modal-title" class="size-guide-modal-title">Руководство По Размерам</h2>
+            <button onclick="closeSizeGuideModal()" class="size-guide-modal-close" aria-label="Закрыть руководство по размерам">
+                <i class="fa-solid fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="size-guide-modal-body">
+            <!-- Таблица размеров бюстгальтеров -->
+            <div class="size-table-section">
+                <h3 class="size-table-title">Размер Бюстгальтеров с Чашкой</h3>
+                <div class="size-table-wrapper">
+                    <table class="size-table">
+                        <thead>
+                            <tr>
+                                <th>Размер</th>
+                                <th>65</th>
+                                <th>70</th>
+                                <th>75</th>
+                                <th>80</th>
+                                <th>85</th>
+                                <th>90</th>
+                                <th>95</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="size-table-label">Объём под грудью (см)</td>
+                                <td>63-67</td>
+                                <td>66-72</td>
+                                <td>73-77</td>
+                                <td>78-82</td>
+                                <td>83-87</td>
+                                <td>88-92</td>
+                                <td>93-97</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 class="size-table-subtitle">Объём груди (см)</h4>
+                    <table class="size-table">
+                        <thead>
+                            <tr>
+                                <th>Чашка</th>
+                                <th>65</th>
+                                <th>70</th>
+                                <th>75</th>
+                                <th>80</th>
+                                <th>85</th>
+                                <th>90</th>
+                                <th>95</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="size-table-label">A</td>
+                                <td>77-79</td>
+                                <td>82-84</td>
+                                <td>87-89</td>
+                                <td>92-94</td>
+                                <td>97-99</td>
+                                <td>102-104</td>
+                                <td>107-109</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">B</td>
+                                <td>79-81</td>
+                                <td>84-86</td>
+                                <td>89-91</td>
+                                <td>94-96</td>
+                                <td>99-101</td>
+                                <td>104-106</td>
+                                <td>109-111</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">C</td>
+                                <td>81-83</td>
+                                <td>86-88</td>
+                                <td>91-93</td>
+                                <td>96-98</td>
+                                <td>101-103</td>
+                                <td>106-108</td>
+                                <td>111-113</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">D</td>
+                                <td>83-85</td>
+                                <td>88-90</td>
+                                <td>93-95</td>
+                                <td>98-100</td>
+                                <td>103-105</td>
+                                <td>108-110</td>
+                                <td>113-115</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">E</td>
+                                <td>—</td>
+                                <td>90-92</td>
+                                <td>95-97</td>
+                                <td>100-102</td>
+                                <td>105-107</td>
+                                <td>110-112</td>
+                                <td>115-117</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">F</td>
+                                <td>—</td>
+                                <td>92-94</td>
+                                <td>97-99</td>
+                                <td>102-104</td>
+                                <td>107-109</td>
+                                <td>112-114</td>
+                                <td>117-119</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">G</td>
+                                <td>—</td>
+                                <td>94-96</td>
+                                <td>99-101</td>
+                                <td>104-106</td>
+                                <td>109-111</td>
+                                <td>114-116</td>
+                                <td>119-121</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Таблица размеров трусов -->
+            <div class="size-table-section">
+                <h3 class="size-table-title">Размер Трусов</h3>
+                <div class="size-table-wrapper">
+                    <table class="size-table">
+                        <thead>
+                            <tr>
+                                <th>Обхват бёдер (см)</th>
+                                <th>86-90</th>
+                                <th>91-95</th>
+                                <th>96-100</th>
+                                <th>101-105</th>
+                                <th>106-110</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="size-table-label">Размер Российский</td>
+                                <td>40</td>
+                                <td>42</td>
+                                <td>44</td>
+                                <td>46</td>
+                                <td>48</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">Размер Европейский</td>
+                                <td>38</td>
+                                <td>40</td>
+                                <td>42</td>
+                                <td>44</td>
+                                <td>46</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">Размер Международный</td>
+                                <td>XS</td>
+                                <td>S</td>
+                                <td>M</td>
+                                <td>L</td>
+                                <td>XL</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Таблица размеров одежды -->
+            <div class="size-table-section">
+                <h3 class="size-table-title">Размер Одежды</h3>
+                <div class="size-table-wrapper">
+                    <table class="size-table">
+                        <thead>
+                            <tr>
+                                <th>Размер Международный</th>
+                                <th>Размер Российский</th>
+                                <th>Размер Европейский</th>
+                                <th>Обхват груди (см)</th>
+                                <th>Обхват талии (см)</th>
+                                <th>Обхват бёдер (см)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="size-table-label">XS</td>
+                                <td>40</td>
+                                <td>38</td>
+                                <td>78–82</td>
+                                <td>58–62</td>
+                                <td>86–90</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">S</td>
+                                <td>42</td>
+                                <td>40</td>
+                                <td>82–86</td>
+                                <td>62–66</td>
+                                <td>90–94</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">M</td>
+                                <td>44</td>
+                                <td>42</td>
+                                <td>86–90</td>
+                                <td>66–70</td>
+                                <td>94–98</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">L</td>
+                                <td>46</td>
+                                <td>44</td>
+                                <td>90–96</td>
+                                <td>70–76</td>
+                                <td>98–104</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">XL</td>
+                                <td>48</td>
+                                <td>46</td>
+                                <td>96–102</td>
+                                <td>76–82</td>
+                                <td>104–110</td>
+                            </tr>
+                            <tr>
+                                <td class="size-table-label">XXL</td>
+                                <td>50</td>
+                                <td>48</td>
+                                <td>102–108</td>
+                                <td>82–88</td>
+                                <td>110–116</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Модальное окно быстрого просмотра товара -->
+
+<div id="quick-view-modal" class="quick-view-modal" role="dialog" aria-modal="true" aria-labelledby="quick-view-modal-title">
+    <div class="quick-view-modal-overlay" onclick="closeQuickViewModal()"></div>
+    <div class="quick-view-modal-content">
+        <div class="quick-view-modal-header">
+            <h2 id="quick-view-modal-title" class="quick-view-modal-title">Быстрый просмотр</h2>
+            <button onclick="closeQuickViewModal()" class="quick-view-modal-close" aria-label="Закрыть быстрый просмотр">
+                <i class="fa-solid fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="quick-view-modal-body">
+            <div class="quick-view-grid">
+                <div class="quick-view-image-wrapper">
+                    <img id="quick-view-image" src="" alt="" class="quick-view-image" loading="lazy">
+                    <div id="quick-view-badge" class="quick-view-badge"></div>
+                </div>
+                <div class="quick-view-info">
+                    <h3 id="quick-view-name" class="quick-view-name"></h3>
+                    <p id="quick-view-description" class="quick-view-description"></p>
+                    <div class="quick-view-price-wrapper">
+                        <p id="quick-view-price" class="quick-view-price"></p>
+                        <p id="quick-view-original-price" class="quick-view-original-price hidden"></p>
+                    </div>
+                    <div class="quick-view-sizes">
+                        <h4 class="quick-view-sizes-title">Доступные размеры:</h4>
+                        <div id="quick-view-sizes-list" class="quick-view-sizes-list"></div>
+                    </div>
+                    <a id="quick-view-details-btn" href="catalog.html" class="cta-button btn-outline no-decoration mt-2rem inline-block full-width text-center">
+                        <span>Подробнее</span>
+                    </a>
+                    <button type="button" id="quick-view-order-btn" class="cta-button btn-solid quick-view-order-btn mt-1rem full-width text-center" disabled>
+                        <span>В корзину</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Уведомление о статусе отправки формы -->
+
+<div id="notification" class="notification" role="alert" aria-live="polite" aria-atomic="true">
+    <div class="notification-overlay"></div>
+    <div class="notification-content">
+        <div class="notification-icon">
+            <i></i>
+        </div>
+        <div class="notification-message">
+            <h4 class="notification-title"></h4>
+            <p class="notification-text"></p>
+        </div>
+        <button class="notification-close" aria-label="Закрыть уведомление">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+</div>

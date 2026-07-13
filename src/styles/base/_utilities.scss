@@ -1,29 +1,23 @@
-/* ==========================================================================
-   УТИЛИТЫ (Вспомогательные классы)
-   ========================================================================== */
+/* Utilities — quiet luxury */
 
-/* Шрифты */
 .font-serif {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
 }
 
 .font-sans {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
 }
 
-/* Контейнер */
 .container {
-    max-width: 1440px;
+    max-width: var(--container-max);
     margin: 0 auto;
     padding: 0 2rem;
-    /* Улучшение для маленьких экранов - предотвращение переполнения */
     width: 100%;
     box-sizing: border-box;
 }
 
-/* Цвета */
 .text-gold {
-    color: var(--color-gold);
+    color: var(--color-gold-text);
 }
 
 .bg-charcoal {
@@ -38,34 +32,39 @@
     background-color: var(--color-bg-tertiary);
 }
 
-/* Эффекты */
-.glassmorphism {
-    background: var(--color-glass-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--color-glass-border);
+.glassmorphism,
+.liquid-glass {
+    @include liquid-glass;
+}
+
+.liquid-glass--dense {
+    @include liquid-glass(dense);
+}
+
+.liquid-glass--chrome {
+    @include liquid-glass(chrome);
 }
 
 .gold-gradient {
-    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-pink-light) 40%, var(--color-pink) 60%, var(--color-gold) 100%);
+    background: var(--color-gold);
 }
 
 .hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: opacity var(--motion-base) var(--ease-standard);
 }
 
 @media (hover: hover) and (pointer: fine) {
     .hover-lift:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px var(--color-shadow-black);
+        opacity: 0.92;
+        transform: none;
+        box-shadow: none;
     }
 }
 
-/* Утилиты для отображения/скрытия */
 .hidden {
-    display: none ;
+    display: none;
 }
 
-/* Утилиты для ссылок и кнопок */
 .no-decoration {
     text-decoration: none !important;
 }
@@ -86,7 +85,10 @@
     text-align: center !important;
 }
 
+.mt-1rem {
+    margin-top: 1rem !important;
+}
+
 .mt-2rem {
     margin-top: 2rem !important;
 }
-

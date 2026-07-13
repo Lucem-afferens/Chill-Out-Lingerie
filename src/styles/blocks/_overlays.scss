@@ -1,0 +1,277 @@
+/* Shared overlays — quiet luxury, minimal chrome
+   Covers: burger menu, modals, toast notification */
+
+/* -------- Tokens (local) -------- */
+:root {
+    --overlay-scrim: rgba(28, 27, 26, 0.32);
+    --overlay-panel-bg: rgba(255, 255, 255, 0.92);
+    --overlay-panel-border: rgba(255, 255, 255, 0.7);
+    --overlay-radius: var(--radius-xl);
+    --overlay-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* -------- Menu scrim -------- */
+.menu-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-modal) - 1);
+    background: var(--overlay-scrim);
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity var(--motion-base) var(--overlay-ease),
+        visibility var(--motion-base) var(--overlay-ease);
+}
+
+.menu-scrim.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* -------- Shared modal shell -------- */
+.size-guide-modal,
+.quick-view-modal,
+.filters-modal,
+.notification {
+    transition:
+        opacity var(--motion-base) var(--overlay-ease),
+        visibility var(--motion-base) var(--overlay-ease);
+}
+
+.size-guide-modal-overlay,
+.quick-view-modal-overlay,
+.filters-modal-overlay,
+.notification-overlay {
+    background: var(--overlay-scrim) !important;
+    backdrop-filter: blur(10px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(120%) !important;
+    transition: background var(--motion-base) var(--overlay-ease) !important;
+}
+
+.size-guide-modal.active .size-guide-modal-overlay,
+.quick-view-modal.active .quick-view-modal-overlay,
+.filters-modal.active .filters-modal-overlay,
+.notification.active .notification-overlay {
+    background: var(--overlay-scrim) !important;
+}
+
+.size-guide-modal-content,
+.quick-view-modal-content,
+.filters-modal-content {
+    background: var(--overlay-panel-bg) !important;
+    backdrop-filter: blur(24px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+    border: 1px solid var(--overlay-panel-border) !important;
+    border-radius: var(--overlay-radius) !important;
+    box-shadow:
+        0 24px 64px rgba(28, 27, 26, 0.14),
+        0 2px 8px rgba(28, 27, 26, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+    transform: translateY(12px) scale(0.98) !important;
+    transition:
+        transform var(--motion-slow) var(--overlay-ease),
+        opacity var(--motion-slow) var(--overlay-ease) !important;
+}
+
+.size-guide-modal-content::before,
+.quick-view-modal-content::before,
+.filters-modal-content::before,
+.notification-content::before {
+    content: none !important;
+    display: none !important;
+}
+
+.size-guide-modal.active .size-guide-modal-content,
+.quick-view-modal.active .quick-view-modal-content,
+.filters-modal.active .filters-modal-content {
+    transform: translateY(0) scale(1) !important;
+}
+
+.size-guide-modal-header,
+.quick-view-modal-header,
+.filters-modal-header {
+    padding: 1.25rem 1.5rem !important;
+    border-bottom: 1px solid var(--color-border) !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.size-guide-modal-title,
+.quick-view-modal-title,
+.filters-modal-title,
+.filters-modal-header h2 {
+    font-family: var(--font-display) !important;
+    font-size: clamp(1.5rem, 3vw, 1.875rem) !important;
+    font-weight: var(--font-weight-regular) !important;
+    letter-spacing: var(--tracking-display) !important;
+    color: var(--color-text-primary) !important;
+    line-height: var(--leading-tight) !important;
+}
+
+.size-guide-modal-close,
+.quick-view-modal-close,
+.filters-modal-close,
+.notification-close,
+.menu-close {
+    width: var(--touch-min) !important;
+    height: var(--touch-min) !important;
+    min-width: var(--touch-min) !important;
+    min-height: var(--touch-min) !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: var(--radius-md) !important;
+    color: var(--color-text-secondary) !important;
+    font-size: 1.125rem !important;
+    box-shadow: none !important;
+    transform: none !important;
+    transition:
+        color var(--motion-fast) var(--ease-standard),
+        background var(--motion-fast) var(--ease-standard),
+        border-color var(--motion-fast) var(--ease-standard) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .size-guide-modal-close:hover,
+    .size-guide-modal-close:focus-visible,
+    .quick-view-modal-close:hover,
+    .quick-view-modal-close:focus-visible,
+    .filters-modal-close:hover,
+    .filters-modal-close:focus-visible,
+    .notification-close:hover,
+    .notification-close:focus-visible,
+    .menu-close:hover,
+    .menu-close:focus-visible {
+        background: rgba(28, 27, 26, 0.04) !important;
+        border-color: var(--color-border) !important;
+        color: var(--color-text-primary) !important;
+        transform: none !important;
+        box-shadow: none !important;
+        outline: none;
+    }
+}
+
+.size-guide-modal-close:focus-visible,
+.quick-view-modal-close:focus-visible,
+.filters-modal-close:focus-visible,
+.notification-close:focus-visible,
+.menu-close:focus-visible {
+    outline: 2px solid var(--color-gold) !important;
+    outline-offset: 2px !important;
+}
+
+.size-guide-modal-body,
+.quick-view-modal-body,
+.filters-modal-body {
+    padding: 1.5rem !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(28, 27, 26, 0.18) transparent;
+}
+
+.size-guide-modal-body::-webkit-scrollbar,
+.quick-view-modal-body::-webkit-scrollbar,
+.filters-modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.size-guide-modal-body::-webkit-scrollbar-track,
+.quick-view-modal-body::-webkit-scrollbar-track,
+.filters-modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.size-guide-modal-body::-webkit-scrollbar-thumb,
+.quick-view-modal-body::-webkit-scrollbar-thumb,
+.filters-modal-body::-webkit-scrollbar-thumb {
+    background: rgba(28, 27, 26, 0.16);
+    border-radius: var(--radius-full);
+}
+
+/* -------- Notification (toast dialog) -------- */
+.notification-content {
+    width: min(92vw, 26rem) !important;
+    max-width: 26rem !important;
+    background: var(--overlay-panel-bg) !important;
+    backdrop-filter: blur(24px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+    border: 1px solid var(--overlay-panel-border) !important;
+    border-radius: var(--overlay-radius) !important;
+    box-shadow:
+        0 20px 48px rgba(28, 27, 26, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+    gap: 1rem !important;
+    padding: 1.25rem 1.25rem 1.25rem 1.35rem !important;
+    transform: translateY(10px) scale(0.98) !important;
+    transition:
+        transform var(--motion-slow) var(--overlay-ease),
+        opacity var(--motion-slow) var(--overlay-ease) !important;
+}
+
+.notification.active .notification-content {
+    transform: translateY(0) scale(1) !important;
+}
+
+.notification-icon {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    min-width: 2.5rem !important;
+    min-height: 2.5rem !important;
+    background: rgba(184, 149, 108, 0.1) !important;
+    border: 1px solid rgba(184, 149, 108, 0.22) !important;
+    border-radius: var(--radius-md) !important;
+}
+
+.notification-icon i {
+    font-size: 1rem !important;
+    color: var(--color-gold-text) !important;
+    animation: none !important;
+}
+
+.notification-title {
+    font-size: 1.25rem !important;
+    font-weight: var(--font-weight-regular) !important;
+    letter-spacing: var(--tracking-display) !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.notification-text {
+    font-size: var(--text-sm) !important;
+    color: var(--color-text-secondary) !important;
+}
+
+.notification.notification-success .notification-icon {
+    background: rgba(90, 107, 92, 0.1) !important;
+    border-color: rgba(90, 107, 92, 0.22) !important;
+}
+
+.notification.notification-success .notification-icon i {
+    color: var(--color-status-success) !important;
+}
+
+.notification.notification-error .notification-icon {
+    background: rgba(140, 74, 74, 0.1) !important;
+    border-color: rgba(140, 74, 74, 0.22) !important;
+}
+
+.notification.notification-error .notification-icon i {
+    color: var(--color-status-error) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .menu-scrim,
+    .menu-overlay,
+    .size-guide-modal,
+    .quick-view-modal,
+    .filters-modal,
+    .notification,
+    .size-guide-modal-content,
+    .quick-view-modal-content,
+    .filters-modal-content,
+    .notification-content {
+        transition-duration: 0.01ms !important;
+    }
+}

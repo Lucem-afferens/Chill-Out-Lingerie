@@ -1,0 +1,85 @@
+---
+description: Typography system rules for Virelle fonts, hierarchy, readability, and text roles.
+alwaysApply: false
+---
+
+# Typography System — Virelle
+
+Applies with `design/design-system.mdc`. Typography creates hierarchy and brand voice — not decoration.
+
+Source of truth: Google Fonts link in HTML + usage in SCSS blocks (`Cormorant Garamond`, `Montserrat`). Prefer introducing `--font-display` / `--font-body` tokens in `_variables.scss` when touching type systematically.
+
+## Product context
+
+| Cue | Direction |
+|-----|-----------|
+| Audience | Shoppers scanning beauty + comfort |
+| Language | Russian — fonts must cover Cyrillic well |
+| Voice | Elegant display personality in headings; clean UI in body |
+
+## Font families (fixed)
+
+| Role | Family |
+|------|--------|
+| Display / brand / headings | **Cormorant Garamond** |
+| Body / UI / controls | **Montserrat** |
+
+```css
+font-family: 'Cormorant Garamond', serif; /* headings, logo, hero */
+font-family: 'Montserrat', sans-serif;    /* body, buttons, meta */
+```
+
+**Rule:** Cormorant for brand, hero title, section titles, product names where already used; Montserrat for body, nav actions, buttons, filters. Do not add a third family without an explicit request. Keep `display=swap` on font loads.
+
+## Scale & roles
+
+Prefer consistent sizes via tokens/utilities over one-off `px` when extending the system.
+
+| Role | Typical use |
+|------|-------------|
+| Hero / brand H1 | `Virelle` — strongest display |
+| Hero subtitle | Short category line (пижамы и бельё) |
+| Section H2 | `.section-title` |
+| Section support | `.section-subtitle` |
+| Product name | `.product-name` |
+| Body | Descriptions, about, testimonials |
+| Price / meta | `.product-price`, badges, helper text |
+
+## Hierarchy
+
+On every section the user must instantly see: topic (H2), product/proof, optional CTA. Do not make every line visually equal.
+
+Build hierarchy from **size + weight + spacing + color** — not color alone. Text colors from `--color-text-*` / gold utility (`.text-gold`).
+
+## Heading structure (a11y)
+
+- One **H1** on the page (hero brand)
+- Sections: **H2** (`.section-title`)
+- Cards / items: **H3/H4** as already patterned — don’t skip levels for styling
+
+## Weight, line height, tracking
+
+- Cormorant: lighter elegant weights for large display; avoid heavy bold everywhere
+- Montserrat: 300–500 for UI; reserve 600 for emphasis
+- Headings: tighter line-height; body: comfortable reading
+- Hero title: balanced wrap; don’t let brand wrap awkwardly on mobile
+
+## Density & responsive
+
+Mobile-first: readable base, no overflow, clear hierarchy. Check catalog filters and product grids at narrow widths.
+
+## Accessibility
+
+Support zoom and contrast. Avoid tiny muted-on-muted prices/labels and image-only critical copy.
+
+## Output Format (new system / audit)
+
+1. **Font strategy** — families, Cyrillic, performance
+2. **Scale** — size / weight / line-height per role
+3. **Tokens** — preferred `--font-*` / size variables if introducing them
+
+## Implementation Order
+
+1. Tokens (if any) → 2. Global/base → 3. Section & product type → 4. Responsive → 5. a11y
+
+For audits, follow `design/ui-review.mdc`.

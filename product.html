@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Primary Meta Tags -->
+    <title>Virelle — Карточка товара</title>
+    <meta name="title" content="Virelle — Карточка товара">
+    <meta name="description" content="Каталог премиального нижнего белья Virelle. Бюстгальтеры, трусы, пижамы и комплекты. Фильтры по типу, категории и размеру. Бесплатная доставка по России.">
+    <meta name="keywords" content="каталог нижнего белья, лингерье каталог, премиум белье, бюстгальтеры, трусы, пижамы, Virelle">
+    <meta name="author" content="Virelle">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <link rel="canonical" href="https://virelle-chi.vercel.app/product.html">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Virelle - Пижамы и нижнее белье">
+    <meta property="og:url" content="https://virelle-chi.vercel.app/product.html">
+    <meta property="og:image" content="https://virelle-chi.vercel.app/logo.svg">
+    <meta property="og:description" content="Каталог премиального нижнего белья Virelle. Бюстгальтеры, трусы, пижамы и комплекты. Фильтры по типу, категории и размеру. Бесплатная доставка по России.">
+    
+   <!-- Favicon-->
+   <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+   <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+   <link rel="shortcut icon" href="/favicon/favicon.ico" />
+   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+   <meta name="apple-mobile-web-app-title" content="Virelle" />
+   <link rel="manifest" href="/favicon/site.webmanifest" />
+
+    <!-- Предзагрузка критических ресурсов -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="https://storage.googleapis.com">
+    
+    <!-- Синхронная установка темы ДО рендеринга страницы -->
+    <script>
+        (function() {
+            // Читаем сохраненную тему из localStorage
+            document.documentElement.setAttribute('data-theme', 'light');
+        })();
+    </script>
+    
+    <!-- External Resources -->
+    <style id="critical-chrome">
+      /* Prevent burger FOUC: off-canvas until CSS+JS ready (no transition yet) */
+      #menu-overlay.menu-overlay:not(.active) {
+        transform: translateX(-105%);
+        visibility: hidden;
+        pointer-events: none;
+      }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet"></noscript>
+    <!-- Основной скрипт — стили импортируются через script.js для правильной работы Vite HMR -->
+    <script type="module" src="src/script.js" defer></script>
+</head>
+<body>
+
+<!-- Skip to main content link для доступности -->
+<a href="#main-content" class="skip-link" aria-label="Перейти к основному содержимому">Перейти к содержимому</a>
+
+<div id="menu-overlay" class="menu-overlay" role="dialog" aria-modal="true" aria-label="Главное меню">
+    <div class="menu-content container">
+        <button onclick="closeMenu()" class="menu-close" aria-label="Закрыть меню">
+            <i class="fa-solid fa-times" aria-hidden="true"></i>
+        </button>
+        <nav class="menu-nav">
+            <a href="index.html" onclick="closeMenu()">Главная</a>
+            <a href="catalog.html" onclick="closeMenu()">Коллекция</a>
+            <a href="index.html#collection" onclick="closeMenu()">Подборка</a>
+            <a href="index.html#shop-by-category" onclick="closeMenu()">Категории</a>
+            <a href="index.html#about" onclick="closeMenu()">О нас</a>
+            <a href="cart.html" onclick="closeMenu()">Корзина</a>
+        </nav>
+    </div>
+</div>
+
+<header id="header">
+    <div class="header-container container">
+        <button onclick="openMenu()" class="menu-btn" aria-label="Открыть меню" aria-expanded="false">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+        
+        <a href="index.html" class="no-decoration inherit-color" aria-label="Virelle — на главную">
+            <img src="/logo.svg" alt="" class="header-logo-image" fetchpriority="high" loading="eager" decoding="async" width="40" height="40">
+            <span class="header-logo">Virelle</span>
+        </a>
+        
+                <div class="header-actions">
+            <a href="catalog.html?favorites=1" class="icon-btn favorites-link" title="Избранное" aria-label="Избранное">
+                <i class="fa-regular fa-heart" aria-hidden="true"></i>
+                <span class="favorites-count" data-favorites-count hidden>0</span>
+            </a>
+            <a href="cart.html" class="icon-btn cart-link" title="Корзина" aria-label="Корзина">
+                <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                <span class="cart-count" data-cart-count hidden>0</span>
+            </a>
+        </div>
+    </div>
+</header>
+
+<main id="main-content">
+<section id="product-page" class="product-page">
+    <div class="container">
+        <p class="product-breadcrumb"><a href="catalog.html">Коллекция</a> / <span>Товар</span></p>
+
+        <div id="product-empty" class="empty-state" hidden>
+            <h1 class="empty-state-title">Товар не найден</h1>
+            <p class="empty-state-text">Вернитесь в коллекцию — мы подберём что-то особенное.</p>
+            <a href="catalog.html" class="cta-button btn-outline no-decoration"><span>В коллекцию</span></a>
+        </div>
+
+        <div id="product-content" class="product-layout" hidden>
+            <div class="product-gallery">
+                <img id="product-image" src="" alt="" width="800" height="1000" fetchpriority="high">
+            </div>
+            <div class="product-info">
+                <h1 id="product-title" class="product-page-title"></h1>
+                <div class="product-page-price-row">
+                    <p id="product-price" class="product-page-price"></p>
+                    <p id="product-original-price" class="product-price-original" hidden></p>
+                </div>
+                <p id="product-description" class="product-page-desc"></p>
+
+                <div class="product-meta-block">
+                    <h2 class="product-meta-title">Материалы</h2>
+                    <p id="product-materials"></p>
+                </div>
+                <div class="product-meta-block">
+                    <h2 class="product-meta-title">Уход</h2>
+                    <p id="product-care"></p>
+                </div>
+                <div class="product-meta-block">
+                    <h2 class="product-meta-title">Размеры</h2>
+                    <div id="product-sizes" class="product-sizes-row"></div>
+                    <div class="product-size-actions">
+                        <button type="button" class="size-guide-link" onclick="openSizeGuideModal()">Таблица размеров</button>
+                        <button type="button" class="size-guide-link" onclick="openSizeCalculatorModal()">Калькулятор</button>
+                    </div>
+                </div>
+
+                <div class="product-trust-strip" role="note">
+                    <p>Выберите размер и добавьте в корзину — мы свяжемся для подтверждения заказа и доставки.</p>
+                </div>
+
+                <div class="product-cta-row">
+                    <button type="button" id="product-order-btn" class="cta-button btn-solid" disabled>
+                        <span>В корзину</span>
+                    </button>
+                    <button type="button" id="product-favorite-btn" class="cta-button btn-outline favorite-btn-lg" aria-pressed="false">
+                        <i class="fa-regular fa-heart" aria-hidden="true"></i>
+                        <span>В избранное</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-related">
+            <div class="section-header">
+                <h2 class="section-title">Вам также может понравиться</h2>
+            </div>
+            <div id="product-related-grid" class="product-grid"></div>
+        </div>
+    </div>
+</section>
+</main>
+
+<footer id="footer">
+    <div class="container">
+        <div class="footer-main">
+            <div class="footer-brand-block">
+                <a href="index.html" class="footer-brand-link" aria-label="Virelle — на главную">
+                    <img src="/logo.svg" alt="" class="footer-logo-image" width="40" height="40" loading="lazy" decoding="async">
+                    <span class="footer-brand">Virelle</span>
+                </a>
+                <p class="footer-desc">
+                    Пижамы и нижнее бельё с акцентом на комфорт, посадку и спокойную элегантность.
+                </p>
+            </div>
+            <nav class="footer-nav" aria-label="Навигация в подвале">
+                <a href="catalog.html">Каталог</a>
+                <a href="index.html#shop-by-category">Коллекции</a>
+                <a href="index.html#about">О бренде</a>
+                <a href="cart.html">Корзина</a>
+            </nav>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2026 Virelle</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Модальное окно руководства по размерам -->
+<!-- Модальное окно быстрого просмотра товара -->
+<!-- Уведомление о статусе отправки формы -->
+<!-- shared modals: injected by src/shared-modals.js -->
+</body>
+</html>
+

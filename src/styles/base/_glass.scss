@@ -1,0 +1,50 @@
+/* Liquid Glass — Apple-inspired (web approximation)
+   Layers: tint + backdrop blur/saturate/brightness + edge refraction (inset) + soft shadow.
+   Dense variant for text-heavy cards. Fallback when prefers-reduced-transparency.
+   Does NOT set position — callers keep fixed/absolute/sticky. */
+
+@mixin liquid-glass($variant: default) {
+    isolation: isolate;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--glass-shadow), var(--glass-edge);
+    transition:
+        box-shadow var(--motion-base) var(--ease-standard),
+        border-color var(--motion-base) var(--ease-standard),
+        background var(--motion-base) var(--ease-standard),
+        transform var(--motion-base) var(--ease-standard);
+
+    @if $variant == dense {
+        background: var(--glass-tint-dense);
+        backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    } @else if $variant == chrome {
+        background: var(--glass-tint-chrome);
+        border-radius: var(--radius-md);
+        backdrop-filter: blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+        -webkit-backdrop-filter: blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+        box-shadow: var(--glass-shadow-sm), var(--glass-edge);
+    } @else {
+        background: var(--glass-tint);
+        backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    }
+
+    @media (prefers-reduced-transparency: reduce) {
+        background: var(--color-bg-secondary);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border-color: var(--color-border);
+        box-shadow: var(--shadow-sm);
+    }
+}
+
+@mixin liquid-glass-hover {
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            border-color: var(--glass-border-strong);
+            box-shadow: var(--glass-shadow-hover), var(--glass-edge);
+            transform: translateY(-2px);
+        }
+    }
+}

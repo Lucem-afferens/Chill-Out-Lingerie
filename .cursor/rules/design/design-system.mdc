@@ -1,0 +1,83 @@
+---
+description: Core UI/UX design system for Virelle. Apply when creating or modifying interfaces, components, layout, styling, or UX.
+alwaysApply: true
+---
+
+# Design System — Virelle
+
+## Role
+
+Senior Product Designer + Frontend Architect for a lingerie / sleepwear brand site. Target quality: elegant, intimate commerce — not SaaS dashboards or developer portfolios.
+
+## Authorities
+
+- **Product truth:** `src/styles/base/_variables.scss` + blocks in `src/styles/blocks/` + markup in `index.html` / `catalog.html`
+- **Identity:** `design/project-style.mdc`
+- **External standards via `@Docs`:** Apple HIG, Material Design 3, WCAG 2.2, W3C Design Tokens — principles only
+- **Not in stack:** React UI kits, shadcn, Radix, Tailwind-as-system — do not migrate
+
+Specialists:
+
+- Colors / themes → `design/color-system.mdc`
+- Typography → `design/typography-system.mdc`
+- Audits → `design/ui-review.mdc`
+- Full redesign (explicit only) → `design/full-redesign.mdc`
+- Prompts → `design/README.md`
+
+## Principles
+
+1. **Brand first** — Virelle is a hero-level signal, not nav chrome
+2. **Product atmosphere** — photography and soft pink/gold mood carry the story
+3. **One job per section** — one headline, one supporting line, clear CTA when needed
+4. **Mobile-first** — majority traffic is mobile
+5. **Reuse before invent** — extend existing blocks/tokens
+
+## Design Tokens
+
+Source of truth: `src/styles/base/_variables.scss`.
+
+Key families:
+
+- Accents: `--color-gold`, `--color-pink`, `--color-pink-light`
+- Surfaces: `--color-bg-primary|secondary|tertiary`
+- Text: `--color-text-primary|secondary|tertiary|muted|accent|inverse`
+- Spacing: `--spacing-xs` … `--spacing-4xl`, `--section-padding-y`
+- Atmosphere: glass, shadows, gradients (`--color-glass-*`, `--gradient-*`)
+
+Prefer tokens. Do not invent one-off HEX without extending variables for both themes.
+
+## Layout
+
+- Pages: landing (`index.html`) and catalog (`catalog.html`)
+- Sections use `.container` + `.section-header` (title + subtitle)
+- Product grids: `.product-grid` / `.product-card`
+- Breakpoints: follow `_responsive.scss`; don’t invent ad-hoc media queries when a pattern exists
+
+Landing sections (keep order unless redesign is approved): hero → vk-notice → value → featured → bestsellers → new-arrivals → shop-by-category → testimonials → about → footer.
+
+## Components
+
+Vanilla HTML + SCSS blocks (BEM-ish). Reuse:
+
+- Header / menu overlay / theme toggle
+- Hero (full-bleed image + brand title + CTA)
+- `.cta-button`, product cards, badges (NEW / BESTSELLER)
+- Carousel (bestsellers), size modal, footer
+
+Interactive controls need: hover (pointer), focus-visible, active, disabled. Touch target ≥ **44×44px**.
+
+## Motion
+
+Intentional, restrained luxury — not noisy SaaS animation.
+
+- Prefer `transform` / `opacity`, ~150–400ms
+- Respect `prefers-reduced-motion`
+- Do not put heavy loops on the LCP path of the hero
+
+## Accessibility
+
+WCAG 2.2: one H1 (hero brand/title), section H2s, keyboard, focus-visible, contrast, labels, meaningful `alt`, correct `lang="ru"`.
+
+## Themes
+
+Light + dark via `data-theme` on `<html>` (and legacy `.light-theme`). Semantic remaps in `_variables.scss` — never invert blindly. Keep gold stable; adjust pink/text/surfaces per theme.

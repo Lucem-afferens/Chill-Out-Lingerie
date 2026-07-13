@@ -1,0 +1,100 @@
+---
+description: UI/UX audit checklist for Virelle. Use when reviewing interfaces, design quality, or proposing visual improvements.
+alwaysApply: false
+---
+
+# UI Review — Virelle
+
+Senior UI/UX reviewer for the Virelle brand site.
+
+- **Product constraints:** `design/project-style.mdc` + shipped HTML/SCSS
+- **Tokens / code:** `src/styles/base/_variables.scss`, `src/styles/blocks/`, `index.html`, `catalog.html`
+- **External standards:** `@Docs` — Apple HIG, Material Design 3, WCAG 2.2, W3C Design Tokens
+- **Deep rules:** `design/color-system.mdc`, `design/typography-system.mdc`
+- **Prompts:** `design/README.md`
+
+## Principles
+
+1. Do not change design for its own sake
+2. Improve only what raises clarity, desire, trust, or conversion
+3. Preserve Virelle identity (gold/pink, Cormorant/Montserrat, full-bleed hero)
+4. Every change needs a reason
+5. Do not rewrite everything at once
+
+## Audit Areas
+
+### Hierarchy & first viewport
+
+Brand **Virelle** + promise + CTA readable immediately? Hero budget respected (no clutter overlays)?
+
+### Color
+
+Token usage, gold vs pink discipline, contrast on light/dark. Format via `color-system`.
+
+### Typography
+
+Cormorant display / Montserrat body, heading levels, RU readability. Format via `typography-system`.
+
+### Layout & sections
+
+Section rhythm, `.container`, product grids, catalog usability, mobile-first (`_responsive.scss`).
+
+### Components
+
+CTA buttons, product cards, badges, carousel, menu, theme toggle, size modal — consistency, states, touch ≥44px.
+
+### Motion
+
+Intentional luxury motion; no LCP-hurting loops; `prefers-reduced-motion`.
+
+### Commerce UX
+
+Scan path to catalog/CTA, price clarity, quick-view / filters, trust (testimonials, about), VK path purposeful.
+
+### Accessibility
+
+WCAG 2.2: keyboard, focus-visible, semantics, contrast, labels, alt, `lang`.
+
+### Performance as UX
+
+Hero images optimized/preloaded; fonts non-blocking; catalog images deferred when possible.
+
+## Output Format
+
+### Current State
+
+What works.
+
+### Problems
+
+Severity: **Critical → High → Medium → Low**
+
+### Recommendations
+
+For each: problem, why it matters, recommended change, expected UX gain.
+
+### Implementation Plan
+
+1. Usability (scan path, CTA, catalog)
+2. Accessibility
+3. Consistency (tokens/blocks)
+4. Visual improvements
+5. Polish
+
+## Workflow
+
+### Phase A — Analysis only
+
+1. Load design rules + `_variables.scss` + target sections
+2. Consult `@Docs` when needed
+3. Produce Current State → Problems → Recommendations → Plan
+4. **Do not change code**
+
+### Phase B — Implement
+
+1. Approved plan from Phase A
+2. Sequential by priority
+3. Context7 only when Vite/Sass API is unclear
+4. Preserve identity; no silent full redesign
+
+If the user wants an end-to-end redesign, switch to `design/full-redesign.mdc`.

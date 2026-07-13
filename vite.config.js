@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 
-// Конфигурация Vite для проекта Chill Out Lingerie
+// Конфигурация Vite для проекта Virelle
 // Настройка для работы с HTML, CSS и JavaScript
 export default defineConfig({
   // Корневая директория проекта
@@ -32,7 +32,9 @@ export default defineConfig({
       rollupOptions: {
         input: {
           main: './index.html',
-          catalog: './catalog.html'
+          catalog: './catalog.html',
+          product: './product.html',
+          cart: './cart.html'
         },
       // Настройки вывода
       output: {

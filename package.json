@@ -1,7 +1,7 @@
 {
-  "name": "chill-out-lingerie",
+  "name": "virelle",
   "version": "1.0.0",
-  "description": "Chill Out Lingerie - официальный сайт",
+  "description": "Virelle — официальный сайт",
   "type": "module",
   "scripts": {
     "dev": "vite",

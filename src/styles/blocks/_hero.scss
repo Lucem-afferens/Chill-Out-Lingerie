@@ -1,11 +1,10 @@
-/* ==========================================================================
-   HERO СЕКЦИЯ (Главная страница)
-   ========================================================================== */
+/* Quiet luxury hero — light-only, one image */
+
 #hero {
     position: relative;
     height: 100vh;
     height: 100svh;
-    min-height: 600px;
+    min-height: 560px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,28 +22,16 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.15s ease-in-out;
 }
 
-// Изображение для темной темы (по умолчанию видимо)
+/* Light-only: show light hero; hide dark */
 .hero-image-dark {
-    opacity: 1;
-    z-index: 1;
+    opacity: 0;
+    z-index: 0;
+    pointer-events: none;
 }
 
-// Изображение для светлой темы (скрыто по умолчанию)
 .hero-image-light {
-    opacity: 0;
-    z-index: 0;
-}
-
-// Переключение изображений в зависимости от темы
-[data-theme="light"] .hero-image-dark {
-    opacity: 0;
-    z-index: 0;
-}
-
-[data-theme="light"] .hero-image-light {
     opacity: 1;
     z-index: 1;
 }
@@ -60,84 +47,94 @@
     position: relative;
     z-index: 10;
     text-align: center;
-    padding: 0 2rem;
-    animation: fadeIn 0.6s ease-in;
+    padding: 0 var(--spacing-xl);
+    animation: heroFade 0.7s var(--ease-out);
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
+@keyframes heroFade {
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 .hero-title {
-    font-size: 6rem;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.05em;
-    background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #ffc0cb 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: var(--text-hero);
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-regular);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: var(--tracking-display);
+    color: var(--color-text-on-image);
+    text-shadow: 0 1px 18px rgba(28, 27, 26, 0.35);
+}
+
+.hero-title .text-gold {
+    color: var(--color-text-on-image);
 }
 
 .hero-subtitle {
-    font-size: 4rem;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    margin-bottom: 2rem;
-    color: var(--color-text-accent);
+    font-size: var(--text-hero-sub);
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-regular);
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-on-image);
+    text-shadow: 0 1px 12px rgba(28, 27, 26, 0.3);
 }
 
 .hero-text {
-    font-size: 1.25rem;
-    font-weight: 300;
-    margin-bottom: 3rem;
-    max-width: 48rem;
+    font-size: var(--text-base);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-regular);
+    margin-bottom: var(--spacing-2xl);
+    max-width: var(--text-measure);
     margin-left: auto;
     margin-right: auto;
-    color: var(--color-text-accent);
-    letter-spacing: 0.025em;
+    color: var(--color-text-on-image);
+    opacity: 0.95;
+    line-height: var(--leading-body);
+    text-shadow: 0 1px 10px rgba(28, 27, 26, 0.28);
 }
 
 .hero-buttons {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1.5rem;
+    gap: var(--spacing-md);
 }
 
-.hero-buttons .btn-outline {
-    background: var(--color-glass-card-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 2px solid var(--color-pink-light);
-    box-shadow: var(--color-glass-card-shadow);
+@include bp-sm {
+    .hero-buttons {
+        flex-direction: row;
+        gap: var(--spacing-lg);
+    }
+}
+
+.hero-buttons .btn-solid {
+    background: #ffffff;
+    border-color: #ffffff;
+    color: var(--color-text-primary);
+    box-shadow:
+        var(--shadow-md),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 @media (hover: hover) and (pointer: fine) {
-    .hero-buttons .btn-outline:hover,
-    .hero-buttons .btn-outline:focus-visible {
-        background: var(--color-glass-card-bg);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-color: var(--color-pink-light);
-        box-shadow: var(--color-glass-card-shadow), 0 8px 25px var(--color-shadow-pink-hover);
+    .hero-buttons .btn-solid:hover,
+    .hero-buttons .btn-solid:focus-visible {
+        background: rgba(247, 244, 239, 0.95);
+        border-color: var(--color-text-inverse);
+        color: var(--color-text-primary);
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-1px);
     }
 }
 
 .hero-scroll {
     position: absolute;
-    bottom: 3rem;
+    bottom: var(--spacing-2xl);
     left: 50%;
     transform: translateX(-50%);
-    color: var(--color-pink-light);
-    font-size: 1.875rem;
-    animation: bounce 2s infinite;
+    color: var(--color-text-on-image);
+    opacity: 0.7;
+    font-size: var(--text-lg);
+    animation: none;
 }
-
-@keyframes bounce {
-    0%, 100% { transform: translate(-50%, 0); }
-    50% { transform: translate(-50%, 10px); }
-}
-

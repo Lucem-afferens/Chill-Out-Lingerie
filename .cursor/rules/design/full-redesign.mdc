@@ -1,0 +1,99 @@
+---
+description: Full site redesign orchestration for Virelle. Use only when explicitly asked to redesign the brand site end-to-end.
+alwaysApply: false
+---
+
+# Full Site Redesign — Virelle
+
+Senior Product Designer + Frontend Architect. Overrides incremental-only guards in `project-style.mdc` / `ui-review.mdc` — only when the user explicitly asks for a full redesign (or cites this file).
+
+Not a license for random restyles. Redesign must be deliberate and shippable on the existing Vite + HTML/SCSS/JS stack.
+
+## When to use
+
+- User asks for полный редизайн / redesign сайта / пересобрать визуальную архитектуру
+- User `@`-mentions this file or pastes the Full Redesign prompt from `design/README.md`
+
+Otherwise stay on `ui-review.mdc`.
+
+## Mandatory intake (do not skip)
+
+| Priority | Source | Learn |
+|----------|--------|--------|
+| 1 | `src/styles/base/_variables.scss` + `blocks/` | Shipped visual system |
+| 2 | `index.html`, `catalog.html`, `src/script.js` | IA, content, behavior |
+| 3 | This folder: design-system, project-style, color, typography, ui-review | Process + identity |
+| 4 | `@Docs` | HIG, Material 3, WCAG 2.2, W3C Tokens — **principles** |
+| 5 | Live site / screenshots if available | Reality vs intent |
+
+Context7 only when implementing Vite/Sass APIs.
+
+**Truth order:** shipped code + tokens → rules → external Docs. Name drift when HTML/SCSS disagree; redesign may resolve by updating both.
+
+## Hard constraints (architecture)
+
+Keep unless the user explicitly expands scope:
+
+- Vite static site: `index.html` + `catalog.html` + SCSS blocks + `script.js`
+- No migration to React/Astro/Next/shadcn/Tailwind-as-system
+- Hosting remains Vercel-friendly static `dist/`
+- Brand name **Virelle** stays hero-level
+- RU copy and Cyrillic-capable fonts
+- Light/dark via `data-theme` unless redesign explicitly changes theme model
+
+## Professional redesign lens
+
+1. **Strategy** — desire path: brand → collection → catalog/CTA; hero budget
+2. **Visual system** — gold/pink evolution or justified new direction (user OK required for wholesale identity swap)
+3. **Layout** — full-bleed hero, section rhythm, catalog IA
+4. **Components** — cards, CTAs, menu, filters, modals; states + touch ≥44px
+5. **Content design** — product storytelling, trust, categories
+6. **Motion** — intent only; reduced-motion parallel
+7. **A11y + responsive** — WCAG 2.2; mobile-first
+8. **Performance as UX** — hero media, fonts, JS weight
+
+Avoid default AI looks that fight the brand (purple-glow SaaS, broadsheet). Evolving gold/pink + Cormorant/Montserrat is allowed when justified.
+
+## Workflow (strict phases)
+
+### Phase 0 — Scope lock
+
+Confirm if unclear:
+
+- Landing only vs + catalog
+- Identity: **evolve** current language vs **new direction** (one sentence)
+- Analysis-only vs analysis + implement
+
+No coding until Phase 1–2 are approved (unless user said “analyze and implement”).
+
+### Phase 1 — Discovery (analysis only)
+
+1. Current system summary
+2. Spec ↔ code drift (rules/tokens vs HTML/SCSS)
+3. Problems — Critical → Low
+4. Opportunities — where redesign (not a patch) earns desire/clarity/conversion
+
+### Phase 2 — Redesign proposal (no code unless approved)
+
+1. Design direction — one sentence
+2. IA / sections — order, hero composition, what to cut/merge
+3. System deltas — tokens, type, components
+4. Key screens — Hero + catalog + 1–2 sections
+5. Risks — a11y, perf, content gaps
+6. Implementation waves — foundation → shells → sections → polish
+
+### Phase 3 — Implement
+
+1. Tokens / atmosphere first (`_variables.scss`)
+2. Shared shells (header, footer, menu, buttons)
+3. Sections by scan-path (Hero → collections → catalog → trust)
+4. Short diff-summary after each wave; remaining backlog
+
+## Anti-patterns
+
+- Redesigning without reading tokens + HTML + blocks
+- Copying Material/HIG visuals literally onto lingerie branding
+- New UI kit / unrelated font stack “because trendy”
+- Decorating without fixing scan path or product clarity
+- Big-bang rewrite without waves
+- Ignoring `prefers-reduced-motion` or tanking LCP with atmosphere

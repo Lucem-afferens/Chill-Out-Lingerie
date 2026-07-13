@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,16 +40,20 @@
     <script>
         (function() {
             // Читаем сохраненную тему из localStorage
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            // Устанавливаем data-theme на <html> синхронно, до рендеринга
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.documentElement.setAttribute('data-theme', 'light');
         })();
     </script>
     
     <!-- External Resources -->
+    <style id="critical-chrome">
+      /* Prevent burger FOUC: off-canvas until CSS+JS ready (no transition yet) */
+      #menu-overlay.menu-overlay:not(.active) {
+        transform: translateX(-105%);
+        visibility: hidden;
+        pointer-events: none;
+      }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -68,20 +72,13 @@
             <i class="fa-solid fa-times" aria-hidden="true"></i>
         </button>
         <nav class="menu-nav">
-            <a href="index.html" onclick="closeMenu()">ГЛАВНАЯ</a>
-            <a href="catalog.html" onclick="closeMenu()">КАТАЛОГ</a>
-            <a href="index.html#bestsellers" onclick="closeMenu()">ХИТЫ ПРОДАЖ</a>
-            <a href="index.html#new-arrivals" onclick="closeMenu()">НОВИНКИ</a>
-            <a href="index.html#about" onclick="closeMenu()">О НАС</a>
-            <a href="index.html#contact" onclick="closeMenu()">КОНТАКТЫ</a>
+            <a href="index.html" onclick="closeMenu()">Главная</a>
+            <a href="catalog.html" onclick="closeMenu()">Коллекция</a>
+            <a href="index.html#collection" onclick="closeMenu()">Подборка</a>
+            <a href="index.html#shop-by-category" onclick="closeMenu()">Категории</a>
+            <a href="index.html#about" onclick="closeMenu()">О нас</a>
+            <a href="cart.html" onclick="closeMenu()">Корзина</a>
         </nav>
-        <div class="menu-social">
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-facebook"></i></a>
-            <a href="#"><i class="fa-brands fa-pinterest"></i></a>
-            <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-            <a href="https://vk.com/feed" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-vk"></i></a>
-        </div>
     </div>
 </div>
 
@@ -91,22 +88,19 @@
             <i class="fa-solid fa-bars" aria-hidden="true"></i>
         </button>
         
-        <a href="index.html" class="no-decoration inherit-color">
-            <img src="/logo.svg" alt="Virelle" class="header-logo-image">
-            <h2 class="header-logo">Virelle</h2>
+        <a href="index.html" class="no-decoration inherit-color" aria-label="Virelle — на главную">
+            <img src="/logo.svg" alt="" class="header-logo-image" fetchpriority="high" loading="eager" decoding="async" width="40" height="40">
+            <span class="header-logo">Virelle</span>
         </a>
         
-        <div class="header-actions">
-            <button onclick="toggleTheme()" id="theme-toggle" class="icon-btn theme-toggle" title="Переключить тему" aria-label="Переключить на светлую тему">
-                <span class="icon icon--current">
-                    <i class="fa-solid fa-sun" aria-hidden="true"></i>
-                </span>
-                <span class="icon icon--next">
-                    <i class="fa-solid fa-moon" aria-hidden="true"></i>
-                </span>
-            </button>
-            <a href="https://vk.com/feed" target="_blank" class="icon-btn" title="ВКонтакте" aria-label="Наша группа ВКонтакте" rel="noopener noreferrer">
-                <i class="fa-brands fa-vk" aria-hidden="true"></i>
+                <div class="header-actions">
+            <a href="catalog.html?favorites=1" class="icon-btn favorites-link" title="Избранное" aria-label="Избранное">
+                <i class="fa-regular fa-heart" aria-hidden="true"></i>
+                <span class="favorites-count" data-favorites-count hidden>0</span>
+            </a>
+            <a href="cart.html" class="icon-btn cart-link" title="Корзина" aria-label="Корзина">
+                <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                <span class="cart-count" data-cart-count hidden>0</span>
             </a>
         </div>
     </div>
@@ -116,8 +110,8 @@
 <section id="catalog-page" class="catalog-page">
     <div class="container">
         <div class="section-header">
-            <h1 class="section-title">Каталог Товаров</h1>
-            <p class="section-subtitle">Откройте для себя нашу коллекцию премиального нижнего белья</p>
+            <h1 class="section-title">Коллекция</h1>
+            <p class="section-subtitle">Пижамы и нижнее бельё — мягкость ткани и точная посадка</p>
         </div>
         
         <!-- Панель инструментов с фильтрами и сортировкой -->
@@ -125,16 +119,26 @@
             <div class="toolbar-left">
                 <button onclick="openFiltersModal()" class="filter-btn cta-button btn-outline" aria-label="Открыть фильтры" aria-expanded="false" id="filter-btn">
                     <i class="fa-solid fa-filter" aria-hidden="true"></i>
-                    <span>ФИЛЬТР</span>
+                    <span>Фильтр</span>
                     <span class="filter-count hidden" id="filter-count" aria-label="Количество активных фильтров">0</span>
                 </button>
+                <label class="catalog-search-label" for="catalog-search">
+                    <span class="sr-only">Поиск по каталогу</span>
+                    <input type="search" id="catalog-search" class="catalog-search" placeholder="Поиск…" autocomplete="off">
+                </label>
             </div>
             
             <div class="toolbar-right">
                 <div class="products-count-wrapper">
                     <span class="products-count" id="products-count" aria-live="polite">0 товаров</span>
                 </div>
-                <div class="sort-wrapper">
+                <button type="button" onclick="openSizeGuideModal()" class="size-guide-link" aria-label="Открыть таблицу размеров">
+                    Размеры
+                </button>
+                <button type="button" onclick="openSizeCalculatorModal()" class="size-guide-link" aria-label="Открыть калькулятор размеров">
+                    Калькулятор
+                </button>
+                <div class="sort-wrapper" data-custom-select>
                     <label for="sort-select" class="sr-only">Сортировка товаров</label>
                     <select id="sort-select" class="sort-select" aria-label="Сортировка товаров" onchange="handleSortChange(event)">
                         <option value="popularity">По популярности</option>
@@ -155,10 +159,10 @@
         <!-- Состояние пустого результата -->
         <div id="empty-state" class="empty-state hidden" role="status" aria-live="polite">
             <i class="fa-solid fa-search empty-state-icon" aria-hidden="true"></i>
-            <h3 class="empty-state-title">Товары не найдены</h3>
-            <p class="empty-state-text">Попробуйте изменить параметры фильтрации</p>
+            <h3 class="empty-state-title">Пока ничего не нашлось</h3>
+            <p class="empty-state-text">Измените фильтры или сбросьте их — в коллекции точно есть что примерить</p>
             <button onclick="resetFilters()" class="cta-button btn-outline">
-                <span>СБРОСИТЬ ФИЛЬТРЫ</span>
+                <span>Сбросить фильтры</span>
             </button>
         </div>
         
@@ -181,33 +185,24 @@
 <footer id="footer">
     <div class="container">
         <div class="footer-main">
-            <div>
-                <h3 class="footer-brand">Virelle</h3>
+            <div class="footer-brand-block">
+                <a href="index.html" class="footer-brand-link" aria-label="Virelle — на главную">
+                    <img src="/logo.svg" alt="" class="footer-logo-image" width="40" height="40" loading="lazy" decoding="async">
+                    <span class="footer-brand">Virelle</span>
+                </a>
                 <p class="footer-desc">
-                    Повышаем уровень интимного белья с вневременной элегантностью, премиальным качеством и инклюзивными дизайнами для современной женщины.
+                    Пижамы и нижнее бельё с акцентом на комфорт, посадку и спокойную элегантность.
                 </p>
-                <div class="footer-social">
-                    <a href="https://vk.com/feed" target="_blank" class="vk">
-                        <i class="fa-brands fa-vk"></i>
-                    </a>
-                    <a href="#">
-                        <i class="fa-brands fa-instagram"></i>
-                    </a>
-                    <a href="#">
-                        <i class="fa-brands fa-facebook"></i>
-                    </a>
-                    <a href="#">
-                        <i class="fa-brands fa-pinterest"></i>
-                    </a>
-                    <a href="#">
-                        <i class="fa-brands fa-tiktok"></i>
-                    </a>
-                </div>
             </div>
+            <nav class="footer-nav" aria-label="Навигация в подвале">
+                <a href="catalog.html">Каталог</a>
+                <a href="index.html#shop-by-category">Коллекции</a>
+                <a href="index.html#about">О бренде</a>
+                <a href="cart.html">Корзина</a>
+            </nav>
         </div>
-        
         <div class="footer-bottom">
-            <p class="footer-copyright">© 2024 Virelle. All rights reserved.</p>
+            <p class="footer-copyright">© 2026 Virelle</p>
         </div>
     </div>
 </footer>
@@ -327,9 +322,9 @@
                     </div>
                 </div>
                 
-                <!-- Размеры бюстгальтеров -->
-                <div class="size-group">
-                    <h5 class="size-group-title">Размеры бюстгальтеров</h5>
+                <!-- Размеры бюстгальтеров (progressive) -->
+                <details class="size-group bra-sizes-disclosure">
+                    <summary class="size-group-title bra-sizes-summary">Размеры бюстгальтеров</summary>
                     <div class="bra-sizes-grid">
                         <div class="bra-size-group">
                             <h6 class="bra-size-group-title">65</h6>
@@ -569,7 +564,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </details>
             </div>
         </div>
         
@@ -584,59 +579,11 @@
     </div>
 </div>
 
+<!-- Модальное окно калькулятора размеров -->
+<!-- Модальное окно руководства по размерам -->
 <!-- Модальное окно быстрого просмотра товара -->
-<div id="quick-view-modal" class="quick-view-modal" role="dialog" aria-modal="true" aria-labelledby="quick-view-modal-title">
-    <div class="quick-view-modal-overlay" onclick="closeQuickViewModal()"></div>
-    <div class="quick-view-modal-content">
-        <div class="quick-view-modal-header">
-            <h2 id="quick-view-modal-title" class="quick-view-modal-title">Быстрый просмотр</h2>
-            <button onclick="closeQuickViewModal()" class="quick-view-modal-close" aria-label="Закрыть быстрый просмотр">
-                <i class="fa-solid fa-times" aria-hidden="true"></i>
-            </button>
-        </div>
-        <div class="quick-view-modal-body">
-            <div class="quick-view-grid">
-                <div class="quick-view-image-wrapper">
-                    <img id="quick-view-image" src="" alt="" class="quick-view-image" loading="lazy">
-                    <div id="quick-view-badge" class="quick-view-badge"></div>
-                </div>
-                <div class="quick-view-info">
-                    <h3 id="quick-view-name" class="quick-view-name"></h3>
-                    <p id="quick-view-description" class="quick-view-description"></p>
-                    <div class="quick-view-price-wrapper">
-                        <p id="quick-view-price" class="quick-view-price"></p>
-                        <p id="quick-view-original-price" class="quick-view-original-price hidden"></p>
-                    </div>
-                    <div class="quick-view-sizes">
-                        <h4 class="quick-view-sizes-title">Доступные размеры:</h4>
-                        <div id="quick-view-sizes-list" class="quick-view-sizes-list"></div>
-                    </div>
-                    <a id="quick-view-order-btn" href="https://vk.com/feed" target="_blank" class="cta-button btn-solid quick-view-order-btn no-decoration mt-2rem inline-block full-width text-center">
-                        <span>ЗАКАЗАТЬ</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Уведомление о статусе отправки формы -->
-<div id="notification" class="notification" role="alert" aria-live="polite" aria-atomic="true">
-    <div class="notification-overlay"></div>
-    <div class="notification-content">
-        <div class="notification-icon">
-            <i></i>
-        </div>
-        <div class="notification-message">
-            <h4 class="notification-title"></h4>
-            <p class="notification-text"></p>
-        </div>
-        <button class="notification-close" aria-label="Закрыть уведомление">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
-</div>
-
+<!-- shared modals: injected by src/shared-modals.js -->
 </body>
 </html>
 

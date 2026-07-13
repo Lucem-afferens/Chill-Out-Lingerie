@@ -2,9 +2,15 @@
    RESET СТИЛИ
    ========================================================================== */
 
-/* Скрытие скроллбара */
-::-webkit-scrollbar { 
-    display: none; 
+/* Скроллбар — тонкий, не скрываем полностью (a11y) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border-pink-light);
+    border-radius: var(--radius-full);
 }
 
 /* Reset стилей */
@@ -12,15 +18,19 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    overflow-x: hidden;
+}
+
+html {
+    overflow-x: clip;
+    scrollbar-gutter: stable;
 }
 
 /* Основные стили body */
 body {
     background-color: var(--color-bg-primary);
     color: var(--color-text-primary);
-    font-family: 'Montserrat', sans-serif;
-    overflow-x: hidden;
+    font-family: var(--font-body);
+    overflow-x: clip;
     /* Улучшение для маленьких экранов - предотвращение горизонтального скролла */
     min-width: 320px;
     width: 100%;
@@ -31,7 +41,12 @@ body {
     /* Оптимизация загрузки шрифтов */
     font-display: swap;
     /* Плавный переход при смене темы */
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
+}
+
+/* Keep fixed header aligned when body scroll is locked (do NOT touch .menu-overlay) */
+html.is-scroll-locked #header {
+    padding-right: var(--scroll-lock-offset, 0px);
 }
 
 /* Оптимизация загрузки шрифтов - font-display применяется через Google Fonts API */

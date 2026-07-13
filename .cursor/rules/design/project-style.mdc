@@ -1,0 +1,62 @@
+---
+description: Preserve and evolve the Virelle brand visual identity. Guard against blind redesigns.
+alwaysApply: true
+---
+
+# Project Style — Virelle
+
+## Identity First
+
+Before any UI change, understand:
+
+- Audience: women shopping elegant sleepwear and lingerie (RU market)
+- Promise: качество, комфорт, стиль — чувствовать себя красивой и уверенной
+- Voice: warm, refined, intimate — not clinical e-commerce or tech-portfolio tone
+- Look: charcoal / soft light surfaces, gold accent (`#d4af37`), pink atmosphere, glass accents
+- Type: **Cormorant Garamond** (display / brand) + **Montserrat** (UI / body)
+- Stack look: Vite static site, SCSS tokens, full-bleed hero photography
+
+External systems (HIG, Material 3) are **principles**, not a replacement for Virelle’s identity.
+
+## Brand signals (first viewport)
+
+Hero must lead with **Virelle** (`.text-gold` / logo), one short promise line, and a primary CTA group over full-bleed product photography. Do not bury the brand as nav-only chrome. Avoid stuffing the first viewport with stats strips, promo chips, or secondary marketing clusters.
+
+## Consistency
+
+New UI must belong: gold + pink language, Cormorant/Montserrat, spacing scale, product-card patterns, soft glass/shadow vocabulary from tokens.
+
+## Reuse Before Create
+
+For buttons, cards, headers, menus, footers, catalog filters:
+
+1. Search `src/styles/blocks/` and existing HTML patterns
+2. Extend tokens in `_variables.scss` for both themes
+3. Avoid duplicate “almost the same” components
+
+Prefer `.section-header` + `.product-card` + `.cta-button` over one-off wrappers.
+
+## Change Policy
+
+Do not:
+
+- redesign the whole site without an explicit request
+- replace gold/pink/charcoal with a unrelated palette “because it’s nicer”
+- introduce React/Tailwind/shadcn stacks without reason
+- paint over the brand with purple-glow SaaS or broadsheet newspaper defaults
+- put decorative card chrome in the hero or replace full-bleed hero with inset media cards
+
+Prefer incremental improvement aligned with shipped tokens and blocks.
+
+When the user **explicitly** asks for a full redesign (or cites `design/full-redesign.mdc`), follow that rule: Discovery → Proposal → approve → Implement.
+
+## Content vs chrome
+
+- Products: clear name, short material/desc, price in ₽, badges sparingly
+- Categories / catalog: scannable filters and grids, not dashboard clutter
+- Social (VK notice): one purposeful strip, not competing with hero
+- About / testimonials: trust and story — keep copy intimate and specific
+
+## UI Code Quality
+
+Maintainable SCSS, semantic tokens, no magic numbers when a token exists, no unused CSS, keep RU copy consistent in tone.

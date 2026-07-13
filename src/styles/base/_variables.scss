@@ -1,232 +1,212 @@
 /* ==========================================================================
-   CSS ПЕРЕМЕННЫЕ
+   QUIET LUXURY — tokens v3 (light-only)
+   Ivory / charcoal / champagne. No pink. No dark theme.
    ========================================================================== */
 
 :root {
-    /* Spacing система */
-    --spacing-xs: 0.25rem;    /* 4px */
-    --spacing-sm: 0.5rem;     /* 8px */
-    --spacing-md: 1rem;       /* 16px */
-    --spacing-lg: 1.5rem;     /* 24px */
-    --spacing-xl: 2rem;       /* 32px */
-    --spacing-2xl: 3rem;      /* 48px */
-    --spacing-3xl: 4rem;      /* 64px */
-    --spacing-4xl: 6rem;      /* 96px */
-    
-    /* Вертикальные ритмы для секций */
-    --section-padding-y: 4rem;
-    --section-padding-y-mobile: 2.5rem;
-    
-    /* Spacing для карточек товаров */
-    --card-gap: 2rem;
-    --card-gap-mobile: 1.25rem;
-    --card-padding: 1.5rem;
-    
-    /* Spacing для toolbar */
-    --toolbar-padding: 1.5rem;
-    --toolbar-gap: 1.5rem;
-    
-    /* ==========================================================================
-       ЦВЕТОВАЯ СИСТЕМА (ТЕМНАЯ ТЕМА - по умолчанию)
-       ========================================================================== */
-    
-    /* Акцентные цвета (одинаковые для обеих тем) */
-    --color-gold: #d4af37;
-    --color-pink-light: #ffb6c1;
-    --color-pink: #ffc0cb;
-    
-    /* Фоновые цвета */
-    --color-bg-primary: #2b2b2b;      /* Charcoal - основной фон */
-    --color-bg-secondary: #171717;    /* Neutral-900 - темный фон */
-    --color-bg-tertiary: #262626;     /* Neutral-800 - средний фон */
-    
-    /* Цвета текста (контрастные для читаемости на темном фоне) */
-    --color-text-primary: #fafafa;    /* Основной текст - яркий белый */
-    --color-text-secondary: #e0d4dc;  /* Второстепенный текст - светлый контрастный */
-    --color-text-tertiary: #e8dce4;   /* Подзаголовки - светлый розовато-серый */
-    --color-text-inverse: #2b2b2b;    /* Темный текст на светлом фоне */
-    
-    /* Цвета для glassmorphism */
-    --color-glass-bg: rgba(255, 192, 203, 0.08);
-    --color-glass-border: rgba(255, 182, 193, 0.15);
-    
-    /* Цвета теней */
-    --color-shadow-pink: rgba(255, 182, 193, 0.3);
-    --color-shadow-pink-hover: rgba(255, 182, 193, 0.4);
-    --color-shadow-pink-strong: rgba(255, 182, 193, 0.5);
-    --color-shadow-black: rgba(0, 0, 0, 0.3);
-    
-    /* Цвета overlay */
-    --color-overlay-bg: rgba(43, 43, 43, 0.8);
-    --color-overlay-bg-light: rgba(43, 43, 43, 0.6);
-    
-    /* Градиенты для фонов секций */
-    --gradient-bg-section: linear-gradient(to bottom, var(--color-bg-primary), var(--color-bg-secondary));
-    --gradient-bg-vk-notice: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 182, 193, 0.1) 100%);
-    --gradient-bg-menu: linear-gradient(135deg, rgba(43, 43, 43, 0.85) 0%, rgba(60, 40, 45, 0.85) 50%, rgba(43, 43, 43, 0.85) 100%);
-    --gradient-hero-overlay: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4));
-    
-    /* Цвета для границ */
-    --color-border-pink: rgba(255, 182, 193, 0.2);
-    --color-border-pink-light: rgba(255, 182, 193, 0.3);
-    
-    /* Дополнительные цвета для текста (контрастные) */
-    --color-text-accent: #f0e4eb;     /* Акцентный текст - светлый с контрастом */
-    --color-text-muted: #d4c8d0;      /* Приглушенный текст - читаемый на темном */
-    
-    /* Цвета для carousel и overlay элементов */
-    --color-carousel-bg: rgba(43, 43, 43, 0.85);
-    --color-carousel-bg-hover: rgba(43, 43, 43, 0.95);
-    --color-carousel-border: rgba(212, 175, 55, 0.4);
-    --color-carousel-shadow: rgba(212, 175, 55, 0.3);
-    --color-carousel-shadow-hover: rgba(212, 175, 55, 0.4);
-    --color-carousel-shadow-strong: rgba(212, 175, 55, 0.6);
-    
-    /* Цвета для модального окна размеров */
-    --color-modal-overlay: linear-gradient(135deg, 
-        rgba(0, 0, 0, 0.8) 0%, 
-        rgba(20, 15, 18, 0.85) 50%, 
-        rgba(0, 0, 0, 0.8) 100%);
-    --color-modal-overlay-active: linear-gradient(135deg, 
-        rgba(0, 0, 0, 0.85) 0%, 
-        rgba(20, 15, 18, 0.9) 50%, 
-        rgba(0, 0, 0, 0.85) 100%);
-    --color-modal-bg: linear-gradient(135deg, 
-        rgba(43, 43, 43, 0.98) 0%, 
-        rgba(38, 35, 37, 0.98) 50%, 
-        rgba(43, 43, 43, 0.98) 100%);
-    --color-modal-bg-overlay: linear-gradient(135deg, 
-        rgba(212, 175, 55, 0.05) 0%, 
-        rgba(255, 182, 193, 0.03) 50%, 
-        rgba(255, 192, 203, 0.02) 100%);
-    --color-modal-border: rgba(212, 175, 55, 0.3);
-    --color-modal-shadow: 
-        0 25px 70px rgba(0, 0, 0, 0.6),
-        0 10px 30px rgba(212, 175, 55, 0.2),
-        0 0 0 1px rgba(255, 182, 193, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    --color-modal-header-bg: linear-gradient(135deg, 
-        rgba(212, 175, 55, 0.12) 0%, 
-        rgba(255, 182, 193, 0.08) 50%, 
-        rgba(255, 192, 203, 0.05) 100%);
-    --color-modal-header-border: rgba(255, 182, 193, 0.2);
-    --color-modal-close-bg: rgba(255, 182, 193, 0.15);
-    --color-modal-close-border: rgba(255, 182, 193, 0.3);
-    --color-modal-close-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    --color-modal-close-bg-hover: linear-gradient(135deg, rgba(255, 182, 193, 0.3) 0%, rgba(212, 175, 55, 0.2) 100%);
-    --color-modal-close-shadow-hover: 
-        0 4px 12px rgba(212, 175, 55, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    
-    /* Цвета для таблиц размеров */
-    --color-table-header-bg: linear-gradient(135deg, 
-        rgba(212, 175, 55, 0.2) 0%, 
-        rgba(255, 182, 193, 0.15) 100%);
-    --color-table-row-border: rgba(255, 182, 193, 0.1);
-    --color-table-row-hover: rgba(255, 182, 193, 0.05);
-    --color-table-label-bg: rgba(212, 175, 55, 0.1);
-}
+    /* Typography */
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Montserrat', sans-serif;
 
-/* СВЕТЛАЯ ТЕМА */
-[data-theme="light"],
-.light-theme {
-    /* Акцентные цвета (более темные для светлой темы для лучшей читаемости) */
-    --color-pink-light: #f2a5b8;      /* Темнее исходного #ffb6c1 */
-    --color-pink: #f2a5b8;            /* Темнее исходного #ffc0cb */
-    
-    /* Фоновые цвета (инвертированы) */
-    --color-bg-primary: #fafafa;      /* Светлый основной фон */
-    --color-bg-secondary: #ffffff;    /* Белый фон */
-    --color-bg-tertiary: #f5f5f5;     /* Светло-серый фон */
-    
-    /* Цвета текста (контрастные для читаемости на светлом фоне) */
-    --color-text-primary: #1a1a1a;    /* Основной текст - насыщенный темный */
-    --color-text-secondary: #3d3239;  /* Второстепенный текст - темный контрастный */
-    --color-text-tertiary: #4a3f46;   /* Подзаголовки - темный серо-розовый */
-    --color-text-inverse: #ffffff;    /* Белый текст на темном фоне */
-    
-    /* Цвета для glassmorphism (более насыщенные для светлой темы) */
-    --color-glass-bg: rgba(255, 182, 193, 0.15);
-    --color-glass-border: rgba(255, 182, 193, 0.25);
-    
-    /* Цвета теней (более темные для светлой темы) */
-    --color-shadow-pink: rgba(255, 182, 193, 0.25);
-    --color-shadow-pink-hover: rgba(255, 182, 193, 0.35);
-    --color-shadow-pink-strong: rgba(255, 182, 193, 0.45);
-    --color-shadow-black: rgba(0, 0, 0, 0.15);
-    
-    /* Цвета overlay (более светлые) */
-    --color-overlay-bg: rgba(250, 250, 250, 0.85);
-    --color-overlay-bg-light: rgba(250, 250, 250, 0.7);
-    
-    /* Градиенты для фонов секций (светлая тема) */
-    --gradient-bg-section: linear-gradient(to bottom, var(--color-bg-primary), var(--color-bg-secondary));
-    --gradient-bg-vk-notice: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(255, 182, 193, 0.08) 100%);
-    --gradient-bg-menu: linear-gradient(135deg, rgba(250, 250, 250, 0.85) 0%, rgba(245, 240, 245, 0.85) 50%, rgba(250, 250, 250, 0.85) 100%);
-    --gradient-hero-overlay: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5));
-    
-    /* Цвета для границ */
-    --color-border-pink: rgba(255, 182, 193, 0.3);
-    --color-border-pink-light: rgba(255, 182, 193, 0.4);
-    
-    /* Дополнительные цвета для текста (контрастные) */
-    --color-text-accent: #5c4552;     /* Акцентный текст - темный контрастный */
-    --color-text-muted: #5a4d56;      /* Приглушенный текст - читаемый на светлом */
-    
-    /* Цвета для carousel и overlay элементов (светлая тема) */
-    --color-carousel-bg: rgba(250, 250, 250, 0.9);
-    --color-carousel-bg-hover: rgba(245, 245, 245, 0.95);
-    --color-carousel-border: rgba(212, 175, 55, 0.5);
-    --color-carousel-shadow: rgba(212, 175, 55, 0.2);
-    --color-carousel-shadow-hover: rgba(212, 175, 55, 0.3);
-    --color-carousel-shadow-strong: rgba(212, 175, 55, 0.5);
-    
-    /* Цвета для модального окна размеров (светлая тема) */
-    --color-modal-overlay: linear-gradient(135deg, 
-        rgba(0, 0, 0, 0.6) 0%, 
-        rgba(20, 15, 18, 0.65) 50%, 
-        rgba(0, 0, 0, 0.6) 100%);
-    --color-modal-overlay-active: linear-gradient(135deg, 
-        rgba(0, 0, 0, 0.65) 0%, 
-        rgba(20, 15, 18, 0.7) 50%, 
-        rgba(0, 0, 0, 0.65) 100%);
-    --color-modal-bg: linear-gradient(135deg, 
-        rgba(250, 250, 250, 0.98) 0%, 
-        rgba(255, 255, 255, 0.98) 50%, 
-        rgba(250, 250, 250, 0.98) 100%);
-    --color-modal-bg-overlay: linear-gradient(135deg, 
-        rgba(212, 175, 55, 0.08) 0%, 
-        rgba(255, 182, 193, 0.05) 50%, 
-        rgba(255, 192, 203, 0.03) 100%);
-    --color-modal-border: rgba(212, 175, 55, 0.4);
-    --color-modal-shadow: 
-        0 25px 70px rgba(0, 0, 0, 0.15),
-        0 10px 30px rgba(212, 175, 55, 0.15),
-        0 0 0 1px rgba(255, 182, 193, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    --color-modal-header-bg: linear-gradient(135deg, 
-        rgba(212, 175, 55, 0.15) 0%, 
-        rgba(255, 182, 193, 0.12) 50%, 
-        rgba(255, 192, 203, 0.08) 100%);
-    --color-modal-header-border: rgba(255, 182, 193, 0.3);
-    --color-modal-close-bg: rgba(255, 182, 193, 0.2);
-    --color-modal-close-border: rgba(255, 182, 193, 0.35);
-    --color-modal-close-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    --color-modal-close-bg-hover: linear-gradient(135deg, rgba(255, 182, 193, 0.35) 0%, rgba(212, 175, 55, 0.25) 100%);
-    --color-modal-close-shadow-hover: 
-        0 4px 12px rgba(212, 175, 55, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    
-    /* Цвета для таблиц размеров (светлая тема) */
-    --color-table-header-bg: linear-gradient(135deg, 
-        rgba(212, 175, 55, 0.25) 0%, 
-        rgba(255, 182, 193, 0.2) 100%);
-    --color-table-row-border: rgba(255, 182, 193, 0.2);
-    --color-table-row-hover: rgba(255, 182, 193, 0.1);
-    --color-table-label-bg: rgba(212, 175, 55, 0.15);
-}
+    /* Type scale */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 2rem;
+    --text-4xl: clamp(2rem, 4vw, 2.75rem);
+    --text-hero: clamp(3rem, 8vw, 5.5rem);
+    --text-hero-sub: clamp(1.25rem, 3vw, 2rem);
+    --text-measure: 32rem;
 
+    /* Radius — Apple-like soft rounding */
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* Font weights & leading */
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --leading-tight: 1.15;
+    --leading-snug: 1.35;
+    --leading-body: 1.65;
+    --tracking-display: 0.04em;
+    --tracking-ui: 0.08em;
+
+    /* Elevation — soft Apple-style */
+    --shadow-sm: 0 2px 8px rgba(28, 27, 26, 0.04), 0 1px 2px rgba(28, 27, 26, 0.03);
+    --shadow-md: 0 8px 28px rgba(28, 27, 26, 0.08), 0 2px 8px rgba(28, 27, 26, 0.04);
+    --shadow-lg: 0 16px 48px rgba(28, 27, 26, 0.1), 0 4px 12px rgba(28, 27, 26, 0.05);
+    --shadow-focus: 0 0 0 3px rgba(184, 149, 108, 0.35);
+
+    /* Z-index */
+    --z-header: 50;
+    --z-overlay: 1000;
+    --z-modal: 2000;
+    --z-toast: 3000;
+    --z-skip: 4000;
+
+    /* Breakpoints (docs / JS) */
+    --bp-sm: 640px;
+    --bp-md: 768px;
+    --bp-lg: 1024px;
+    --bp-xl: 1280px;
+    --bp-2xl: 1440px;
+
+    --container-max: 1320px;
+
+    /* Motion — restrained */
+    --motion-fast: 150ms;
+    --motion-base: 220ms;
+    --motion-slow: 280ms;
+    --ease-out: ease-out;
+    --ease-standard: ease;
+
+    /* Spacing — more air */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4.5rem;
+    --spacing-4xl: 7rem;
+
+    --section-padding-y: 5.5rem;
+    --section-padding-y-mobile: 3rem;
+
+    --card-gap: 2.75rem;
+    --card-gap-mobile: 1.75rem;
+    --card-padding: 1rem;
+
+    --toolbar-padding: 1rem;
+    --toolbar-gap: 1.25rem;
+
+    --touch-min: 44px;
+
+    /* -------- Quiet luxury palette (light-only) -------- */
+    --color-gold: #b8956c;              /* champagne fills / borders */
+    --color-gold-text: #7a5c3a;         /* champagne text ≥4.5:1 on ivory */
+    --color-accent: var(--color-gold);
+    --color-on-accent: #1c1b1a;
+    --color-solid-white: #ffffff;
+
+    /* Legacy aliases → champagne (brand). Favorite uses its own rose. */
+    --color-pink: var(--color-gold);
+    --color-pink-light: var(--color-gold);
+    --color-favorite: #c45c7a;
+
+    --color-bg-primary: #f7f4ef;
+    --color-bg-secondary: #ffffff;
+    --color-bg-tertiary: #ebe6df;
+
+    --color-text-primary: #1c1b1a;
+    --color-text-secondary: #4f4a43;
+    --color-text-tertiary: #4f4a43;
+    --color-text-muted: #5c574f;        /* solid, no wash-out on glass */
+    --color-text-accent: var(--color-gold-text);
+    --color-text-inverse: #f7f4ef;
+    --color-text-on-image: var(--color-text-inverse);
+
+    --color-border: rgba(28, 27, 26, 0.12);
+    --color-border-strong: rgba(28, 27, 26, 0.22);
+    --color-border-pink: var(--color-border);
+    --color-border-pink-light: var(--color-border-strong);
+
+    --color-badge-new-bg: transparent;
+    --color-badge-bestseller-bg: transparent;
+    --color-badge-sale-bg: transparent;
+    --color-badge-text: var(--color-text-primary);
+    --color-status-success: #5a6b5c;
+    --color-status-error: #8c4a4a;
+
+    /* Liquid Glass (Apple-inspired web approx) */
+    --glass-tint: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.72) 0%,
+        rgba(255, 255, 255, 0.42) 48%,
+        rgba(255, 255, 255, 0.55) 100%
+    );
+    --glass-tint-dense: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.78) 0%,
+        rgba(255, 255, 255, 0.55) 100%
+    );
+    --glass-tint-chrome: rgba(255, 255, 255, 0.42);
+    --glass-border: rgba(255, 255, 255, 0.62);
+    --glass-border-strong: rgba(255, 255, 255, 0.85);
+    --glass-blur: 28px;
+    --glass-blur-chrome: 20px;
+    --glass-saturate: 180%;
+    --glass-brightness: 1.06;
+    --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.78), inset 0 -1px 0 rgba(28, 27, 26, 0.04);
+    --glass-shadow-sm: 0 2px 10px rgba(28, 27, 26, 0.05), 0 1px 2px rgba(28, 27, 26, 0.03);
+    --glass-shadow: 0 10px 36px rgba(28, 27, 26, 0.08), 0 2px 8px rgba(28, 27, 26, 0.04);
+    --glass-shadow-hover: 0 16px 48px rgba(28, 27, 26, 0.12), 0 4px 12px rgba(28, 27, 26, 0.05);
+
+    /* Readable glass control (frost + charcoal text) */
+    --btn-glass-bg: rgba(255, 255, 255, 0.78);
+    --btn-glass-bg-hover: rgba(255, 255, 255, 0.94);
+    --btn-glass-text: var(--color-text-primary);
+    --btn-glass-text-hover: var(--color-gold-text);
+
+    /* Legacy aliases → liquid glass */
+    --color-glass-bg: rgba(255, 255, 255, 0.55);
+    --color-glass-border: var(--glass-border);
+    --color-glass-card-bg: rgba(255, 255, 255, 0.72);
+    --color-glass-card-shadow: var(--glass-shadow);
+    --color-glass-blur: var(--glass-blur);
+    --color-glass-saturate: var(--glass-saturate);
+    --color-header-bg: rgba(247, 244, 239, 0.62);
+    --color-header-bg-light: rgba(247, 244, 239, 0.62);
+
+    --color-shadow-pink: transparent;
+    --color-shadow-pink-hover: transparent;
+    --color-shadow-pink-strong: transparent;
+    --color-shadow-black: rgba(28, 27, 26, 0.08);
+
+    --color-overlay-bg: rgba(28, 27, 26, 0.45);
+    --color-overlay-bg-light: rgba(28, 27, 26, 0.28);
+
+    --gradient-bg-section: var(--color-bg-primary);
+    --gradient-bg-vk-notice: var(--color-bg-tertiary);
+    --gradient-bg-menu: var(--color-bg-secondary);
+    --gradient-hero-overlay: linear-gradient(
+        to bottom,
+        rgba(28, 27, 26, 0.28) 0%,
+        rgba(28, 27, 26, 0.48) 50%,
+        rgba(28, 27, 26, 0.72) 100%
+    );
+
+    --color-carousel-bg: var(--color-bg-secondary);
+    --color-carousel-bg-hover: var(--color-bg-tertiary);
+    --color-carousel-border: var(--color-border);
+    --color-carousel-shadow: transparent;
+    --color-carousel-shadow-hover: transparent;
+    --color-carousel-shadow-strong: transparent;
+
+    --color-modal-overlay: rgba(28, 27, 26, 0.32);
+    --color-modal-overlay-active: rgba(28, 27, 26, 0.36);
+    --color-modal-bg: rgba(255, 255, 255, 0.92);
+    --color-modal-bg-overlay: transparent;
+    --color-modal-border: rgba(255, 255, 255, 0.7);
+    --color-modal-shadow: 0 24px 64px rgba(28, 27, 26, 0.14);
+    --color-modal-header-bg: transparent;
+    --color-modal-header-border: var(--color-border);
+    --color-modal-close-bg: transparent;
+    --color-modal-close-border: transparent;
+    --color-modal-close-shadow: none;
+    --color-modal-close-bg-hover: rgba(28, 27, 26, 0.04);
+    --color-modal-close-shadow-hover: none;
+
+    --color-table-header-bg: var(--color-bg-tertiary);
+    --color-table-row-border: var(--color-border);
+    --color-table-row-hover: var(--color-bg-primary);
+    --color-table-label-bg: var(--color-bg-tertiary);
+}

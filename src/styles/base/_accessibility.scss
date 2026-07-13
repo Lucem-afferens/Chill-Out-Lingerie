@@ -8,19 +8,19 @@
     top: -100px;
     left: 0;
     background: var(--color-gold);
-    color: var(--color-text-inverse);
+    color: var(--color-on-accent);
     padding: 0.75rem 1.5rem;
     text-decoration: none;
-    font-weight: 600;
-    font-size: 0.875rem;
-    z-index: 10000;
-    border-radius: 0 0 8px 0;
-    transition: top 0.3s ease;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--text-sm);
+    z-index: var(--z-skip);
+    border-radius: 0;
+    transition: top var(--motion-fast) var(--ease-standard);
 }
 
 .skip-link:focus {
     top: 0;
-    outline: 3px solid var(--color-pink-light);
+    outline: 2px solid var(--color-text-primary);
     outline-offset: 2px;
 }
 
@@ -35,5 +35,27 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border-width: 0;
+}
+
+/* Sticky header: keep focused controls visible */
+:focus-visible {
+    scroll-margin-top: 4rem;
+}
+
+/* Reduced motion — luxury stillness when requested */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .hero-scroll,
+    .hero-content {
+        animation: none !important;
+    }
 }
 

@@ -1,0 +1,98 @@
+---
+description: Color system rules for Virelle palettes, themes, branding, semantic tokens, and contrast.
+alwaysApply: false
+---
+
+# Color System — Virelle
+
+Applies with `design/design-system.mdc`. Every color needs purpose, semantic role, and fit to the lingerie brand identity.
+
+Do not introduce random HEX without a stated role. Prefer extending `src/styles/base/_variables.scss` for **both** ` :root` (dark) and `[data-theme="light"]`.
+
+## Product context
+
+| Cue | Direction |
+|-----|-----------|
+| Domain | Lingerie / sleepwear brand site |
+| Tone | Soft luxury — intimate, elegant, calm |
+| Neutrals | Charcoal (`#2b2b2b`) / near-black secondary; light theme soft white/gray |
+| Brand metal | Gold `#d4af37` (`--color-gold`) — titles, highlights, premium edges |
+| Atmosphere | Pink `#ffc0cb` / `#ffb6c1` — glass, borders, soft glow (not every surface) |
+| Hero | Full-bleed photo + soft dark overlay gradient — not neon floods |
+
+Gold is the **brand accent**; pink is **atmosphere**. Do not paint large chrome or every link pink.
+
+## Architecture
+
+### Surfaces
+
+`--color-bg-primary` | `--color-bg-secondary` | `--color-bg-tertiary`
+
+Section backgrounds may use `--gradient-bg-section`. Prefer tokenized surfaces over one-off fills.
+
+### Text
+
+`--color-text-primary` | `--secondary` | `--tertiary` | `--muted` | `--accent` | `--inverse`
+
+Maintain contrast on both themes. Avoid pure `#000` page fills; dark page uses charcoal family already in tokens.
+
+### Accents & feedback
+
+- Gold: brand moments, hero name, carousel accents, premium borders
+- Pink: glass panels, soft borders/shadows, hover atmosphere
+- Overlays / modal / table tokens already exist — reuse them
+
+```css
+/* Bad */
+color: #d4af37;
+/* Good */
+color: var(--color-gold);
+```
+
+### Glass / overlays
+
+Use `--color-glass-*`, `--color-overlay-*`, modal/carousel tokens. Don’t invent competing blur stacks.
+
+## Tokens in components
+
+No scattered HEX in blocks when a variable exists. Theme-specific values belong under `:root` and `[data-theme="light"]` (or `.light-theme`).
+
+## Palette changes
+
+When proposing a palette change:
+
+1. One-sentence brand direction
+2. Map Gold (brand), Pink (atmosphere), Neutrals (surfaces/text), Semantic if needed
+3. Provide dark **and** light remaps
+4. Validate contrast (below)
+5. Implement in `_variables.scss` first — then blocks
+
+## Harmony
+
+Restrained neutrals + gold + soft pink. Avoid neon backgrounds, rainbow UIs, purple-on-white SaaS defaults, glow spam that fights product photography.
+
+## Accessibility (WCAG 2.2)
+
+| Text | Minimum contrast |
+|------|------------------|
+| Normal | 4.5:1 |
+| Large | 3:1 |
+
+Focus-visible, clear hover/disabled. Never trade accessibility for style — especially gold-on-light and muted pink-on-dark.
+
+## Themes
+
+Not “white → black”. Separate semantic mapping. Gold stays; pink and text shift for readability. Never invert images/UI blindly.
+
+## Output Format (new system / audit)
+
+1. **Brand direction**
+2. **Palette** — HEX + purpose
+3. **Tokens** — CSS variable names matching project (`--color-*`)
+4. **Dark / light** — both mappings
+
+## Implementation Order
+
+1. `_variables.scss` → 2. Blocks → 3. Contrast check → 4. States
+
+For audits, follow `design/ui-review.mdc`.

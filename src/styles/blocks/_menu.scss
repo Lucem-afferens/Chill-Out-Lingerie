@@ -1,53 +1,45 @@
-/* ==========================================================================
-   MENU OVERLAY (Мобильное меню)
-   ========================================================================== */
+/* Quiet luxury burger menu — minimal side panel */
 
 .menu-overlay {
     position: fixed;
     top: 0;
-    left: -100%;
-    width: 100%;
+    left: 0;
+    width: min(100%, 22rem);
     height: 100vh;
-    background: var(--gradient-bg-menu);
-    backdrop-filter: blur(10px);
-    z-index: 9999;
-    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100dvh;
+    z-index: var(--z-modal);
+    background: rgba(247, 244, 239, 0.94);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: none;
+    border-right: 1px solid rgba(28, 27, 26, 0.08);
+    border-radius: 0;
+    box-shadow: 12px 0 40px rgba(28, 27, 26, 0.08);
+    transform: translateX(-105%);
+    visibility: hidden;
+    pointer-events: none;
+    /* No transition until html.ui-ready — avoids open→close FOUC on navigation */
+    transition: none;
+    isolation: isolate;
+}
+
+html.ui-ready .menu-overlay {
+    transition: transform var(--motion-slow) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .menu-overlay.active {
-    left: 0;
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
 }
 
-/* Десктоп: боковая панель слева (не на весь экран) */
-@media (min-width: 1024px) {
+@include bp-lg {
     .menu-overlay {
-        left: -450px;
-        right: auto;
-        width: 450px;
-        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .menu-overlay.active {
-        left: 0;
-        right: auto;
-    }
-
-    .menu-content {
-        padding: 0 2.5rem;
-    }
-
-    .menu-nav {
-        gap: 2.5rem;
+        width: 24rem;
     }
 
     .menu-nav a {
-        font-size: 2rem;
-    }
-
-    .menu-close {
-        top: 1.5rem;
-        right: 1.5rem;
-        font-size: 2rem;
+        font-size: clamp(1.75rem, 2.5vw, 2.25rem);
     }
 }
 
@@ -56,71 +48,62 @@
     flex-direction: column;
     justify-content: center;
     height: 100%;
-    padding: 0 2rem;
+    padding: 4.5rem 2rem 2.5rem;
+    box-sizing: border-box;
 }
 
 .menu-close {
     position: absolute;
-    top: 2rem;
-    right: 2rem;
-    background: none;
-    border: none;
-    color: var(--color-pink-light);
-    font-size: 2.5rem;
+    top: 0.85rem;
+    right: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .menu-close:hover,
-    .menu-close:focus-visible {
-        transform: rotate(90deg);
-        color: var(--color-pink);
-    }
+    padding: 0;
 }
 
 .menu-nav {
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: 0.35rem;
 }
 
 .menu-nav a {
-    font-size: 3rem;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
+    display: block;
+    padding: 0.65rem 0.25rem;
+    font-size: clamp(1.625rem, 6vw, 2rem);
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-regular);
     color: var(--color-text-primary);
     text-decoration: none;
-    transition: color 0.3s ease;
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-tight);
+    border-radius: var(--radius-sm);
+    transition:
+        color var(--motion-fast) var(--ease-standard),
+        padding-left var(--motion-fast) var(--ease-standard);
 }
 
 @media (hover: hover) and (pointer: fine) {
     .menu-nav a:hover,
     .menu-nav a:focus-visible {
-        background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-pink-light) 50%, var(--color-pink) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: var(--color-gold-text);
+        padding-left: 0.35rem;
     }
+}
+
+.menu-nav a:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 4px;
 }
 
 .menu-social {
-    display: flex;
-    gap: 1.5rem;
-    margin-top: 4rem;
+    display: none;
 }
 
-.menu-social a {
-    color: var(--color-pink-light);
-    font-size: 1.5rem;
-    transition: transform 0.3s ease;
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .menu-social a:hover,
-    .menu-social a:focus-visible {
-        transform: scale(1.1);
-        color: var(--color-pink);
+@media (prefers-reduced-motion: reduce) {
+    html.ui-ready .menu-overlay {
+        transition-duration: 0.01ms;
     }
 }
-
