@@ -56,15 +56,27 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="https://storage.googleapis.com">
     
-    <!-- LCP: light theme is default; dark deferred -->
-    <link rel="preload" as="image" href="/main_for_light_theme.png" fetchpriority="high" type="image/png">
+    <!-- LCP: light default; dark hero when theme=dark -->
+    <link rel="preload" as="image" href="/main_for_light_theme.png" fetchpriority="high" type="image/png" id="hero-preload-light">
     <link rel="preload" as="image" href="/logo.svg" type="image/svg+xml">
     
     <!-- Синхронная установка темы ДО рендеринга страницы -->
     <script>
         (function() {
-            // Читаем сохраненную тему из localStorage
-            document.documentElement.setAttribute('data-theme', 'light');
+            var theme = 'light';
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') theme = saved;
+            } catch (e) {}
+            document.documentElement.setAttribute('data-theme', theme);
+            if (theme === 'dark') {
+                var link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'image';
+                link.href = '/main_for_dark_theme.png';
+                link.fetchPriority = 'high';
+                document.head.appendChild(link);
+            }
         })();
     </script>
     
@@ -118,6 +130,19 @@
         </a>
         
                 <div class="header-actions">
+                        <button type="button" onclick="toggleTheme()" id="theme-toggle" class="icon-btn theme-toggle" title="Тёмная тема" aria-label="Переключить на тёмную тему">
+                <span class="icon icon--sun icon--current" aria-hidden="true">
+                    <svg class="theme-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                        <circle cx="12" cy="12" r="3.75" stroke="currentColor" stroke-width="1.35"/>
+                        <path d="M12 3.25v2.1M12 18.65v2.1M3.25 12h2.1M18.65 12h2.1M5.9 5.9l1.5 1.5M16.6 16.6l1.5 1.5M5.9 18.1l1.5-1.5M16.6 7.4l1.5-1.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span class="icon icon--moon icon--next" aria-hidden="true">
+                    <svg class="theme-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                        <path d="M15.35 4.2A8.15 8.15 0 1 0 19.8 14.35 6.55 6.55 0 0 1 15.35 4.2Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+            </button>
             <a href="catalog.html?favorites=1" class="icon-btn favorites-link" title="Избранное" aria-label="Избранное">
                 <i class="fa-regular fa-heart" aria-hidden="true"></i>
                 <span class="favorites-count" data-favorites-count hidden>0</span>
@@ -256,8 +281,6 @@
 
 
 <section id="testimonials">
-    <div class="testimonials-bg"></div>
-    
     <div class="container">
         <div class="section-header">
             <h2 class="section-title">Отзывы</h2>
@@ -349,10 +372,10 @@
                     Virelle — пижамы и нижнее бельё для женщин, которые ценят мягкость ткани, аккуратный крой и спокойную элегантность.
                 </p>
                 <p class="size-guide-text">
-                    Мы подбираем материалы с вниманием к комфорту и силуэту. Заказ оформляется на сайте — без лишней суеты.
+                    Мы подбираем материалы с вниманием к комфорту и силуэту. Выберите модель в коллекции — заказ оформляется спокойно, без лишней суеты.
                 </p>
-                <a href="cart.html" class="cta-button btn-solid no-decoration">
-                    <span>Оформить заказ</span>
+                <a href="catalog.html" class="cta-button btn-solid no-decoration">
+                    <span>Смотреть коллекцию</span>
                 </a>
             </div>
             

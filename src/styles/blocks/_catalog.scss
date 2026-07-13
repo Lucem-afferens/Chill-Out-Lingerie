@@ -726,24 +726,7 @@
    ========================================================================== */
 #testimonials {
     padding: var(--section-padding-y) 0;
-    background: var(--color-bg-primary);
     position: relative;
-    overflow: hidden;
-}
-
-.testimonials-bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(800px, 90vw);
-    height: min(800px, 90vw);
-    background: radial-gradient(circle, rgba(184, 149, 108, 0.28) 0%, rgba(235, 230, 223, 0.55) 45%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.85;
-    z-index: 0;
-    pointer-events: none;
 }
 
 #testimonials .container {
@@ -960,7 +943,6 @@
    ========================================================================== */
 #about {
     padding: var(--section-padding-y) 0;
-    background: var(--gradient-bg-section);
 }
 
 /* Left-rail editorial: brand story beside imagery */
@@ -1210,7 +1192,6 @@
    ========================================================================== */
 #shop-by-category {
     padding: var(--section-padding-y) 0;
-    background: var(--color-bg-secondary);
 }
 
 .shop-category-container {

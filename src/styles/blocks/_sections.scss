@@ -113,10 +113,6 @@
    ========================================================================== */
 #value-proposition {
     padding: var(--section-padding-y) 0;
-    background:
-        radial-gradient(ellipse 60% 50% at 20% 30%, rgba(184, 149, 108, 0.12), transparent 55%),
-        radial-gradient(ellipse 50% 40% at 80% 70%, rgba(235, 230, 223, 0.9), transparent 50%),
-        var(--color-bg-primary);
     position: relative;
 }
 
@@ -1324,11 +1320,19 @@
 }
 
 .quick-view-sizes-title {
-    font-size: 1.125rem;
-    font-family: var(--font-display);
-    font-weight: 500;
-    color: var(--color-text-primary);
-    margin-bottom: var(--spacing-sm);
+    font-size: var(--text-xs);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--tracking-ui);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--spacing-sm);
+}
+
+.quick-view-size-hint {
+    margin: var(--spacing-sm) 0 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
 }
 
 .quick-view-sizes-list {
@@ -1357,9 +1361,33 @@
     }
 }
 
-/* Кнопка заказа */
+.quick-view-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
 .quick-view-order-btn {
-    margin-top: var(--spacing-lg) !important;
+    margin-top: 0 !important;
+}
+
+.quick-view-details-link {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: var(--touch-min);
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-ui);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+}
+
+.quick-view-details-link:hover,
+.quick-view-details-link:focus-visible {
+    color: var(--color-gold-text);
 }
 
 /* ==========================================================================

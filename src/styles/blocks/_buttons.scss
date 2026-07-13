@@ -127,8 +127,8 @@
             border-color: var(--color-gold);
             color: var(--btn-glass-text-hover);
             -webkit-text-fill-color: var(--btn-glass-text-hover);
-            box-shadow: var(--shadow-md), var(--glass-edge);
-            transform: translateY(-1px);
+            box-shadow: var(--glass-shadow-hover), var(--glass-edge);
+            transform: translateY(-2px);
             outline: none;
         }
     }
@@ -140,7 +140,7 @@
 
     &:active:not(:disabled) {
         transform: translateY(1px);
-        box-shadow: none;
+        box-shadow: var(--glass-shadow-sm);
     }
 }
 
@@ -219,9 +219,6 @@
 /* Product overlay + on-media glass controls → shared system */
 .quick-view-btn,
 .product-overlay .product-card-link,
-.hero-secondary-link,
-#hero .hero-secondary-link,
-.hero-buttons .btn-outline,
 .shop-category-link {
     @include btn-glass-base;
     @include btn-glass-hover;
@@ -240,5 +237,91 @@
     .shop-category-link:hover i,
     .shop-category-link:focus-visible i {
         transform: translateX(3px);
+    }
+}
+
+/* Hero on-image glass CTAs — light text + frost (after general button rules) */
+.hero-buttons .cta-button,
+.hero-buttons .hero-secondary-link {
+    isolation: isolate;
+    backdrop-filter: blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    -webkit-backdrop-filter: blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    color: var(--btn-on-image-text);
+    -webkit-text-fill-color: var(--btn-on-image-text);
+    border: 1px solid var(--btn-on-image-border);
+    box-shadow: var(--btn-on-image-shadow);
+    text-shadow: none;
+    transition:
+        background var(--motion-base) var(--ease-standard),
+        color var(--motion-base) var(--ease-standard),
+        border-color var(--motion-base) var(--ease-standard),
+        box-shadow var(--motion-base) var(--ease-standard),
+        transform var(--motion-base) var(--ease-standard);
+}
+
+.hero-buttons .cta-button.btn-solid {
+    background: var(--btn-on-image-bg-primary);
+    border-color: var(--btn-on-image-border);
+    color: var(--btn-on-image-text);
+    -webkit-text-fill-color: var(--btn-on-image-text);
+    box-shadow: var(--btn-on-image-shadow);
+}
+
+.hero-buttons .hero-secondary-link {
+    @include btn-glass-base;
+    background: var(--btn-on-image-bg);
+    color: var(--btn-on-image-text);
+    -webkit-text-fill-color: var(--btn-on-image-text);
+    border-color: var(--btn-on-image-border);
+    box-shadow: var(--btn-on-image-shadow);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .hero-buttons .cta-button.btn-solid:hover:not(:disabled),
+    .hero-buttons .cta-button.btn-solid:focus-visible {
+        background: var(--btn-on-image-bg-primary-hover);
+        border-color: var(--btn-on-image-border-hover);
+        color: var(--btn-on-image-text-hover);
+        -webkit-text-fill-color: var(--btn-on-image-text-hover);
+        box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .hero-buttons .hero-secondary-link:hover:not(:disabled),
+    .hero-buttons .hero-secondary-link:focus-visible {
+        background: var(--btn-on-image-bg-hover);
+        border-color: var(--btn-on-image-border-hover);
+        color: var(--btn-on-image-text-hover);
+        -webkit-text-fill-color: var(--btn-on-image-text-hover);
+        box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+        transform: translateY(-2px);
+    }
+}
+
+.hero-buttons .cta-button:focus-visible,
+.hero-buttons .hero-secondary-link:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    .hero-buttons .cta-button.btn-solid,
+    .hero-buttons .hero-secondary-link {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(28, 27, 26, 0.82);
+        border-color: rgba(247, 244, 239, 0.35);
+        color: #f7f4ef;
+        -webkit-text-fill-color: #f7f4ef;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-buttons .cta-button,
+    .hero-buttons .hero-secondary-link {
+        transition: background var(--motion-fast) var(--ease-standard),
+            color var(--motion-fast) var(--ease-standard),
+            border-color var(--motion-fast) var(--ease-standard);
+        transform: none;
     }
 }

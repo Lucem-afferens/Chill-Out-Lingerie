@@ -155,6 +155,10 @@
     align-items: center;
 }
 
+.product-cta-row .cta-button.is-added {
+    border-color: var(--color-status-success);
+}
+
 .product-related {
     margin-top: var(--spacing-4xl);
 }
@@ -289,9 +293,6 @@
 
 .home-trust-strip {
     padding: var(--section-padding-y) 0;
-    background:
-        radial-gradient(ellipse 50% 60% at 50% 0%, rgba(184, 149, 108, 0.1), transparent 60%),
-        var(--color-bg-secondary);
 }
 
 .home-trust-grid {

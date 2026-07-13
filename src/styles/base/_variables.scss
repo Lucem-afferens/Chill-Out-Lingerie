@@ -1,9 +1,10 @@
 /* ==========================================================================
-   QUIET LUXURY — tokens v3 (light-only)
-   Ivory / charcoal / champagne. No pink. No dark theme.
+   QUIET LUXURY — tokens v3
+   Ivory / charcoal / champagne. Light default; dark via [data-theme="dark"].
    ========================================================================== */
 
 :root {
+    color-scheme: light;
     /* Typography */
     --font-display: 'Cormorant Garamond', serif;
     --font-body: 'Montserrat', sans-serif;
@@ -165,6 +166,31 @@
     --color-glass-saturate: var(--glass-saturate);
     --color-header-bg: rgba(247, 244, 239, 0.62);
     --color-header-bg-light: rgba(247, 244, 239, 0.62);
+    --color-header-gradient: linear-gradient(
+        180deg,
+        rgba(247, 244, 239, 0.55) 0%,
+        rgba(247, 244, 239, 0.4) 100%
+    );
+    --color-menu-bg: rgba(247, 244, 239, 0.94);
+    --color-menu-border: rgba(28, 27, 26, 0.08);
+    --color-menu-shadow: 12px 0 40px rgba(28, 27, 26, 0.08);
+    --color-control-hover-bg: rgba(255, 255, 255, 0.95);
+
+    /* Soft ambient spots — continuous layer on #main-content (not per section) */
+    --ambient-spot-champagne: rgba(184, 149, 108, 0.06);
+    --ambient-spot-ivory: rgba(235, 230, 223, 0.12);
+    --ambient-spot-soft: rgba(255, 255, 255, 0.08);
+
+    /* On-image glass CTAs (hero over photography) */
+    --btn-on-image-bg: rgba(255, 255, 255, 0.18);
+    --btn-on-image-bg-hover: rgba(255, 255, 255, 0.32);
+    --btn-on-image-bg-primary: rgba(255, 255, 255, 0.28);
+    --btn-on-image-bg-primary-hover: rgba(255, 255, 255, 0.42);
+    --btn-on-image-text: #f7f4ef;
+    --btn-on-image-text-hover: #ffffff;
+    --btn-on-image-border: rgba(255, 255, 255, 0.42);
+    --btn-on-image-border-hover: rgba(212, 184, 140, 0.75);
+    --btn-on-image-shadow: 0 8px 28px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 
     --color-shadow-pink: transparent;
     --color-shadow-pink-hover: transparent;
@@ -208,5 +234,142 @@
     --color-table-header-bg: var(--color-bg-tertiary);
     --color-table-row-border: var(--color-border);
     --color-table-row-hover: var(--color-bg-primary);
+    --color-table-label-bg: var(--color-bg-tertiary);
+}
+
+/* -------- Dark theme remaps (quiet luxury charcoal) -------- */
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-gold: #c9a878;
+    --color-gold-text: #d4b896;
+    --color-accent: var(--color-gold);
+    --color-on-accent: #1c1b1a;
+    --color-solid-white: #ffffff;
+
+    --color-pink: var(--color-gold);
+    --color-pink-light: var(--color-gold);
+    --color-favorite: #d47894;
+
+    --color-bg-primary: #1c1b1a;
+    --color-bg-secondary: #141312;
+    --color-bg-tertiary: #2a2826;
+
+    --color-text-primary: #f7f4ef;
+    --color-text-secondary: #cfc8be;
+    --color-text-tertiary: #cfc8be;
+    --color-text-muted: #a8a098;
+    --color-text-accent: var(--color-gold-text);
+    --color-text-inverse: #1c1b1a;
+    --color-text-on-image: #f7f4ef;
+
+    --color-border: rgba(247, 244, 239, 0.12);
+    --color-border-strong: rgba(247, 244, 239, 0.22);
+    --color-border-pink: var(--color-border);
+    --color-border-pink-light: var(--color-border-strong);
+
+    --color-badge-text: var(--color-text-primary);
+    --color-status-success: #8fa392;
+    --color-status-error: #c47a7a;
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.36), 0 2px 8px rgba(0, 0, 0, 0.22);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.42), 0 4px 12px rgba(0, 0, 0, 0.24);
+    --shadow-focus: 0 0 0 3px rgba(201, 168, 120, 0.4);
+
+    --glass-tint: linear-gradient(
+        145deg,
+        rgba(42, 40, 38, 0.78) 0%,
+        rgba(28, 27, 26, 0.55) 48%,
+        rgba(36, 34, 32, 0.68) 100%
+    );
+    --glass-tint-dense: linear-gradient(
+        145deg,
+        rgba(42, 40, 38, 0.88) 0%,
+        rgba(28, 27, 26, 0.72) 100%
+    );
+    --glass-tint-chrome: rgba(36, 34, 32, 0.55);
+    --glass-border: rgba(247, 244, 239, 0.14);
+    --glass-border-strong: rgba(201, 168, 120, 0.35);
+    --glass-brightness: 1.02;
+    --glass-edge: inset 0 1px 0 rgba(247, 244, 239, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+    --glass-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.18);
+    --glass-shadow: 0 10px 36px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.22);
+    --glass-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.48), 0 4px 12px rgba(0, 0, 0, 0.26);
+
+    --btn-glass-bg: rgba(42, 40, 38, 0.78);
+    --btn-glass-bg-hover: rgba(52, 50, 48, 0.92);
+    --btn-glass-text: var(--color-text-primary);
+    --btn-glass-text-hover: var(--color-gold-text);
+
+    --color-glass-bg: rgba(42, 40, 38, 0.55);
+    --color-glass-border: var(--glass-border);
+    --color-glass-card-bg: rgba(42, 40, 38, 0.72);
+    --color-glass-card-shadow: var(--glass-shadow);
+    --color-header-bg: rgba(28, 27, 26, 0.72);
+    --color-header-bg-light: rgba(28, 27, 26, 0.72);
+    --color-header-gradient: linear-gradient(
+        180deg,
+        rgba(28, 27, 26, 0.72) 0%,
+        rgba(28, 27, 26, 0.55) 100%
+    );
+    --color-menu-bg: rgba(28, 27, 26, 0.96);
+    --color-menu-border: rgba(247, 244, 239, 0.1);
+    --color-menu-shadow: 12px 0 40px rgba(0, 0, 0, 0.45);
+    --color-control-hover-bg: rgba(52, 50, 48, 0.95);
+
+    --ambient-spot-champagne: rgba(201, 168, 120, 0.06);
+    --ambient-spot-ivory: rgba(247, 244, 239, 0.035);
+    --ambient-spot-soft: rgba(247, 244, 239, 0.025);
+
+    --btn-on-image-bg: rgba(28, 27, 26, 0.35);
+    --btn-on-image-bg-hover: rgba(42, 40, 38, 0.55);
+    --btn-on-image-bg-primary: rgba(255, 255, 255, 0.16);
+    --btn-on-image-bg-primary-hover: rgba(255, 255, 255, 0.28);
+    --btn-on-image-text: #f7f4ef;
+    --btn-on-image-text-hover: #ffffff;
+    --btn-on-image-border: rgba(247, 244, 239, 0.32);
+    --btn-on-image-border-hover: rgba(201, 168, 120, 0.65);
+    --btn-on-image-shadow: 0 10px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+
+    --color-shadow-black: rgba(0, 0, 0, 0.4);
+
+    --color-overlay-bg: rgba(0, 0, 0, 0.55);
+    --color-overlay-bg-light: rgba(0, 0, 0, 0.35);
+
+    --gradient-bg-section: var(--color-bg-primary);
+    --gradient-bg-vk-notice: var(--color-bg-tertiary);
+    --gradient-bg-menu: var(--color-bg-secondary);
+    --gradient-hero-overlay: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.22) 0%,
+        rgba(0, 0, 0, 0.42) 50%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
+
+    --color-carousel-bg: var(--color-bg-secondary);
+    --color-carousel-bg-hover: var(--color-bg-tertiary);
+    --color-carousel-border: var(--color-border);
+    --color-carousel-shadow: transparent;
+    --color-carousel-shadow-hover: transparent;
+    --color-carousel-shadow-strong: transparent;
+
+    --color-modal-overlay: rgba(0, 0, 0, 0.55);
+    --color-modal-overlay-active: rgba(0, 0, 0, 0.62);
+    --color-modal-bg: rgba(36, 34, 32, 0.94);
+    --color-modal-bg-overlay: transparent;
+    --color-modal-border: rgba(247, 244, 239, 0.14);
+    --color-modal-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    --color-modal-header-bg: transparent;
+    --color-modal-header-border: var(--color-border);
+    --color-modal-close-bg: transparent;
+    --color-modal-close-border: transparent;
+    --color-modal-close-shadow: none;
+    --color-modal-close-bg-hover: rgba(247, 244, 239, 0.06);
+    --color-modal-close-shadow-hover: none;
+
+    --color-table-header-bg: var(--color-bg-tertiary);
+    --color-table-row-border: var(--color-border);
+    --color-table-row-hover: rgba(247, 244, 239, 0.04);
     --color-table-label-bg: var(--color-bg-tertiary);
 }

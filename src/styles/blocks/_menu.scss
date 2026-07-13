@@ -8,13 +8,13 @@
     height: 100vh;
     height: 100dvh;
     z-index: var(--z-modal);
-    background: rgba(247, 244, 239, 0.94);
+    background: var(--color-menu-bg);
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
     border: none;
-    border-right: 1px solid rgba(28, 27, 26, 0.08);
+    border-right: 1px solid var(--color-menu-border);
     border-radius: 0;
-    box-shadow: 12px 0 40px rgba(28, 27, 26, 0.08);
+    box-shadow: var(--color-menu-shadow);
     transform: translateX(-105%);
     visibility: hidden;
     pointer-events: none;

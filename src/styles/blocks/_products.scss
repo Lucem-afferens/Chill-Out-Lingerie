@@ -1,12 +1,27 @@
 /* Quiet luxury + Apple glass cards */
 
+/* Continuous atmosphere across landing — avoids hard cuts at section edges */
+#main-content {
+    background-color: var(--color-bg-primary);
+    background-image:
+        radial-gradient(ellipse 85% 32% at 10% 22%, var(--ambient-spot-champagne), transparent 72%),
+        radial-gradient(ellipse 75% 30% at 90% 48%, var(--ambient-spot-ivory), transparent 70%),
+        radial-gradient(ellipse 70% 28% at 45% 72%, var(--ambient-spot-soft), transparent 72%),
+        radial-gradient(ellipse 65% 26% at 18% 90%, var(--ambient-spot-champagne), transparent 70%);
+    background-repeat: no-repeat;
+}
+
+#shop-by-category,
+#collection,
+#testimonials,
+#about,
+.home-trust-strip,
+#value-proposition {
+    background: transparent;
+}
+
 #collection {
     padding: var(--section-padding-y) 0;
-    background:
-        radial-gradient(ellipse 60% 50% at 12% 15%, rgba(184, 149, 108, 0.16), transparent 55%),
-        radial-gradient(ellipse 50% 45% at 88% 75%, rgba(235, 230, 223, 0.95), transparent 52%),
-        radial-gradient(ellipse 40% 35% at 50% 50%, rgba(255, 255, 255, 0.5), transparent 60%),
-        var(--color-bg-primary);
 }
 
 .section-header {

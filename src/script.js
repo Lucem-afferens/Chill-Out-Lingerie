@@ -8,7 +8,6 @@ import {
     addToCart,
     updateCartQty,
     removeFromCart,
-    clearCart,
     getCartCount,
     getCartSubtotal,
     CART_MAX_QTY
@@ -111,6 +110,20 @@ function updateCartBadge() {
     });
 }
 
+function pulseCartBadge() {
+    document.querySelectorAll('.cart-link').forEach((link) => {
+        link.classList.remove('is-cart-pulse');
+        // restart animation
+        void link.offsetWidth;
+        link.classList.add('is-cart-pulse');
+    });
+    window.setTimeout(() => {
+        document.querySelectorAll('.cart-link').forEach((link) => {
+            link.classList.remove('is-cart-pulse');
+        });
+    }, 700);
+}
+
 function renderSelectableSizes(container, sizes, selected, onSelect) {
     if (!container) return;
     const list = Array.isArray(sizes) ? sizes : [];
@@ -125,10 +138,29 @@ function renderSelectableSizes(container, sizes, selected, onSelect) {
     });
 }
 
-function handleAddToCart(productId, size) {
+function pickDefaultSize(sizes) {
+    const list = Array.isArray(sizes) ? sizes : [];
+    return list.length === 1 ? list[0] : '';
+}
+
+function markSizeNeeded(container) {
+    if (!container) return;
+    container.classList.add('is-size-needed');
+    window.setTimeout(() => container.classList.remove('is-size-needed'), 1200);
+}
+
+/**
+ * @param {number|string} productId
+ * @param {string} size
+ * @param {{ goToCart?: boolean, closeQuickView?: boolean } } [opts]
+ */
+function handleAddToCart(productId, size, opts = {}) {
     const product = getProductById(productId);
     if (!product) {
         showNotification('Ошибка', 'Товар не найден.', 'error', 3000);
+        return false;
+    }
+    if (!size) {
         return false;
     }
     const result = addToCart(productId, size, 1);
@@ -137,16 +169,17 @@ function handleAddToCart(productId, size) {
         showNotification('Не удалось добавить', result.error || 'Попробуйте ещё раз.', 'error', 3500);
         return false;
     }
-    showNotification(
-        'В корзине',
-        result.merged
-            ? `${product.name} (${size}) — количество обновлено.`
-            : `${product.name} (${size}) добавлен в корзину.`,
-        'success',
-        2800
-    );
+
+    pulseCartBadge();
+    if (opts.closeQuickView !== false) {
+        closeQuickViewModal();
+    }
     if (document.getElementById('cart-page')) {
         renderCartPage();
+    }
+    if (opts.goToCart) {
+        window.location.href = 'cart.html';
+        return true;
     }
     return true;
 }
@@ -185,8 +218,8 @@ function validateCheckoutForm(form) {
     if (data.name.length < 2) errors.name = 'Укажите имя.';
     if (!isValidRuPhone(data.phone)) errors.phone = 'Укажите корректный телефон.';
     if (!isValidEmail(data.email)) errors.email = 'Проверьте email.';
-    if (data.city.length < 2) errors.city = 'Укажите город.';
-    if (data.address.length < 5) errors.address = 'Укажите адрес доставки.';
+    if (data.city && data.city.length < 2) errors.city = 'Укажите город.';
+    if (data.address && data.address.length < 5) errors.address = 'Укажите адрес.';
     if (data.comment.length > 500) errors.comment = 'Слишком длинный комментарий.';
     if (!data.agree) errors.agree = 'Нужно согласие на обработку данных.';
 
@@ -198,18 +231,117 @@ function validateCheckoutForm(form) {
     return { ok: Object.keys(errors).length === 0, data, errors };
 }
 
+const CART_SELECTION_KEY = 'virelle-cart-selection';
+
+function cartLineKey(productId, size) {
+    return `${Number(productId)}:${String(size || '').trim()}`;
+}
+
+function readCartSelectionState() {
+    try {
+        const raw = sessionStorage.getItem(CART_SELECTION_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        const selected = new Set(Array.isArray(parsed?.selected) ? parsed.selected.map(String) : []);
+        const tracked = new Set(Array.isArray(parsed?.tracked) ? parsed.tracked.map(String) : []);
+        return { selected, tracked };
+    } catch {
+        return { selected: new Set(), tracked: new Set() };
+    }
+}
+
+function writeCartSelectionState(selected, tracked) {
+    try {
+        sessionStorage.setItem(
+            CART_SELECTION_KEY,
+            JSON.stringify({
+                selected: [...selected],
+                tracked: [...tracked]
+            })
+        );
+    } catch {
+        /* ignore quota */
+    }
+}
+
+/** Keep selection in sync: new lines auto-selected, removed lines pruned. */
+function syncCartSelection(lines) {
+    const { selected, tracked } = readCartSelectionState();
+    const keys = lines.map((line) => cartLineKey(line.productId, line.size));
+    const keySet = new Set(keys);
+
+    keys.forEach((key) => {
+        if (!tracked.has(key)) {
+            tracked.add(key);
+            selected.add(key);
+        }
+    });
+
+    [...tracked].forEach((key) => {
+        if (!keySet.has(key)) {
+            tracked.delete(key);
+            selected.delete(key);
+        }
+    });
+
+    writeCartSelectionState(selected, tracked);
+    return { selected, tracked, keys };
+}
+
+function isCartLineSelected(productId, size, selected, multiSelect) {
+    if (!multiSelect) return true;
+    return selected.has(cartLineKey(productId, size));
+}
+
+function getSelectedCartLines(lines, selected, multiSelect) {
+    if (!multiSelect) return lines;
+    return lines.filter((line) => selected.has(cartLineKey(line.productId, line.size)));
+}
+
+function setLineSelected(productId, size, checked) {
+    const lines = getCart();
+    const { selected, tracked } = syncCartSelection(lines);
+    const key = cartLineKey(productId, size);
+    if (checked) selected.add(key);
+    else selected.delete(key);
+    writeCartSelectionState(selected, tracked);
+}
+
+function setAllCartLinesSelected(checked) {
+    const lines = getCart();
+    const { tracked } = syncCartSelection(lines);
+    const selected = checked
+        ? new Set(lines.map((line) => cartLineKey(line.productId, line.size)))
+        : new Set();
+    writeCartSelectionState(selected, tracked);
+}
+
+function updateCheckoutSubmitState(selectedCount) {
+    const submitBtn = document.getElementById('checkout-submit');
+    if (!submitBtn) return;
+    const disabled = selectedCount < 1;
+    submitBtn.disabled = disabled;
+    submitBtn.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    const label = submitBtn.querySelector('span');
+    if (label) {
+        label.textContent = disabled ? 'Выберите товары' : 'Отправить заявку';
+    }
+}
+
 function renderCartPage() {
     const root = document.getElementById('cart-page');
     if (!root) return;
 
     const empty = document.getElementById('cart-empty');
-    const wrap = document.getElementById('cart-lines-wrap');
+    const active = document.getElementById('cart-active');
     const list = document.getElementById('cart-lines');
+    const toolbar = document.getElementById('cart-select-toolbar');
+    const selectAll = document.getElementById('cart-select-all');
     const form = document.getElementById('checkout-form');
     const success = document.getElementById('checkout-success');
-    const emptyHint = document.getElementById('checkout-empty-hint');
+    const checkoutBlock = document.getElementById('cart-checkout-block');
     const countEl = document.getElementById('cart-items-count');
     const subtotalEl = document.getElementById('cart-subtotal');
+    const headingCount = document.getElementById('cart-heading-count');
 
     const cart = getCart();
     const validLines = cart.filter((line) => getProductById(line.productId));
@@ -219,11 +351,28 @@ function renderCartPage() {
     const lines = getCart();
     const isEmpty = lines.length === 0;
     const orderDone = success && !success.hidden;
+    const multiSelect = lines.length > 1;
+    const { selected } = syncCartSelection(lines);
+    const selectedLines = getSelectedCartLines(lines, selected, multiSelect);
+    const selectedCount = getCartCount(selectedLines);
+    const allSelected = multiSelect && lines.every((line) => selected.has(cartLineKey(line.productId, line.size)));
+    const someSelected = multiSelect && selectedLines.length > 0 && !allSelected;
 
     if (empty) empty.hidden = !isEmpty || orderDone;
-    if (wrap) wrap.hidden = isEmpty || orderDone;
+    if (active) {
+        active.hidden = isEmpty && !orderDone;
+        active.classList.toggle('is-success', Boolean(orderDone));
+    }
     if (form) form.hidden = isEmpty || orderDone;
-    if (emptyHint) emptyHint.hidden = !isEmpty || orderDone;
+    if (checkoutBlock) checkoutBlock.hidden = Boolean(orderDone);
+
+    if (toolbar) {
+        toolbar.hidden = isEmpty || orderDone || !multiSelect;
+    }
+    if (selectAll && multiSelect && !isEmpty && !orderDone) {
+        selectAll.checked = allSelected;
+        selectAll.indeterminate = someSelected;
+    }
 
     if (list && !isEmpty && !orderDone) {
         list.innerHTML = lines
@@ -231,15 +380,26 @@ function renderCartPage() {
                 const product = getProductById(line.productId);
                 if (!product) return '';
                 const lineTotal = product.price * line.qty;
+                const safeName = String(product.name || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/"/g, '&quot;');
+                const lineChecked = isCartLineSelected(line.productId, line.size, selected, multiSelect);
+                const checkHtml = multiSelect
+                    ? `<label class="cart-check cart-check--line">
+                        <input type="checkbox" data-cart-select ${lineChecked ? 'checked' : ''} aria-label="Выбрать: ${safeName}, размер ${line.size}">
+                    </label>`
+                    : '';
                 return `
-                <li class="cart-line" data-product-id="${line.productId}" data-size="${line.size}">
-                    <img class="cart-line-image" src="${product.image}" alt="" width="72" height="88" loading="lazy">
+                <li class="cart-line${multiSelect && !lineChecked ? ' is-unchecked' : ''}${multiSelect ? ' has-select' : ''}" data-product-id="${line.productId}" data-size="${line.size}">
+                    ${checkHtml}
+                    <img class="cart-line-thumb" src="${product.image}" alt="${safeName}" width="104" height="128" loading="lazy">
                     <div class="cart-line-body">
                         <div class="cart-line-top">
-                            <h3 class="cart-line-name"><a href="product.html?id=${product.id}">${product.name}</a></h3>
+                            <h2 class="cart-line-name"><a href="product.html?id=${product.id}">${safeName}</a></h2>
                             <p class="cart-line-price">${formatPrice(lineTotal)}</p>
                         </div>
-                        <p class="cart-line-meta">Размер: ${line.size} · ${formatPrice(product.price)} / шт.</p>
+                        <p class="cart-line-meta">Размер ${line.size} · ${formatPrice(product.price)} / шт.</p>
                         <div class="cart-line-actions">
                             <div class="cart-qty" role="group" aria-label="Количество">
                                 <button type="button" data-cart-qty="-1" aria-label="Уменьшить" ${line.qty <= 1 ? 'disabled' : ''}>−</button>
@@ -252,10 +412,26 @@ function renderCartPage() {
                 </li>`;
             })
             .join('');
+    } else if (list && (isEmpty || orderDone)) {
+        list.innerHTML = '';
     }
 
-    if (countEl) countEl.textContent = `${getCartCount(lines)} шт.`;
-    if (subtotalEl) subtotalEl.textContent = formatPrice(getCartSubtotal(lines, getProductById));
+    if (countEl) countEl.textContent = `${selectedCount} шт.`;
+    if (subtotalEl) subtotalEl.textContent = formatPrice(getCartSubtotal(selectedLines, getProductById));
+    if (headingCount) {
+        if (!isEmpty && !orderDone) {
+            headingCount.hidden = false;
+            headingCount.textContent = multiSelect
+                ? `${selectedCount} из ${getCartCount(lines)} шт.`
+                : `${selectedCount} шт.`;
+        } else {
+            headingCount.hidden = true;
+            headingCount.textContent = '';
+        }
+    }
+    if (!isEmpty && !orderDone) {
+        updateCheckoutSubmitState(selectedCount);
+    }
     updateCartBadge();
 }
 
@@ -265,9 +441,30 @@ function initCartPage() {
 
     renderCartPage();
 
+    const selectAll = document.getElementById('cart-select-all');
+    if (selectAll && !selectAll.dataset.bound) {
+        selectAll.dataset.bound = '1';
+        selectAll.addEventListener('change', () => {
+            setAllCartLinesSelected(selectAll.checked);
+            renderCartPage();
+        });
+    }
+
     const list = document.getElementById('cart-lines');
     if (list && !list.dataset.bound) {
         list.dataset.bound = '1';
+        list.addEventListener('change', (e) => {
+            const input = e.target.closest('[data-cart-select]');
+            if (!input) return;
+            const line = input.closest('.cart-line');
+            if (!line) return;
+            setLineSelected(
+                line.getAttribute('data-product-id'),
+                line.getAttribute('data-size'),
+                input.checked
+            );
+            renderCartPage();
+        });
         list.addEventListener('click', (e) => {
             const line = e.target.closest('.cart-line');
             if (!line) return;
@@ -276,7 +473,6 @@ function initCartPage() {
 
             if (e.target.closest('[data-cart-remove]')) {
                 removeFromCart(productId, size);
-                showNotification('Удалено', 'Позиция убрана из корзины.', 'success', 2200);
                 renderCartPage();
                 return;
             }
@@ -308,10 +504,18 @@ function initCartPage() {
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
             const submitBtn = document.getElementById('checkout-submit');
+            const lines = getCart();
+            const multiSelect = lines.length > 1;
+            const { selected } = syncCartSelection(lines);
+            const selectedLines = getSelectedCartLines(lines, selected, multiSelect);
 
-            if (getCart().length === 0) {
+            if (lines.length === 0) {
                 showNotification('Корзина пуста', 'Добавьте товары перед оформлением.', 'error', 3000);
                 renderCartPage();
+                return;
+            }
+            if (selectedLines.length === 0) {
+                showNotification('Ничего не выбрано', 'Отметьте товары для заказа.', 'error', 3000);
                 return;
             }
 
@@ -322,7 +526,6 @@ function initCartPage() {
                 return;
             }
             if (!ok) {
-                showNotification('Проверьте форму', 'Заполните обязательные поля.', 'error', 3000);
                 const firstInvalid = form.querySelector('.form-field.is-invalid input, .form-field.is-invalid textarea, .form-field.is-invalid input[type="checkbox"]');
                 firstInvalid?.focus();
                 return;
@@ -333,8 +536,7 @@ function initCartPage() {
                 submitBtn.setAttribute('aria-busy', 'true');
             }
 
-            // Stub network delay
-            await new Promise((r) => setTimeout(r, 650));
+            await new Promise((r) => setTimeout(r, 280));
 
             const orderId = `VR-${Date.now().toString(36).toUpperCase()}`;
             const snapshot = {
@@ -348,8 +550,8 @@ function initCartPage() {
                     address: data.address,
                     comment: data.comment || null
                 },
-                items: getCart(),
-                total: getCartSubtotal(getCart(), getProductById)
+                items: selectedLines,
+                total: getCartSubtotal(selectedLines, getProductById)
             };
 
             try {
@@ -358,10 +560,33 @@ function initCartPage() {
                 /* ignore quota */
             }
 
-            clearCart();
+            const selectedKeys = new Set(
+                selectedLines.map((line) => cartLineKey(line.productId, line.size))
+            );
+            const remaining = lines.filter(
+                (line) => !selectedKeys.has(cartLineKey(line.productId, line.size))
+            );
+            setCart(remaining);
+            syncCartSelection(remaining);
             updateCartBadge();
             form.reset();
             clearFormErrors(form);
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.removeAttribute('aria-busy');
+            }
+
+            if (remaining.length > 0) {
+                const notice = document.getElementById('cart-order-notice');
+                if (notice) {
+                    notice.hidden = false;
+                    notice.textContent = `Заявка ${orderId} принята. Свяжемся по ${data.phone}. Неотмеченные позиции остались ниже.`;
+                }
+                renderCartPage();
+                notice?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                return;
+            }
 
             const success = document.getElementById('checkout-success');
             const successText = document.getElementById('checkout-success-text');
@@ -370,24 +595,26 @@ function initCartPage() {
             }
             if (success) success.hidden = false;
             form.hidden = true;
-            const emptyHintEl = document.getElementById('checkout-empty-hint');
-            if (emptyHintEl) emptyHintEl.hidden = true;
+            const checkoutBlock = document.getElementById('cart-checkout-block');
+            if (checkoutBlock) checkoutBlock.hidden = true;
 
             const empty = document.getElementById('cart-empty');
-            const wrap = document.getElementById('cart-lines-wrap');
+            const active = document.getElementById('cart-active');
+            const notice = document.getElementById('cart-order-notice');
+            if (notice) {
+                notice.hidden = true;
+                notice.textContent = '';
+            }
             if (empty) empty.hidden = true;
-            if (wrap) wrap.hidden = true;
+            if (active) {
+                active.hidden = false;
+                active.classList.add('is-success');
+            }
 
-            showNotification(
-                'Заказ отправлен',
-                `Заявка ${orderId} принята. Это демо-отправка без сервера.`,
-                'success',
-                4500
-            );
-
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.removeAttribute('aria-busy');
+            const headingCount = document.getElementById('cart-heading-count');
+            if (headingCount) {
+                headingCount.hidden = true;
+                headingCount.textContent = '';
             }
 
             success?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -463,25 +690,47 @@ function initProductPage() {
         care.textContent = product.care || 'Деликатная стирка, сушить в расправленном виде.';
     }
     const sizes = document.getElementById('product-sizes');
-    selectedProductSize = '';
+    selectedProductSize = pickDefaultSize(product.sizes || []);
     const bindProductSizes = (selected) => {
         selectedProductSize = selected || '';
         renderSelectableSizes(sizes, product.sizes || [], selectedProductSize, (size) => bindProductSizes(size));
         const addBtn = document.getElementById('product-order-btn');
-        if (addBtn) addBtn.disabled = !selectedProductSize;
+        const buyBtn = document.getElementById('product-buy-btn');
+        const disabled = !selectedProductSize;
+        if (addBtn) addBtn.disabled = disabled;
+        if (buyBtn) buyBtn.disabled = disabled;
     };
-    bindProductSizes('');
+    bindProductSizes(selectedProductSize);
 
     const order = document.getElementById('product-order-btn');
     if (order) {
-        order.disabled = true;
         order.onclick = (e) => {
             e.preventDefault();
             if (!selectedProductSize) {
-                showNotification('Выберите размер', 'Укажите размер перед добавлением в корзину.', 'error', 3000);
+                markSizeNeeded(sizes);
                 return;
             }
-            handleAddToCart(product.id, selectedProductSize);
+            if (handleAddToCart(product.id, selectedProductSize, { closeQuickView: false })) {
+                order.classList.add('is-added');
+                const label = order.querySelector('span');
+                if (label) label.textContent = 'В корзине';
+                window.setTimeout(() => {
+                    order.classList.remove('is-added');
+                    if (label) label.textContent = 'В корзину';
+                }, 1600);
+            }
+        };
+    }
+
+    const buyNow = document.getElementById('product-buy-btn');
+    if (buyNow) {
+        buyNow.onclick = (e) => {
+            e.preventDefault();
+            if (!selectedProductSize) {
+                markSizeNeeded(sizes);
+                return;
+            }
+            handleAddToCart(product.id, selectedProductSize, { goToCart: true, closeQuickView: false });
         };
     }
 
@@ -1102,71 +1351,58 @@ function closeSizeCalculatorModal() {
     }
 }
 
-// Функция для получения класса иконки по теме
-function getIconClass(theme) {
-    return theme === 'dark' ? 'fa-moon' : 'fa-sun';
+function setThemeToggleState(theme) {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
+
+    const sun = themeToggle.querySelector('.icon--sun');
+    const moon = themeToggle.querySelector('.icon--moon');
+    if (!sun || !moon) return;
+
+    const isDark = theme === 'dark';
+    sun.classList.toggle('icon--current', !isDark);
+    sun.classList.toggle('icon--next', isDark);
+    moon.classList.toggle('icon--current', isDark);
+    moon.classList.toggle('icon--next', !isDark);
+
+    themeToggle.setAttribute(
+        'aria-label',
+        isDark ? 'Переключить на светлую тему' : 'Переключить на тёмную тему'
+    );
+    themeToggle.setAttribute('title', isDark ? 'Светлая тема' : 'Тёмная тема');
 }
 
-// Функция для обновления иконки Font Awesome (работает с SVG от autoReplaceSvg: 'nest')
-function updateIconElement(iconContainer, iconClass) {
-    if (!iconContainer) return;
-    
-    // Font Awesome с autoReplaceSvg: 'nest' создает SVG внутри <i>
-    // Для правильной работы нужно полностью пересоздать элемент <i>
-    const iconElement = iconContainer.querySelector('i');
-    
-    if (iconElement) {
-        // Сохраняем атрибут aria-hidden
-        const ariaHidden = iconElement.getAttribute('aria-hidden');
-        
-        // Создаем новый элемент <i> с правильным классом
-        const newIconElement = document.createElement('i');
-        newIconElement.className = 'fa-solid ' + iconClass;
-        if (ariaHidden) {
-            newIconElement.setAttribute('aria-hidden', ariaHidden);
-        }
-        
-        // Заменяем старый элемент новым
-        iconElement.replaceWith(newIconElement);
-        
-        // Font Awesome автоматически создаст SVG внутри нового элемента
-    }
-}
-
-// Функция для синхронизации иконок с текущей темой
 function syncThemeIcon() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    setThemeToggleState(currentTheme);
+}
+
+function toggleTheme() {
     const html = document.documentElement;
     const currentTheme = html.getAttribute('data-theme') || 'light';
-    const themeToggle = document.getElementById('theme-toggle');
-    
-    if (!themeToggle) return;
-    
-    const currentSpan = themeToggle.querySelector('.icon--current');
-    const nextSpan = themeToggle.querySelector('.icon--next');
-    
-    if (!currentSpan || !nextSpan) return;
-    
-    // Текущая иконка должна показывать текущую тему
-    // Следующая иконка должна показывать противоположную тему
-    const currentIconClass = getIconClass(currentTheme);
-    const nextIconClass = getIconClass(currentTheme === 'light' ? 'dark' : 'light');
-    
-    // Обновляем иконки с учетом SVG от Font Awesome
-    // Передаем span контейнер, функция сама найдет и обновит <i> элемент внутри
-    updateIconElement(currentSpan, currentIconClass);
-    updateIconElement(nextSpan, nextIconClass);
-}
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
-// Тема: quiet luxury — только light
-function toggleTheme() {
-    /* dark theme removed */
+    html.setAttribute('data-theme', newTheme);
+    try {
+        localStorage.setItem('theme', newTheme);
+    } catch (_) { /* ignore */ }
+
+    setThemeToggleState(newTheme);
 }
 
 function initTheme() {
-    document.documentElement.setAttribute('data-theme', 'light');
+    let savedTheme = 'light';
     try {
-        localStorage.setItem('theme', 'light');
+        const stored = localStorage.getItem('theme');
+        if (stored === 'dark' || stored === 'light') savedTheme = stored;
     } catch (_) { /* ignore */ }
+
+    const html = document.documentElement;
+    if (html.getAttribute('data-theme') !== savedTheme) {
+        html.setAttribute('data-theme', savedTheme);
+    }
+
+    setThemeToggleState(savedTheme);
 }
 
 // ==========================================================================
@@ -1264,7 +1500,7 @@ function openQuickViewModalWithData(product) {
     
     // Размеры
     const sizesListEl = document.getElementById('quick-view-sizes-list');
-    selectedQuickViewSize = '';
+    selectedQuickViewSize = pickDefaultSize(product.sizes || []);
     quickViewProductId = product.id || null;
     const bindQuickSizes = (selected) => {
         selectedQuickViewSize = selected || '';
@@ -1280,9 +1516,12 @@ function openQuickViewModalWithData(product) {
             btn.addEventListener('click', () => bindQuickSizes(btn.getAttribute('data-size')));
         });
         const addBtn = document.getElementById('quick-view-order-btn');
-        if (addBtn) addBtn.disabled = !selectedQuickViewSize;
+        const buyBtn = document.getElementById('quick-view-buy-btn');
+        const disabled = !selectedQuickViewSize;
+        if (addBtn) addBtn.disabled = disabled;
+        if (buyBtn) buyBtn.disabled = disabled;
     };
-    bindQuickSizes('');
+    bindQuickSizes(selectedQuickViewSize);
     
     // Бейдж
     const badgeEl = document.getElementById('quick-view-badge');
@@ -1302,16 +1541,28 @@ function openQuickViewModalWithData(product) {
     
     const orderBtn = document.getElementById('quick-view-order-btn');
     if (orderBtn) {
-        orderBtn.disabled = true;
         orderBtn.onclick = () => {
             if (!quickViewProductId) return;
             if (!selectedQuickViewSize) {
-                showNotification('Выберите размер', 'Укажите размер перед добавлением в корзину.', 'error', 3000);
+                markSizeNeeded(sizesListEl);
                 return;
             }
-            if (handleAddToCart(quickViewProductId, selectedQuickViewSize)) {
-                // keep modal open so user can continue
+            handleAddToCart(quickViewProductId, selectedQuickViewSize, { closeQuickView: true });
+        };
+    }
+
+    const buyBtn = document.getElementById('quick-view-buy-btn');
+    if (buyBtn) {
+        buyBtn.onclick = () => {
+            if (!quickViewProductId) return;
+            if (!selectedQuickViewSize) {
+                markSizeNeeded(sizesListEl);
+                return;
             }
+            handleAddToCart(quickViewProductId, selectedQuickViewSize, {
+                closeQuickView: true,
+                goToCart: true
+            });
         };
     }
 
@@ -2247,8 +2498,7 @@ function createProductCard(product) {
                     <img src="${product.image}" alt="${product.name}" loading="lazy" width="600" height="800">
                 </a>
                 <div class="product-overlay">
-                    <button class="btn-glass btn-glass--sm quick-view-btn" onclick="openQuickViewModal(${product.id})" type="button" aria-label="Быстрый просмотр: ${product.name}">Быстрый просмотр</button>
-                    <a class="btn-glass btn-glass--sm product-card-link" href="product.html?id=${product.id}">Подробнее</a>
+                    <button class="btn-glass btn-glass--sm quick-view-btn" onclick="openQuickViewModal(${product.id})" type="button" aria-label="Купить: ${product.name}">Выбрать размер</button>
                 </div>
                 <button type="button" class="favorite-btn${favActive}" data-favorite-id="${product.id}" onclick="toggleFavorite(${product.id}, this, event)" aria-label="В избранное" aria-pressed="${isFavorite(product.id)}">
                     <i class="fa-${isFavorite(product.id) ? 'solid' : 'regular'} fa-heart" aria-hidden="true"></i>

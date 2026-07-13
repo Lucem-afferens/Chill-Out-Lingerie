@@ -19,14 +19,27 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <script>
         (function() {
-            document.documentElement.setAttribute('data-theme', 'light');
+            var theme = 'light';
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') theme = saved;
+            } catch (e) {}
+            document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
+    <style id="critical-chrome">
+      /* Prevent burger FOUC: off-canvas until CSS+JS ready (no transition yet) */
+      #menu-overlay.menu-overlay:not(.active) {
+        transform: translateX(-105%);
+        visibility: hidden;
+        pointer-events: none;
+      }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet"></noscript>
-  <script type="module" crossorigin src="./assets/script-DAPB8Az1.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/script-Bg8Gqi2h.css">
+  <script type="module" crossorigin src="./assets/script-DAF2lfIv.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/script-CMTHrk-u.css">
 </head>
 <body>
 <a href="#main-content" class="skip-link" aria-label="Перейти к основному содержимому">Перейти к содержимому</a>
@@ -55,6 +68,19 @@
             <span class="header-logo">Virelle</span>
         </a>
         <div class="header-actions">
+                        <button type="button" onclick="toggleTheme()" id="theme-toggle" class="icon-btn theme-toggle" title="Тёмная тема" aria-label="Переключить на тёмную тему">
+                <span class="icon icon--sun icon--current" aria-hidden="true">
+                    <svg class="theme-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                        <circle cx="12" cy="12" r="3.75" stroke="currentColor" stroke-width="1.35"/>
+                        <path d="M12 3.25v2.1M12 18.65v2.1M3.25 12h2.1M18.65 12h2.1M5.9 5.9l1.5 1.5M16.6 16.6l1.5 1.5M5.9 18.1l1.5-1.5M16.6 7.4l1.5-1.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span class="icon icon--moon icon--next" aria-hidden="true">
+                    <svg class="theme-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                        <path d="M15.35 4.2A8.15 8.15 0 1 0 19.8 14.35 6.55 6.55 0 0 1 15.35 4.2Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+            </button>
             <a href="catalog.html?favorites=1" class="icon-btn favorites-link" title="Избранное" aria-label="Избранное">
                 <i class="fa-regular fa-heart" aria-hidden="true"></i>
                 <span class="favorites-count" data-favorites-count hidden>0</span>
@@ -69,113 +95,123 @@
 
 <main id="main-content">
 <section id="cart-page" class="cart-page" aria-labelledby="cart-page-title">
-    <div class="container">
-        <div class="section-header">
-            <h1 id="cart-page-title" class="section-title">Корзина</h1>
-            <p class="section-subtitle">Проверьте заказ и оставьте контакты — мы свяжемся для подтверждения.</p>
+    <div class="container cart-shell">
+        <header class="cart-heading">
+            <div class="cart-heading-text">
+                <p class="cart-kicker">Заказ</p>
+                <h1 id="cart-page-title" class="cart-title">
+                    Корзина
+                    <span id="cart-heading-count" class="cart-heading-count" hidden></span>
+                </h1>
+                <p class="cart-lead">Имя и телефон — достаточно. Адрес уточним при звонке.</p>
+            </div>
+            <a href="catalog.html" class="cart-continue">В коллекцию</a>
+        </header>
+
+        <div id="cart-empty" class="cart-empty" hidden>
+            <p class="cart-kicker">Коллекция ждёт</p>
+            <h2 class="cart-empty-title">Корзина пуста</h2>
+            <p class="cart-empty-text">Выберите модель и размер — заказ оформится здесь, спокойно и без суеты.</p>
+            <a href="catalog.html" class="cta-button btn-solid no-decoration"><span>Смотреть коллекцию</span></a>
         </div>
 
-        <div class="cart-layout">
-            <div class="cart-panel">
-                <h2 class="cart-panel-title">Ваш выбор</h2>
-
-                <div id="cart-empty" class="cart-empty" hidden>
-                    <h3 class="cart-empty-title">Корзина пуста</h3>
-                    <p class="cart-empty-text">Добавьте модели из коллекции — сначала выберите размер.</p>
-                    <a href="catalog.html" class="cta-button btn-solid no-decoration"><span>В коллекцию</span></a>
+        <div id="cart-active" class="cart-active" hidden>
+            <div class="cart-main">
+                <p id="cart-order-notice" class="cart-order-notice" role="status" hidden></p>
+                <div id="cart-select-toolbar" class="cart-select-toolbar" hidden>
+                    <label class="cart-check cart-check--all">
+                        <input type="checkbox" id="cart-select-all" checked>
+                        <span>Выбрать все</span>
+                    </label>
                 </div>
-
-                <div id="cart-lines-wrap" class="cart-lines-wrap" hidden>
-                    <ul id="cart-lines" class="cart-lines" aria-live="polite"></ul>
-                    <div class="cart-summary">
-                        <div class="cart-summary-row">
-                            <span>Товары</span>
-                            <span id="cart-items-count">0</span>
-                        </div>
-                        <div class="cart-summary-row is-total">
-                            <span>Итого</span>
-                            <span id="cart-subtotal">0 ₽</span>
-                        </div>
-                    </div>
-                </div>
+                <ul id="cart-lines" class="cart-lines" aria-live="polite"></ul>
             </div>
 
-            <div class="checkout-panel">
-                <h2 class="checkout-panel-title">Оформление заказа</h2>
-
-                <p id="checkout-empty-hint" class="checkout-note" hidden>
-                    Добавьте товары в корзину, чтобы отправить заявку.
-                </p>
-
-                <div id="checkout-success" class="checkout-success" hidden>
-                    <div class="checkout-success-icon" aria-hidden="true">
-                        <i class="fa-solid fa-check"></i>
+            <aside class="cart-aside" aria-label="Оформление заказа">
+                <div class="cart-aside-inner">
+                    <div id="checkout-success" class="checkout-success" hidden>
+                        <div class="checkout-success-icon" aria-hidden="true">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <h2 class="checkout-success-title">Заявка принята</h2>
+                        <p id="checkout-success-text" class="checkout-success-text">
+                            Спасибо! Мы получили ваш заказ и скоро свяжемся для подтверждения.
+                        </p>
+                        <a href="catalog.html" class="cta-button btn-outline no-decoration"><span>Продолжить покупки</span></a>
                     </div>
-                    <h3 class="checkout-success-title">Заявка принята</h3>
-                    <p id="checkout-success-text" class="checkout-success-text">
-                        Спасибо! Мы получили ваш заказ и скоро свяжемся для подтверждения.
-                    </p>
-                    <a href="catalog.html" class="cta-button btn-outline no-decoration"><span>Продолжить покупки</span></a>
+
+                    <div id="cart-checkout-block" class="cart-checkout-block">
+                        <div class="cart-summary">
+                            <div class="cart-summary-row">
+                                <span>Товары</span>
+                                <span id="cart-items-count">0</span>
+                            </div>
+                            <div class="cart-summary-row is-total">
+                                <span>Итого</span>
+                                <span id="cart-subtotal">0 ₽</span>
+                            </div>
+                        </div>
+
+                        <form id="checkout-form" class="checkout-form" novalidate>
+                            <div class="form-honeypot" aria-hidden="true">
+                                <label for="checkout-company">Company</label>
+                                <input type="text" id="checkout-company" name="company" tabindex="-1" autocomplete="off">
+                            </div>
+
+                            <div class="form-field" data-field="name">
+                                <label for="checkout-name">Имя <span class="req" aria-hidden="true">*</span></label>
+                                <input id="checkout-name" name="name" type="text" autocomplete="name" required maxlength="80" placeholder="Как к вам обращаться">
+                                <span class="form-error" data-error-for="name" role="alert"></span>
+                            </div>
+
+                            <div class="form-field" data-field="phone">
+                                <label for="checkout-phone">Телефон <span class="req" aria-hidden="true">*</span></label>
+                                <input id="checkout-phone" name="phone" type="tel" autocomplete="tel" required maxlength="20" inputmode="tel" placeholder="+7 900 000-00-00">
+                                <span class="form-error" data-error-for="phone" role="alert"></span>
+                            </div>
+
+                            <details class="checkout-extra">
+                                <summary>Комментарий и адрес (по желанию)</summary>
+                                <div class="checkout-extra-body">
+                                    <div class="form-field" data-field="email">
+                                        <label for="checkout-email">Email</label>
+                                        <input id="checkout-email" name="email" type="email" autocomplete="email" maxlength="120" placeholder="необязательно">
+                                        <span class="form-error" data-error-for="email" role="alert"></span>
+                                    </div>
+                                    <div class="form-field" data-field="city">
+                                        <label for="checkout-city">Город</label>
+                                        <input id="checkout-city" name="city" type="text" autocomplete="address-level2" maxlength="80" placeholder="можно уточнить при звонке">
+                                        <span class="form-error" data-error-for="city" role="alert"></span>
+                                    </div>
+                                    <div class="form-field" data-field="address">
+                                        <label for="checkout-address">Адрес</label>
+                                        <input id="checkout-address" name="address" type="text" autocomplete="street-address" maxlength="160" placeholder="можно уточнить при звонке">
+                                        <span class="form-error" data-error-for="address" role="alert"></span>
+                                    </div>
+                                    <div class="form-field" data-field="comment">
+                                        <label for="checkout-comment">Комментарий</label>
+                                        <textarea id="checkout-comment" name="comment" maxlength="500" placeholder="Пожелания по размеру или доставке" rows="2"></textarea>
+                                        <span class="form-error" data-error-for="comment" role="alert"></span>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <div class="form-field" data-field="agree">
+                                <label class="form-check">
+                                    <input id="checkout-agree" name="agree" type="checkbox" required>
+                                    <span>Согласна на обработку данных для связи по заказу <span class="req" aria-hidden="true">*</span></span>
+                                </label>
+                                <span class="form-error" data-error-for="agree" role="alert"></span>
+                            </div>
+
+                            <button type="submit" id="checkout-submit" class="cta-button btn-solid checkout-submit">
+                                <span>Отправить заявку</span>
+                            </button>
+                            <p class="checkout-footnote">Мы свяжемся для подтверждения. Демо: данные остаются на устройстве.</p>
+                        </form>
+                    </div>
                 </div>
-
-                <form id="checkout-form" class="checkout-form" novalidate>
-                    <p class="checkout-note">Отправка — демонстрационная. Данные остаются на этом устройстве и не уходят на сервер.</p>
-
-                    <div class="form-honeypot" aria-hidden="true">
-                        <label for="checkout-company">Company</label>
-                        <input type="text" id="checkout-company" name="company" tabindex="-1" autocomplete="off">
-                    </div>
-
-                    <div class="form-field" data-field="name">
-                        <label for="checkout-name">Имя <span class="req" aria-hidden="true">*</span></label>
-                        <input id="checkout-name" name="name" type="text" autocomplete="name" required maxlength="80" placeholder="Как к вам обращаться">
-                        <span class="form-error" data-error-for="name" role="alert"></span>
-                    </div>
-
-                    <div class="form-row-2">
-                        <div class="form-field" data-field="phone">
-                            <label for="checkout-phone">Телефон <span class="req" aria-hidden="true">*</span></label>
-                            <input id="checkout-phone" name="phone" type="tel" autocomplete="tel" required maxlength="20" inputmode="tel" placeholder="+7 900 000-00-00">
-                            <span class="form-error" data-error-for="phone" role="alert"></span>
-                        </div>
-                        <div class="form-field" data-field="email">
-                            <label for="checkout-email">Email</label>
-                            <input id="checkout-email" name="email" type="email" autocomplete="email" maxlength="120" placeholder="необязательно">
-                            <span class="form-error" data-error-for="email" role="alert"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-field" data-field="city">
-                        <label for="checkout-city">Город <span class="req" aria-hidden="true">*</span></label>
-                        <input id="checkout-city" name="city" type="text" autocomplete="address-level2" required maxlength="80" placeholder="Город доставки">
-                        <span class="form-error" data-error-for="city" role="alert"></span>
-                    </div>
-
-                    <div class="form-field" data-field="address">
-                        <label for="checkout-address">Адрес <span class="req" aria-hidden="true">*</span></label>
-                        <input id="checkout-address" name="address" type="text" autocomplete="street-address" required maxlength="160" placeholder="Улица, дом, квартира">
-                        <span class="form-error" data-error-for="address" role="alert"></span>
-                    </div>
-
-                    <div class="form-field" data-field="comment">
-                        <label for="checkout-comment">Комментарий</label>
-                        <textarea id="checkout-comment" name="comment" maxlength="500" placeholder="Пожелания по доставке или размеру"></textarea>
-                        <span class="form-error" data-error-for="comment" role="alert"></span>
-                    </div>
-
-                    <div class="form-field" data-field="agree">
-                        <label class="form-check">
-                            <input id="checkout-agree" name="agree" type="checkbox" required>
-                            <span>Согласна на обработку данных для связи по заказу <span class="req" aria-hidden="true">*</span></span>
-                        </label>
-                        <span class="form-error" data-error-for="agree" role="alert"></span>
-                    </div>
-
-                    <button type="submit" id="checkout-submit" class="cta-button btn-solid checkout-submit">
-                        <span>Отправить заказ</span>
-                    </button>
-                </form>
-            </div>
+            </aside>
         </div>
     </div>
 </section>

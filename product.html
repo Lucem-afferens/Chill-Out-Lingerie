@@ -39,8 +39,12 @@
     <!-- Синхронная установка темы ДО рендеринга страницы -->
     <script>
         (function() {
-            // Читаем сохраненную тему из localStorage
-            document.documentElement.setAttribute('data-theme', 'light');
+            var theme = 'light';
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') theme = saved;
+            } catch (e) {}
+            document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
     
@@ -94,6 +98,19 @@
         </a>
         
                 <div class="header-actions">
+                        <button type="button" onclick="toggleTheme()" id="theme-toggle" class="icon-btn theme-toggle" title="Тёмная тема" aria-label="Переключить на тёмную тему">
+                <span class="icon icon--sun icon--current" aria-hidden="true">
+                    <svg class="theme-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                        <circle cx="12" cy="12" r="3.75" stroke="currentColor" stroke-width="1.35"/>
+                        <path d="M12 3.25v2.1M12 18.65v2.1M3.25 12h2.1M18.65 12h2.1M5.9 5.9l1.5 1.5M16.6 16.6l1.5 1.5M5.9 18.1l1.5-1.5M16.6 7.4l1.5-1.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span class="icon icon--moon icon--next" aria-hidden="true">
+                    <svg class="theme-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                        <path d="M15.35 4.2A8.15 8.15 0 1 0 19.8 14.35 6.55 6.55 0 0 1 15.35 4.2Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+            </button>
             <a href="catalog.html?favorites=1" class="icon-btn favorites-link" title="Избранное" aria-label="Избранное">
                 <i class="fa-regular fa-heart" aria-hidden="true"></i>
                 <span class="favorites-count" data-favorites-count hidden>0</span>
@@ -147,16 +164,19 @@
                 </div>
 
                 <div class="product-trust-strip" role="note">
-                    <p>Выберите размер и добавьте в корзину — мы свяжемся для подтверждения заказа и доставки.</p>
+                    <p>Размер → в корзину → заявка. Адрес уточним при звонке.</p>
                 </div>
 
                 <div class="product-cta-row">
                     <button type="button" id="product-order-btn" class="cta-button btn-solid" disabled>
                         <span>В корзину</span>
                     </button>
-                    <button type="button" id="product-favorite-btn" class="cta-button btn-outline favorite-btn-lg" aria-pressed="false">
+                    <button type="button" id="product-buy-btn" class="cta-button btn-outline" disabled>
+                        <span>Оформить</span>
+                    </button>
+                    <button type="button" id="product-favorite-btn" class="cta-button btn-ghost favorite-btn-lg" aria-pressed="false">
                         <i class="fa-regular fa-heart" aria-hidden="true"></i>
-                        <span>В избранное</span>
+                        <span>Избранное</span>
                     </button>
                 </div>
             </div>

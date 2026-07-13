@@ -10,12 +10,9 @@
     border: none;
     border-radius: 0;
     border-bottom: 1px solid var(--glass-border);
-    background: linear-gradient(
-        180deg,
-        rgba(247, 244, 239, 0.55) 0%,
-        rgba(247, 244, 239, 0.4) 100%
-    );
-    transition: transform var(--motion-base) var(--ease-standard);
+    background: var(--color-header-gradient);
+    transition: transform var(--motion-base) var(--ease-standard),
+        background var(--motion-base) var(--ease-standard);
 }
 
 #header.header-hidden {
@@ -137,7 +134,7 @@
     .icon-btn:focus-visible {
         color: var(--color-gold-text);
         border-color: var(--color-gold);
-        background: rgba(255, 255, 255, 0.95);
+        background: var(--color-control-hover-bg);
         box-shadow: var(--shadow-md);
     }
 }
@@ -145,6 +142,65 @@
 .icon-btn:focus-visible {
     outline: 2px solid var(--color-gold);
     outline-offset: 2px;
+}
+
+.theme-toggle {
+    position: relative;
+    padding: 0;
+}
+
+.theme-toggle .icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: inherit;
+    transition:
+        opacity var(--motion-base) var(--ease-standard),
+        transform var(--motion-base) var(--ease-standard);
+}
+
+.theme-toggle .theme-icon {
+    display: block;
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+.theme-toggle .icon--current {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    z-index: 2;
+}
+
+.theme-toggle .icon--next {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.72) rotate(-18deg);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.theme-toggle .icon--moon.icon--next {
+    transform: translate(-50%, -50%) scale(0.72) rotate(18deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .theme-toggle:hover .icon--current.icon--sun {
+        transform: translate(-50%, -50%) scale(1.06) rotate(12deg);
+    }
+
+    .theme-toggle:hover .icon--current.icon--moon {
+        transform: translate(-50%, -50%) scale(1.06) rotate(-8deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .theme-toggle .icon {
+        transition: none;
+    }
+
+    .theme-toggle:hover .icon--current.icon--sun,
+    .theme-toggle:hover .icon--current.icon--moon {
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 .menu-btn {
@@ -170,7 +226,7 @@
         transform: none;
         color: var(--color-gold-text);
         border-color: var(--color-gold);
-        background: rgba(255, 255, 255, 0.95);
+        background: var(--color-control-hover-bg);
         box-shadow: var(--shadow-md);
     }
 }
